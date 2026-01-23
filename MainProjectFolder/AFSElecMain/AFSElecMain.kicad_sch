@@ -7,7 +7,7 @@
 	(lib_symbols)
 	(text "hi this is a test"
 		(exclude_from_sim no)
-		(at 50.8 36.576 0)
+		(at 38.862 29.972 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -15,9 +15,19 @@
 		)
 		(uuid "2fe0bd74-a6db-437f-ab91-3c8218f226cd")
 	)
+	(text "Your Mom"
+		(exclude_from_sim no)
+		(at 31.75 34.544 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "a87ec981-64ee-46da-a0f9-bfd18edfc087")
+	)
 	(text "Hi, welcome to the main schematic of the AFS Elec PCB"
 		(exclude_from_sim no)
-		(at 61.468 24.13 0)
+		(at 54.864 23.368 0)
 		(effects
 			(font
 				(size 1.27 1.27)
