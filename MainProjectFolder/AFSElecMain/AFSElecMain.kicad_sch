@@ -5,6 +5,16 @@
 	(uuid "f1b9ba39-f7ad-425b-95b0-801cfe902049")
 	(paper "A4")
 	(lib_symbols)
+	(text "hi this is a test"
+		(exclude_from_sim no)
+		(at 50.8 36.576 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "2fe0bd74-a6db-437f-ab91-3c8218f226cd")
+	)
 	(text "Hi, welcome to the main schematic of the AFS Elec PCB"
 		(exclude_from_sim no)
 		(at 61.468 24.13 0)
