@@ -1,0 +1,24 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "f1b9ba39-f7ad-425b-95b0-801cfe902049")
+	(paper "A4")
+	(lib_symbols)
+	(text "Hi, welcome to the main schematic of the AFS Elec PCB"
+		(exclude_from_sim no)
+		(at 61.468 24.13 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "d4654044-aadf-4a05-9940-143c689acd80")
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)
