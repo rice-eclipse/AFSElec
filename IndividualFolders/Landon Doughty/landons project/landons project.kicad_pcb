@@ -81,7 +81,7 @@
 	(footprint "logos:ECLIPSELogo1"
 		(layer "F.Cu")
 		(uuid "8238e408-7167-4f0b-a038-57d1eee15cd2")
-		(at 118 79.5)
+		(at 195 71.5)
 		(property "Reference" "G***"
 			(at -0.5 -6.5 0)
 			(layer "F.SilkS")
@@ -554,89 +554,27 @@
 		)
 		(embedded_fonts no)
 	)
-	(gr_line
-		(start 97 127.5)
-		(end 97 77)
+	(gr_circle
+		(center 195 97.5)
+		(end 233.1 97.5)
 		(stroke
 			(width 0.05)
 			(type default)
 		)
+		(fill no)
 		(layer "Edge.Cuts")
-		(uuid "070431ab-d3a0-415e-bb10-87c9df247d78")
+		(uuid "24ab391a-6d3f-427e-b06c-c7931c7a44e9")
 	)
-	(gr_arc
-		(start 135.5 74)
-		(mid 137.62132 74.87868)
-		(end 138.5 77)
+	(gr_circle
+		(center 195 97.5)
+		(end 207.7 97.5)
 		(stroke
 			(width 0.05)
 			(type default)
 		)
+		(fill no)
 		(layer "Edge.Cuts")
-		(uuid "1d8f3a2e-22af-4d69-8f11-ec375db14ca1")
-	)
-	(gr_arc
-		(start 97 77)
-		(mid 97.87868 74.87868)
-		(end 100 74)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "2147ddd8-fe57-441b-8f24-3f1c1ffcc0a4")
-	)
-	(gr_line
-		(start 100 74)
-		(end 135.5 74)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "23e679b9-48e5-4a36-8585-ac7d9c271d4c")
-	)
-	(gr_arc
-		(start 138.5 127.5)
-		(mid 137.62132 129.62132)
-		(end 135.5 130.5)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "24d9c5dc-1f09-4610-82ad-b3051754bf41")
-	)
-	(gr_line
-		(start 138.5 77)
-		(end 138.5 127.5)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "67b24f89-6b07-407b-9bf4-3bacf3dc8185")
-	)
-	(gr_line
-		(start 135.5 130.5)
-		(end 100 130.5)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "a64047dd-51e0-4605-bb12-fb9b45fcf1d1")
-	)
-	(gr_arc
-		(start 100 130.5)
-		(mid 97.87868 129.62132)
-		(end 97 127.5)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(layer "Edge.Cuts")
-		(uuid "f0e59248-8437-4ca0-afb3-d20883603a51")
+		(uuid "aafe0927-81a9-4758-a39e-0f62572a3bea")
 	)
 	(embedded_fonts no)
 )
