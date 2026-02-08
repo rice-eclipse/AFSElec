@@ -663,11 +663,9 @@
 		(color 0 0 0 0)
 		(uuid "c353ae55-ad1e-4bcd-a957-7a64df49d7c3")
 	)
-	(junction
-		(at 144.78 86.36)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "fe7669b5-2094-45d2-9ee3-d3b37e3f8f83")
+	(no_connect
+		(at 137.16 76.2)
+		(uuid "168b0027-3f92-48f0-9818-a80270f2d4e6")
 	)
 	(wire
 		(pts
@@ -771,16 +769,6 @@
 	)
 	(wire
 		(pts
-			(xy 144.78 83.82) (xy 144.78 86.36)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b3c6c277-ed93-4d0d-9b77-585406b60552")
-	)
-	(wire
-		(pts
 			(xy 86.36 78.74) (xy 96.52 78.74)
 		)
 		(stroke
@@ -798,16 +786,6 @@
 			(type default)
 		)
 		(uuid "f3ab8176-3a23-420c-ba02-d358c2758fd4")
-	)
-	(wire
-		(pts
-			(xy 137.16 76.2) (xy 144.78 76.2)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f5775888-c7a2-49b2-a571-9072808dec83")
 	)
 	(wire
 		(pts
@@ -882,76 +860,6 @@
 				)
 				(justify right)
 				(hide yes)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 144.78 80.01 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "0b1fda73-c5c3-4065-98fd-3019b81778f3")
-		(property "Reference" "Cf"
-			(at 148.59 78.7399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "C"
-			(at 148.59 81.2799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 145.7452 83.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 144.78 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Unpolarized capacitor"
-			(at 144.78 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "b60f2ed2-390d-4548-9c0f-af08e620853d")
-		)
-		(pin "1"
-			(uuid "5006247a-44f1-417a-bc8f-b2ff367f6ac2")
-		)
-		(instances
-			(project ""
-				(path "/7c0919ff-f8bd-446a-9f9b-2fa64e9478a1"
-					(reference "Cf")
-					(unit 1)
-				)
 			)
 		)
 	)
@@ -1040,7 +948,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0.1 uf"
+		(property "Value" "1 µf"
 			(at 165.1 76.1999 0)
 			(effects
 				(font
@@ -1049,7 +957,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 162.2552 78.74 0)
 			(effects
 				(font
@@ -1117,7 +1025,7 @@
 				)
 			)
 		)
-		(property "Footprint" "SOIC-8_MNP"
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
 			(at 96.52 71.12 0)
 			(effects
 				(font
