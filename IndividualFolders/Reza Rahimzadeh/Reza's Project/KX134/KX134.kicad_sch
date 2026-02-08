@@ -1221,7 +1221,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 115.2652 111.76 0)
 			(effects
 				(font
@@ -1356,7 +1356,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 178.7652 105.41 0)
 			(effects
 				(font
@@ -1491,7 +1491,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LGA12_2X2X0P9_ROM"
+		(property "Footprint" "Package_LGA:LGA-12_2x2mm_P0.5mm"
 			(at 115.57 90.17 0)
 			(effects
 				(font
