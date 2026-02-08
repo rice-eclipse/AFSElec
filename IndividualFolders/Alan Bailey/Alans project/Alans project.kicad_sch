@@ -1229,7 +1229,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 191.77 108.2548 0)
 			(effects
 				(font
@@ -1297,7 +1297,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 147.32 126.0348 0)
 			(effects
 				(font
@@ -1365,7 +1365,7 @@
 				)
 			)
 		)
-		(property "Footprint" "MMC5983MA_MEM"
+		(property "Footprint" "Package_LGA:LGA-16_3x3mm_P0.5mm"
 			(at 110.49 93.98 0)
 			(effects
 				(font
