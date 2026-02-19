@@ -1914,188 +1914,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Device:R_Shunt"
-			(pin_names
-				(offset 0)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "R"
-				(at -2.032 0 90)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "R_Shunt"
-				(at 0 0 90)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at -1.778 0 90)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Shunt resistor with Kelvin connections"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "R res shunt resistor"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "R_*Shunt*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "R_Shunt_0_1"
-				(rectangle
-					(start -1.016 -2.54)
-					(end 1.016 2.54)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 -2.54) (xy 1.27 -2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 2.54) (xy 0 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "R_Shunt_1_1"
-				(pin passive line
-					(at 0 5.08 270)
-					(length 2.54)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 -5.08 90)
-					(length 2.54)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 2.54 2.54 180)
-					(length 1.27)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 2.54 -2.54 180)
-					(length 1.27)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "ICM-42688-P:ICM-42688-P"
 			(pin_names
 				(offset 1.016)
@@ -7175,6 +6993,16 @@
 		)
 		(uuid "abb1bf8c-3c64-4383-a77b-4689a0125c73")
 	)
+	(text "High Precision 2mOhm Shunt"
+		(exclude_from_sim no)
+		(at 330.2 106.68 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "ae408906-c978-4cb6-857b-4579ee7a850b")
+	)
 	(text "INA226 Power Sensor\n"
 		(exclude_from_sim no)
 		(at 358.14 82.804 0)
@@ -7594,6 +7422,12 @@
 		(uuid "8d95ea99-ce7f-467f-a167-a20d61031c0d")
 	)
 	(junction
+		(at 336.55 132.08)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "93337bae-594e-4bde-b9df-7393e9eea420")
+	)
+	(junction
 		(at 116.84 67.31)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7718,6 +7552,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "d4e0f9c1-528a-4540-9593-1fb5ac0a94f0")
+	)
+	(junction
+		(at 336.55 124.46)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d5f36a6d-d6b3-468e-aac9-20952874a12e")
 	)
 	(junction
 		(at 347.98 196.85)
@@ -8319,16 +8159,6 @@
 	)
 	(wire
 		(pts
-			(xy 336.55 134.62) (xy 336.55 146.05)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "28a255ed-c04a-4690-8c5c-e68a283792ec")
-	)
-	(wire
-		(pts
 			(xy 283.21 191.77) (xy 288.29 191.77)
 		)
 		(stroke
@@ -8669,6 +8499,16 @@
 	)
 	(wire
 		(pts
+			(xy 339.09 124.46) (xy 336.55 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4415a76d-92a7-4f54-a4a2-fcb1fbcd264f")
+	)
+	(wire
+		(pts
 			(xy 137.16 95.25) (xy 149.86 95.25)
 		)
 		(stroke
@@ -8776,16 +8616,6 @@
 			(type default)
 		)
 		(uuid "4bf62c6e-9b3c-4e4b-bbae-737eb21d34ac")
-	)
-	(wire
-		(pts
-			(xy 339.09 132.08) (xy 342.9 132.08)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4bffcf1f-56e8-471f-83e3-98077412434f")
 	)
 	(wire
 		(pts
@@ -9356,6 +9186,16 @@
 			(type default)
 		)
 		(uuid "7ed3bea2-ce27-4daa-86c9-05b121515213")
+	)
+	(wire
+		(pts
+			(xy 336.55 132.08) (xy 342.9 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7fa4ad9f-ea77-48c8-94fe-74fadb92bdf8")
 	)
 	(wire
 		(pts
@@ -10419,7 +10259,7 @@
 	)
 	(wire
 		(pts
-			(xy 339.09 127) (xy 339.09 129.54)
+			(xy 339.09 124.46) (xy 339.09 129.54)
 		)
 		(stroke
 			(width 0)
@@ -10446,6 +10286,16 @@
 			(type default)
 		)
 		(uuid "d90000e0-07c1-4563-a643-8fd207a2e31e")
+	)
+	(wire
+		(pts
+			(xy 336.55 132.08) (xy 336.55 146.05)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d98d3982-32cd-4b91-bc39-772c0f506b97")
 	)
 	(wire
 		(pts
@@ -12862,7 +12712,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" ""
 			(at 539.4452 210.82 0)
 			(effects
 				(font
@@ -13984,6 +13834,193 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 336.55 128.27 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1cd9a930-3342-4ad6-a5db-c29b953c0972")
+		(property "Reference" "R13"
+			(at 334.01 126.9999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "2m"
+			(at 334.01 129.5399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric"
+			(at 334.772 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 336.55 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 336.55 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Availability" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Check_prices" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description_1" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MAXIMUM_PACKAGE_HEIGHT" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MF" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MP" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "PARTREV" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Package" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Price" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Purchase-URL" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "STANDARD" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "SnapEDA_Link" ""
+			(at 336.55 128.27 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a1820def-669c-4f5e-8074-b249cc0bebe4")
+		)
+		(pin "2"
+			(uuid "a1dcce04-b65b-4294-8ad7-21d1b473d4b8")
+		)
+		(instances
+			(project "Main"
+				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
+					(reference "R13")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "ICM-42688-P:ICM-42688-P")
 		(at 195.58 198.12 0)
 		(unit 1)
@@ -14937,7 +14974,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_0805_2012Metric"
+		(property "Footprint" ""
 			(at 528.32 207.01 0)
 			(effects
 				(font
@@ -15950,199 +15987,6 @@
 			(project "Main"
 				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
 					(reference "#PWR028")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R_Shunt")
-		(at 336.55 129.54 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "43a4a470-d7f7-4c07-a0a0-c05c6623be25")
-		(property "Reference" "R9"
-			(at 334.01 128.2699 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "2m"
-			(at 334.01 130.8099 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 334.772 129.54 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Shunt resistor with Kelvin connections"
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Availability" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Check_prices" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description_1" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "MANUFACTURER" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "MAXIMUM_PACKAGE_HEIGHT" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "MF" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "MP" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "PARTREV" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Package" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Price" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Purchase-URL" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "STANDARD" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "SnapEDA_Link" ""
-			(at 336.55 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "b7dd3ae8-5b7e-4684-8f39-81be607f4b57")
-		)
-		(pin "3"
-			(uuid "baa12174-a12d-47eb-a6a9-75857d345b6e")
-		)
-		(pin "4"
-			(uuid "f0f9efc8-c5b5-4e43-a9d9-eec052dab509")
-		)
-		(pin "2"
-			(uuid "5f5a8541-8e78-4485-ae0a-d410d924cf5b")
-		)
-		(instances
-			(project "Main"
-				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
-					(reference "R9")
 					(unit 1)
 				)
 			)
@@ -20606,7 +20450,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+		(property "Footprint" ""
 			(at 491.1852 201.93 0)
 			(effects
 				(font
@@ -22042,7 +21886,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Inductor_SMD:L_0805_2012Metric"
+		(property "Footprint" ""
 			(at 533.4 201.93 0)
 			(effects
 				(font
