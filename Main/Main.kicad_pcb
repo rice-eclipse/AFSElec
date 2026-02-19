@@ -4649,7 +4649,7 @@
 	(footprint "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm"
 		(layer "F.Cu")
 		(uuid "1aa200f5-8f0f-4307-9f5b-b038c31b2ab8")
-		(at 114 115 -90)
+		(at 145.995 52.175 -90)
 		(descr "SOIC, 8 Pin (https://www.analog.com/media/en/technical-documentation/data-sheets/ada4898-1_4898-2.pdf#page=29), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOIC SO")
 		(property "Reference" "U9"
@@ -5068,7 +5068,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "1f9dc8c8-4fe9-44a5-ac73-9fd2db8b9a3b")
-		(at 81 90 180)
+		(at 112.995 27.175 180)
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J5"
@@ -9175,7 +9175,7 @@
 		(property "Reference" "U14"
 			(at 0 -6.65 0)
 			(layer "F.SilkS")
-			(uuid "1512c304-a7db-451e-9c57-af5a33204b79")
+			(uuid "53f1c6a1-a89e-4f11-ac85-90e0cbbe468c")
 			(effects
 				(font
 					(size 1 1)
@@ -9186,7 +9186,7 @@
 		(property "Value" "LM2575-3.3BT"
 			(at 0 6.65 0)
 			(layer "F.Fab")
-			(uuid "6c11f2ff-bcb4-4c58-80cf-11402611e902")
+			(uuid "9167a047-2e77-427a-9e7f-688b522d4a54")
 			(effects
 				(font
 					(size 1 1)
@@ -9198,7 +9198,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "3c26524f-de9f-41ae-a9a6-e312759ac18c")
+			(uuid "4f4e5a7d-d33e-411a-a354-477563332a6a")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9210,7 +9210,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "d11ec582-1198-4c28-9868-45ab881683ee")
+			(uuid "43d9583e-7117-437a-8915-b9150d078b3b")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11435,7 +11435,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "54873ad6-8c08-4688-b945-a347badb313c")
-		(at 119 90 180)
+		(at 150.995 27.175 180)
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J3"
@@ -11699,7 +11699,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "558bcaeb-bd94-4716-bd66-cea10363ef66")
-		(at 81 110)
+		(at 112.995 47.175)
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J6"
@@ -15869,7 +15869,7 @@
 	(footprint "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm"
 		(layer "F.Cu")
 		(uuid "92b49b56-2ffd-45c4-b3e4-100313a55d51")
-		(at 114 85 90)
+		(at 145.995 22.175 90)
 		(descr "SOIC, 8 Pin (https://www.analog.com/media/en/technical-documentation/data-sheets/ada4898-1_4898-2.pdf#page=29), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOIC SO")
 		(property "Reference" "U11"
@@ -16288,7 +16288,7 @@
 	(footprint "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm"
 		(layer "F.Cu")
 		(uuid "92da2c56-6ca0-4966-9c5b-3da436f6fc20")
-		(at 86 115 -90)
+		(at 117.995 52.175 -90)
 		(descr "SOIC, 8 Pin (https://www.analog.com/media/en/technical-documentation/data-sheets/ada4898-1_4898-2.pdf#page=29), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOIC SO")
 		(property "Reference" "U13"
@@ -19120,7 +19120,7 @@
 	(footprint "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm"
 		(layer "F.Cu")
 		(uuid "b24e6b86-447b-4aa5-a3bb-1fdda7d251dc")
-		(at 86 85 90)
+		(at 117.995 22.175 90)
 		(descr "SOIC, 8 Pin (https://www.analog.com/media/en/technical-documentation/data-sheets/ada4898-1_4898-2.pdf#page=29), generated with kicad-footprint-generator ipc_gullwing_generator.py")
 		(tags "SOIC SO")
 		(property "Reference" "U12"
@@ -22872,7 +22872,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "ce16fa62-9e07-444d-8876-5094088e7b63")
-		(at 119 110)
+		(at 150.995 47.175)
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J4"
@@ -28148,6 +28148,17 @@
 			)
 		)
 	)
+	(gr_curve
+		(pts
+			(xy 127.066218 73.185271) (xy 119.966218 66.385271) (xy 124.116218 75.135271) (xy 114 75)
+		)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "03bb6c2b-3b3e-400e-95a3-ccac7aae62e1")
+	)
 	(gr_arc
 		(start 230.693678 74.084118)
 		(mid 230.808847 75.764846)
@@ -28182,13 +28193,12 @@
 		(uuid "0917e446-3d63-4228-aaa0-2393c01441c5")
 	)
 	(gr_line
-		(start 65.549751 90.858199)
-		(end 65.549751 109.409116)
+		(start 9.549751 154.958199)
+		(end 9.549751 173.509116)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "0c791d70-6deb-4242-a31f-7df5649104a8")
 	)
@@ -28204,25 +28214,23 @@
 		(uuid "0c8f2e07-5ada-43d2-bc04-486314af8165")
 	)
 	(gr_arc
-		(start 78.00168 119.778565)
-		(mid 73.805532 121.199225)
-		(end 70.127989 118.729137)
+		(start 22.00168 183.878565)
+		(mid 17.805548 185.299228)
+		(end 14.127989 182.829137)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "10db0745-8154-474f-917b-f30c914db213")
 	)
 	(gr_line
-		(start 66.211618 111.895196)
-		(end 70.127989 118.729137)
+		(start 10.211618 175.995196)
+		(end 14.127989 182.829137)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "1186b41f-f48d-4613-bf97-d792143dd15b")
 	)
@@ -28238,14 +28246,13 @@
 		(uuid "136ca17f-d164-44c3-a04d-02417f6521c6")
 	)
 	(gr_arc
-		(start 65.549751 90.858199)
-		(mid 65.71805 89.571862)
-		(end 66.211617 88.37212)
+		(start 9.549751 154.958199)
+		(mid 9.718049 153.671861)
+		(end 10.211617 152.47212)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "1aa07c51-8757-4f3f-bdcf-5b4249d18bf3")
 	)
@@ -28272,25 +28279,23 @@
 		(uuid "2099cde6-d8df-4b47-bd32-70bc9ddf0e20")
 	)
 	(gr_arc
-		(start 129.872018 118.729125)
-		(mid 126.194468 121.199221)
-		(end 121.998342 119.778577)
+		(start 73.872018 182.829125)
+		(mid 70.194477 185.29923)
+		(end 65.998342 183.878577)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "2187eeb7-ad19-45c5-81e8-5aaa8050966e")
 	)
 	(gr_line
-		(start 121.998342 119.778577)
-		(end 121.998337 119.778582)
+		(start 65.998342 183.878577)
+		(end 65.998337 183.878582)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "23f2fa7c-3f7a-4889-b480-0b32fdc2d5a3")
 	)
@@ -28348,13 +28353,12 @@
 		(uuid "3c83024d-c132-483a-927a-4abe76ab9c3d")
 	)
 	(gr_line
-		(start 66.211617 88.37212)
-		(end 70.127989 81.538176)
+		(start 10.211617 152.47212)
+		(end 14.127989 145.638176)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "3d64cf27-005b-47d7-a700-82652d67304b")
 	)
@@ -28379,14 +28383,13 @@
 		(uuid "4d9a68f6-751f-48db-8fae-335af1003458")
 	)
 	(gr_arc
-		(start 134.450249 109.4091)
-		(mid 134.281945 110.695451)
-		(end 133.782904 111.904754)
+		(start 78.450249 173.5091)
+		(mid 78.280539 174.800773)
+		(end 77.782904 176.004754)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "4f9b04a9-d1a6-4872-9539-816bb4bc8073")
 	)
@@ -28462,14 +28465,13 @@
 		(uuid "6cf4487a-cdbe-4451-a71d-54b645b5b4ca")
 	)
 	(gr_arc
-		(start 70.127989 81.538176)
-		(mid 73.805532 79.068089)
-		(end 78.001657 80.488726)
+		(start 14.127989 145.638176)
+		(mid 17.805533 143.16809)
+		(end 22.001657 144.588726)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "6d66db48-6836-4d6d-87fd-69150e3e8ec6")
 	)
@@ -28495,46 +28497,42 @@
 		(uuid "6ea9e4f1-d1f0-42c0-9e71-07c146cdd7bb")
 	)
 	(gr_line
-		(start 133.788419 88.372184)
-		(end 129.872012 81.538179)
+		(start 77.788419 152.472184)
+		(end 73.872012 145.638179)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "6ef9cf19-fce3-49da-85ba-e16563126df1")
 	)
 	(gr_line
-		(start 121 118.780245)
-		(end 121 81.481178)
+		(start 65 182.880245)
+		(end 65 145.581178)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "713a82df-f06b-4bbb-bab9-4839384e7e7e")
 	)
 	(gr_line
-		(start 134.450249 109.4091)
-		(end 134.450249 90.844784)
+		(start 78.450249 173.5091)
+		(end 78.450249 154.944784)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "73903bd0-793f-4585-bfc7-b66fa797a345")
 	)
 	(gr_line
-		(start 121.99856 80.488509)
-		(end 121 81.481178)
+		(start 65.99856 144.588509)
+		(end 65 145.581178)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "7a409923-2e25-4acc-ae1d-aecdc98c26e8")
 	)
@@ -28550,14 +28548,13 @@
 		(uuid "800f3d83-9ac4-4e2e-bc92-8b0c3aa2777e")
 	)
 	(gr_circle
-		(center 75 125)
-		(end 76.5 125)
+		(center 19 189.1)
+		(end 20.5 189.1)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
 		(fill no)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "83feaef9-c08c-4618-8bf2-f8caf54b2e97")
 	)
@@ -28573,14 +28570,13 @@
 		(uuid "85f6b006-f9a6-4d62-8f2e-215428b3d9bb")
 	)
 	(gr_arc
-		(start 121.99856 80.488509)
-		(mid 126.194469 79.068088)
-		(end 129.872012 81.538179)
+		(start 65.99856 144.588509)
+		(mid 70.194632 143.168104)
+		(end 73.872012 145.638179)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "8680da9f-0faf-4b71-9436-80e140b0e42d")
 	)
@@ -28607,25 +28603,23 @@
 		(uuid "8708462e-6ff7-4abb-97fe-7f6021fe0e3e")
 	)
 	(gr_circle
-		(center 125 125)
-		(end 126.5 125)
+		(center 69 189.1)
+		(end 70.5 189.1)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
 		(fill no)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "878988b9-738d-43e8-9ea9-43aad83023f3")
 	)
 	(gr_line
-		(start 78.001657 80.488726)
-		(end 79 81.487069)
+		(start 22.001657 144.588726)
+		(end 23 145.587069)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "8d31f0b3-0aae-446c-ac7e-2ae3c0041b3e")
 	)
@@ -28640,36 +28634,33 @@
 		(uuid "9171e8b8-a700-41ea-afe6-c42d1e2d10ba")
 	)
 	(gr_line
-		(start 79 81.487069)
-		(end 79 118.786137)
+		(start 23 145.587069)
+		(end 23 182.886137)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "985a6483-50b4-44e5-8833-8ce874ed17bf")
 	)
 	(gr_line
-		(start 121.998337 119.778582)
-		(end 121 118.780245)
+		(start 65.998337 183.878582)
+		(end 65 182.880245)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "a170337f-b2f5-497c-823f-18a0fa563086")
 	)
 	(gr_circle
-		(center 75 75)
-		(end 76.5 75)
+		(center 19 139.1)
+		(end 20.5 139.1)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
 		(fill no)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "a3c139a0-bc7d-40c3-8eaa-bb3d458fd1d9")
 	)
@@ -28683,6 +28674,17 @@
 		)
 		(layer "Edge.Cuts")
 		(uuid "ad711936-979a-4292-b494-e21bddd9e796")
+	)
+	(gr_curve
+		(pts
+			(xy 72.887447 73.232119) (xy 80.15 66.25) (xy 76 75) (xy 86 75)
+		)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "b5ec3597-69d4-4e1f-9086-b348254f5319")
 	)
 	(gr_line
 		(start 183.503953 123.738687)
@@ -28706,14 +28708,13 @@
 		(uuid "b726d8ad-876e-4355-86e7-a7a174b58371")
 	)
 	(gr_arc
-		(start 66.211618 111.895196)
-		(mid 65.71805 110.695453)
-		(end 65.549751 109.409116)
+		(start 10.211618 175.995196)
+		(mid 9.718042 174.795455)
+		(end 9.549751 173.509116)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "b87b87ad-55be-4bcd-a3e7-7630ce331bba")
 	)
@@ -28739,14 +28740,13 @@
 		(uuid "c5f74684-4c3a-43db-ae7d-148a8f1c0c0e")
 	)
 	(gr_circle
-		(center 125 75)
-		(end 126.5 75)
+		(center 69 139.1)
+		(end 70.5 139.1)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
 		(fill no)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "cd38d8d8-dcb8-4938-b297-20409375ebdc")
 	)
@@ -28783,16 +28783,25 @@
 		(uuid "d83ba852-e61d-4c18-9752-652082e1a643")
 	)
 	(gr_arc
-		(start 133.788419 88.372184)
-		(mid 134.281955 89.571861)
-		(end 134.450249 90.844784)
+		(start 77.788419 152.472184)
+		(mid 78.280248 153.665414)
+		(end 78.450249 154.944784)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "dc2e50e7-2741-4150-9ba6-43fcdafb9bfd")
+	)
+	(gr_line
+		(start 86 75)
+		(end 114 75)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "e42dd739-f776-4480-97ef-e7dde183cdcc")
 	)
 	(gr_arc
 		(start 230 123)
@@ -28806,13 +28815,12 @@
 		(uuid "e7509b29-d441-4f01-8d87-1e0dfec718c1")
 	)
 	(gr_line
-		(start 133.782904 111.904754)
-		(end 129.872018 118.729125)
+		(start 77.782904 176.004754)
+		(end 73.872018 182.829125)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "e865dfbb-7e7d-4d7c-bd1d-c39c71e9c6e5")
 	)
@@ -28838,6 +28846,17 @@
 		(uuid "ea79f2f5-bf40-4a61-b657-e456af08a4c2")
 	)
 	(gr_arc
+		(start 127.066218 73.185271)
+		(mid 100.032946 138.099984)
+		(end 72.887448 73.23212)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "ef6a5535-69b8-477a-8ecd-74ce0b73a0b2")
+	)
+	(gr_arc
 		(start 183.503953 123.738687)
 		(mid 187.039488 122.27422)
 		(end 190.575023 123.738687)
@@ -28849,25 +28868,23 @@
 		(uuid "efd49d66-29cf-4e21-808b-b8a982f46d34")
 	)
 	(gr_circle
-		(center 100 100)
-		(end 138.1 100)
+		(center 44 164.1)
+		(end 82.1 164.1)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
 		(fill no)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "f15d1396-4532-4002-b830-d2ea0e190b11")
 	)
 	(gr_line
-		(start 78.00168 119.778565)
-		(end 79 118.786137)
+		(start 22.00168 183.878565)
+		(end 23 182.886137)
 		(stroke
 			(width 0.2)
 			(type default)
 		)
-		(locked yes)
 		(layer "Edge.Cuts")
 		(uuid "ff3ca711-2e88-4c3b-8259-a5069414d151")
 	)
@@ -29457,7 +29474,6 @@
 	)
 	(group ""
 		(uuid "01b3b162-c934-43cb-a756-495acae6a333")
-		(locked yes)
 		(members "0c791d70-6deb-4242-a31f-7df5649104a8" "10db0745-8154-474f-917b-f30c914db213"
 			"1186b41f-f48d-4613-bf97-d792143dd15b" "1aa07c51-8757-4f3f-bdcf-5b4249d18bf3"
 			"2187eeb7-ad19-45c5-81e8-5aaa8050966e" "23f2fa7c-3f7a-4889-b480-0b32fdc2d5a3"
