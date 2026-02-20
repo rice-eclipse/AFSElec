@@ -25320,7 +25320,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_USB:USB_Micro-B_Amphenol_10118193-0001LF_Horizontal"
 			(at 30.48 35.56 0)
 			(effects
 				(font
