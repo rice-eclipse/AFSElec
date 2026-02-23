@@ -4803,6 +4803,304 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Transistor_FET:Si2319CDS"
+			(pin_names
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "Q"
+				(at 5.08 1.905 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "Si2319CDS"
+				(at 5.08 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+				(at 5.08 -1.905 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "http://www.vishay.com/docs/66709/si2319cd.pdf"
+				(at 5.08 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+					(hide yes)
+				)
+			)
+			(property "Description" "-4.4A Id, -40V Vds, P-Channel MOSFET, SOT-23"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "P-Channel MOSFET"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "SOT?23*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Si2319CDS_0_1"
+				(polyline
+					(pts
+						(xy 0.254 1.905) (xy 0.254 -1.905)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.254 0) (xy -2.54 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 2.286) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 1.778) (xy 3.302 1.778) (xy 3.302 -1.778) (xy 0.762 -1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 0.508) (xy 0.762 -0.508)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 -1.27) (xy 0.762 -2.286)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 1.651 0)
+					(radius 2.794)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.286 0) (xy 1.27 0.381) (xy 1.27 -0.381) (xy 2.286 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 2.54) (xy 2.54 1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.54 1.778)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(circle
+					(center 2.54 -1.778)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 -2.54) (xy 2.54 0) (xy 0.762 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.794 -0.508) (xy 2.921 -0.381) (xy 3.683 -0.381) (xy 3.81 -0.254)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.302 -0.381) (xy 2.921 0.254) (xy 3.683 0.254) (xy 3.302 -0.381)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Si2319CDS_1_1"
+				(pin input line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "G"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 5.08 270)
+					(length 2.54)
+					(name "D"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 -5.08 90)
+					(length 2.54)
+					(name "S"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "otherSymbols:MSD-4-A"
 			(pin_names
 				(offset 1.016)
@@ -7087,9 +7385,9 @@
 		)
 		(uuid "54fe7459-0e48-477d-8fdc-46d80b963f29")
 	)
-	(text "figure out connection of 3.3v sources"
+	(text "Blocks Connection when USB plugged \nin to prevent backpowering\n"
 		(exclude_from_sim no)
-		(at 539.75 180.34 0)
+		(at 562.61 185.166 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7374,12 +7672,6 @@
 		(uuid "31903ae2-85ea-4ec6-9d8a-cefa459e4574")
 	)
 	(junction
-		(at 538.48 196.85)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "37bea0bd-799a-49d9-8ee4-984b7364c381")
-	)
-	(junction
 		(at 490.22 194.31)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7560,6 +7852,12 @@
 		(uuid "7070a8f9-322f-4a50-926d-db5a4a9be428")
 	)
 	(junction
+		(at 538.48 196.85)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "7198cd1e-6ba3-40a4-b88c-94b30358b060")
+	)
+	(junction
 		(at 367.03 255.27)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7648,6 +7946,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a14700a9-04f5-4722-8c83-eb7d350e5f5a")
+	)
+	(junction
+		(at 553.72 204.47)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a443f077-d4e4-45e4-a1b1-27f270d85583")
 	)
 	(junction
 		(at 356.87 104.14)
@@ -8182,6 +8486,16 @@
 			(type default)
 		)
 		(uuid "1814a051-e01d-4052-97ae-0a92b7967184")
+	)
+	(wire
+		(pts
+			(xy 538.48 196.85) (xy 548.64 196.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1845ee2e-bac1-4e05-89e6-d7fda65418a6")
 	)
 	(wire
 		(pts
@@ -9945,6 +10259,16 @@
 	)
 	(wire
 		(pts
+			(xy 558.8 196.85) (xy 570.23 196.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9de853af-eed2-48d0-bf9f-3508fa14c1f8")
+	)
+	(wire
+		(pts
 			(xy 41.91 29.21) (xy 50.8 29.21)
 		)
 		(stroke
@@ -10615,16 +10939,6 @@
 	)
 	(wire
 		(pts
-			(xy 538.48 195.58) (xy 538.48 196.85)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cfd4498e-a3aa-482d-a9d3-54785fc6ea3b")
-	)
-	(wire
-		(pts
 			(xy 300.99 351.79) (xy 304.8 351.79)
 		)
 		(stroke
@@ -11022,6 +11336,16 @@
 			(type default)
 		)
 		(uuid "ef6153ab-2f8c-485b-984c-21f3a8272c16")
+	)
+	(wire
+		(pts
+			(xy 553.72 204.47) (xy 561.34 204.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f0d037a6-5095-4b95-bcf6-c38d8286c303")
 	)
 	(wire
 		(pts
@@ -12664,6 +12988,76 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 553.72 208.28 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "05e4adb9-430f-4f46-8fa3-f38f7132d469")
+		(property "Reference" "R19"
+			(at 556.26 207.0099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "100k"
+			(at 556.26 209.5499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 555.498 208.28 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 553.72 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 553.72 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "34478546-28f1-42fe-9e4e-eb465a0f7b95")
+		)
+		(pin "1"
+			(uuid "691eba60-8f83-4242-b516-a70addab7b15")
+		)
+		(instances
+			(project "Main"
+				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
+					(reference "R19")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:VDD")
 		(at 490.22 189.23 0)
 		(unit 1)
@@ -13309,6 +13703,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:VBUS")
+		(at 561.34 204.47 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0f2f3a5f-5ac7-4f59-9aff-8c1de773fe12")
+		(property "Reference" "#PWR083"
+			(at 561.34 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VBUS"
+			(at 561.34 199.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 561.34 204.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 561.34 204.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VBUS\""
+			(at 561.34 204.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "31599545-b418-4aeb-a92d-c9990e6fc2b5")
+		)
+		(instances
+			(project "Main"
+				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
+					(reference "#PWR083")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+3.3V")
 		(at 356.87 101.6 0)
 		(unit 1)
@@ -13654,7 +14114,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 365.252 247.65 90)
 			(effects
 				(font
@@ -13721,7 +14181,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 333.502 274.32 90)
 			(effects
 				(font
@@ -13954,7 +14414,7 @@
 	)
 	(symbol
 		(lib_id "power:+3.3V")
-		(at 538.48 190.5 0)
+		(at 570.23 196.85 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -13963,7 +14423,7 @@
 		(fields_autoplaced yes)
 		(uuid "16abef80-b636-44f0-b752-3cb1fb0136e6")
 		(property "Reference" "#PWR068"
-			(at 538.48 194.31 0)
+			(at 570.23 200.66 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13972,7 +14432,7 @@
 			)
 		)
 		(property "Value" "+3.3V"
-			(at 538.48 185.42 0)
+			(at 570.23 191.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13980,7 +14440,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 538.48 190.5 0)
+			(at 570.23 196.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13989,7 +14449,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 538.48 190.5 0)
+			(at 570.23 196.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13998,7 +14458,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
-			(at 538.48 190.5 0)
+			(at 570.23 196.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14802,7 +15262,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 362.712 247.65 90)
 			(effects
 				(font
@@ -15212,6 +15672,81 @@
 		)
 	)
 	(symbol
+		(lib_id "Transistor_FET:Si2319CDS")
+		(at 553.72 199.39 270)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2c566df9-ff5b-447b-b36e-d02e3680bd08")
+		(property "Reference" "Q1"
+			(at 553.72 190.5 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Si2301CDS"
+			(at 553.72 193.04 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 551.815 194.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.vishay.com/docs/66709/si2319cd.pdf"
+			(at 549.91 194.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "-4.4A Id, -40V Vds, P-Channel MOSFET, SOT-23"
+			(at 553.72 199.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "4678db15-c6cf-483c-94e8-ede8b16ee9f5")
+		)
+		(pin "1"
+			(uuid "26d71aeb-9501-4e01-b333-afe04b852228")
+		)
+		(pin "3"
+			(uuid "6920bfa6-b559-4e3c-b145-ec12560fd90a")
+		)
+		(instances
+			(project ""
+				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
+					(reference "Q1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:VDD")
 		(at 158.75 323.85 0)
 		(unit 1)
@@ -15457,6 +15992,72 @@
 			(project "Main"
 				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
 					(reference "C18")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 553.72 212.09 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "30c363f9-544d-403c-8f42-2f7ba10b55ce")
+		(property "Reference" "#PWR084"
+			(at 553.72 218.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 553.72 217.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 553.72 212.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 553.72 212.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 553.72 212.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9fe3077e-b930-44cf-8db3-651afbb382c2")
+		)
+		(instances
+			(project "Main"
+				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
+					(reference "#PWR084")
 					(unit 1)
 				)
 			)
@@ -16014,7 +16615,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 341.63 268.732 90)
 			(effects
 				(font
@@ -19009,7 +19610,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 304.4952 266.7 0)
 			(effects
 				(font
@@ -19284,7 +19885,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 360.172 247.65 90)
 			(effects
 				(font
@@ -23629,7 +24230,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 341.63 266.192 90)
 			(effects
 				(font
@@ -27979,7 +28580,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 317.1952 266.7 0)
 			(effects
 				(font
