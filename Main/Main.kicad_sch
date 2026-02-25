@@ -12028,6 +12028,28 @@
 			)
 		)
 	)
+	(global_label "Vout1"
+		(shape input)
+		(at 212.09 143.51 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4c102881-3c0f-447c-8dbf-86207f1f821d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 220.397 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "current -4"
 		(shape input)
 		(at 304.8 365.76 180)
@@ -12182,6 +12204,28 @@
 			)
 		)
 	)
+	(global_label "Vout4"
+		(shape input)
+		(at 212.09 148.59 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "79511930-1580-422e-8697-9d7f2f533e71")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 220.397 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "SPI_SDI"
 		(shape input)
 		(at 105.41 190.5 0)
@@ -12195,6 +12239,28 @@
 		(uuid "8991f2a3-26b2-4dab-a514-0dd36995291a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 115.5314 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SDA"
+		(shape input)
+		(at 212.09 125.73 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8d3baa19-0d4b-45d4-a2ce-b0dea417f815")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 218.6433 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12248,6 +12314,28 @@
 			)
 		)
 	)
+	(global_label "Vout3"
+		(shape input)
+		(at 212.09 151.13 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9aea3d17-06e8-4cb6-b9a9-5ec4f82d4d88")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 220.397 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "SPI_SDI2"
 		(shape input)
 		(at 359.41 260.35 180)
@@ -12266,6 +12354,28 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "Vout2"
+		(shape input)
+		(at 212.09 146.05 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a8ecf92f-d29d-4754-9a29-2c8f06d1e68e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 220.397 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -12305,6 +12415,28 @@
 		(uuid "bd01eeb5-e843-4ea0-b7e8-fb99871fd9d5")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 230.557 330.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "SCL"
+		(shape input)
+		(at 212.09 128.27 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "be2c4faf-0686-4892-824a-796edca62aa7")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 218.5828 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
