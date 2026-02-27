@@ -8421,6 +8421,12 @@
 		(uuid "eabfa663-60eb-4e6f-812a-7c808fcb35f8")
 	)
 	(junction
+		(at 560.07 181.61)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f03c4369-5cb8-4932-8bbb-a5be38183682")
+	)
+	(junction
 		(at 234.95 187.96)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -8671,6 +8677,16 @@
 			(type default)
 		)
 		(uuid "0d8b7591-7295-4cb7-8292-88219f0448a7")
+	)
+	(wire
+		(pts
+			(xy 563.88 181.61) (xy 560.07 181.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0e91851c-e765-4c92-af50-fce29f8ce1ff")
 	)
 	(wire
 		(pts
@@ -9001,6 +9017,16 @@
 			(type default)
 		)
 		(uuid "231de87d-c3c3-4010-8a1d-785572360e02")
+	)
+	(wire
+		(pts
+			(xy 544.83 189.23) (xy 544.83 184.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2461261a-920f-4d45-82b0-3a72f07ea098")
 	)
 	(wire
 		(pts
@@ -9391,6 +9417,16 @@
 			(type default)
 		)
 		(uuid "413d63f7-9fd4-4688-bdfb-a7058600f7f6")
+	)
+	(wire
+		(pts
+			(xy 560.07 181.61) (xy 544.83 181.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "416e473d-a82e-4eb9-8dc0-47210e3bfc8c")
 	)
 	(wire
 		(pts
@@ -10941,6 +10977,16 @@
 			(type default)
 		)
 		(uuid "ada7cb0a-b866-4da8-a5c1-e751bbe189b4")
+	)
+	(wire
+		(pts
+			(xy 552.45 189.23) (xy 544.83 189.23)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ae0744d9-9745-457d-a8e4-cf1233155d9a")
 	)
 	(wire
 		(pts
@@ -13112,7 +13158,7 @@
 	)
 	(global_label "OUT"
 		(shape output)
-		(at 544.83 181.61 0)
+		(at 563.88 181.61 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -13122,7 +13168,7 @@
 		)
 		(uuid "8e142c3c-b727-4e72-8778-504540f94b94")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 548.7986 181.61 0)
+			(at 567.8486 181.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17301,7 +17347,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 494.03 201.93 0)
 			(effects
 				(font
@@ -18085,7 +18131,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 490.22 189.23 0)
 			(effects
 				(font
@@ -18611,6 +18657,103 @@
 			(project "Main"
 				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
 					(reference "J9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:LED")
+		(at 560.07 185.42 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4597d613-ba1f-4327-a42e-dc25befd7a4f")
+		(property "Reference" "D4"
+			(at 563.88 185.7374 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "RED_LED"
+			(at 563.88 188.2774 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "LED_SMD:LED_0805_2012Metric"
+			(at 560.07 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 560.07 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Light emitting diode"
+			(at 560.07 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" "1=K 2=A"
+			(at 560.07 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" ""
+			(at 560.07 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 560.07 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "2550e0f1-463d-49d2-a544-c64c9df8ea0f")
+		)
+		(pin "1"
+			(uuid "3c11a153-7186-48c4-8229-96c6901aeaf9")
+		)
+		(instances
+			(project "Main"
+				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
+					(reference "D4")
 					(unit 1)
 				)
 			)
@@ -20522,7 +20665,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "30k"
+		(property "Value" "100k"
 			(at 512.572 212.852 0)
 			(effects
 				(font
@@ -20531,7 +20674,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 519.43 212.09 0)
 			(effects
 				(font
@@ -23417,7 +23560,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 479.552 123.19 90)
 			(effects
 				(font
@@ -25005,7 +25148,7 @@
 				)
 			)
 		)
-		(property "Footprint" "TPS2121:IC_TPS2121RUXR"
+		(property "Footprint" "Package_DFN_QFN:Texas_VQFN-HR-12_2x2.5mm_P0.5mm_ThermalVias"
 			(at 532.13 196.85 0)
 			(effects
 				(font
@@ -25251,73 +25394,6 @@
 			(project "Main"
 				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
 					(reference "#PWR06")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 544.83 184.15 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "9c073b44-dc06-41d6-b01d-35bc220022d3")
-		(property "Reference" "#PWR083"
-			(at 551.18 184.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 548.64 184.1499 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 544.83 184.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 544.83 184.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 544.83 184.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "a10c3ee1-3bc3-4d1c-85ed-19a2f70f442a")
-		)
-		(instances
-			(project "Main"
-				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
-					(reference "#PWR083")
 					(unit 1)
 				)
 			)
@@ -27755,6 +27831,92 @@
 			(project "Main"
 				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
 					(reference "#PWR03")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 556.26 189.23 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b994b989-498e-4be9-acae-b2c510b3bd7c")
+		(property "Reference" "R22"
+			(at 556.26 195.58 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "R"
+			(at 556.26 193.04 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+			(at 556.26 187.452 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 556.26 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 556.26 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" ""
+			(at 556.26 189.23 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" ""
+			(at 556.26 189.23 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8eb024eb-acab-46d2-bab3-f09867fd0462")
+		)
+		(pin "2"
+			(uuid "117042fe-3096-416c-bec6-a6f81454f31f")
+		)
+		(instances
+			(project "Main"
+				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
+					(reference "R22")
 					(unit 1)
 				)
 			)
@@ -31855,7 +32017,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 494.03 207.01 0)
 			(effects
 				(font
@@ -33396,7 +33558,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 490.22 184.15 0)
 			(effects
 				(font
