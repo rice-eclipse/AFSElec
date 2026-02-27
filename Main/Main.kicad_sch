@@ -4932,25 +4932,23 @@
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "U"
-				(at -7.62 21.082 0)
+			(property "Reference" "U14"
+				(at 0 25.4 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left bottom)
 				)
 			)
 			(property "Value" "TPS2121RUXR"
-				(at -7.62 -20.32 0)
+				(at 0 22.86 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left bottom)
 				)
 			)
-			(property "Footprint" "TPS2121RUXR:IC_TPS2121RUXR"
+			(property "Footprint" "Package_DFN_QFN:Texas_VQFN-HR-12_2x2.5mm_P0.5mm_ThermalVias"
 				(at 0 0 0)
 				(effects
 					(font
@@ -5109,25 +5107,6 @@
 					)
 				)
 				(pin input line
-					(at -12.7 15.24 0)
-					(length 5.08)
-					(hide yes)
-					(name "IN1"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "7_1"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-				(pin input line
 					(at -12.7 12.7 0)
 					(length 5.08)
 					(name "PR1"
@@ -5174,25 +5153,6 @@
 						)
 					)
 					(number "2"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -12.7 5.08 0)
-					(length 5.08)
-					(hide yes)
-					(name "IN2"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "2_1"
 						(effects
 							(font
 								(size 1.016 1.016)
@@ -5301,45 +5261,7 @@
 							)
 						)
 					)
-					(number "1_1"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 12.7 15.24 180)
-					(length 5.08)
-					(hide yes)
-					(name "OUT"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
 					(number "8"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 12.7 15.24 180)
-					(length 5.08)
-					(hide yes)
-					(name "OUT"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "8_1"
 						(effects
 							(font
 								(size 1.016 1.016)
@@ -8253,6 +8175,12 @@
 		(uuid "a6597ce9-170e-4cbd-8100-c14e8ad78357")
 	)
 	(junction
+		(at 560.07 181.61)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a7ee0b6f-f41f-4569-8d7b-686b527463cb")
+	)
+	(junction
 		(at 490.22 186.69)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -8419,12 +8347,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "eabfa663-60eb-4e6f-812a-7c808fcb35f8")
-	)
-	(junction
-		(at 560.07 181.61)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f03c4369-5cb8-4932-8bbb-a5be38183682")
 	)
 	(junction
 		(at 234.95 187.96)
@@ -8680,7 +8602,7 @@
 	)
 	(wire
 		(pts
-			(xy 563.88 181.61) (xy 560.07 181.61)
+			(xy 544.83 181.61) (xy 560.07 181.61)
 		)
 		(stroke
 			(width 0)
@@ -9017,16 +8939,6 @@
 			(type default)
 		)
 		(uuid "231de87d-c3c3-4010-8a1d-785572360e02")
-	)
-	(wire
-		(pts
-			(xy 544.83 189.23) (xy 544.83 184.15)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2461261a-920f-4d45-82b0-3a72f07ea098")
 	)
 	(wire
 		(pts
@@ -9417,16 +9329,6 @@
 			(type default)
 		)
 		(uuid "413d63f7-9fd4-4688-bdfb-a7058600f7f6")
-	)
-	(wire
-		(pts
-			(xy 560.07 181.61) (xy 544.83 181.61)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "416e473d-a82e-4eb9-8dc0-47210e3bfc8c")
 	)
 	(wire
 		(pts
@@ -9867,6 +9769,16 @@
 			(type default)
 		)
 		(uuid "5afc9161-3ed7-4925-bf66-092ee8b06df0")
+	)
+	(wire
+		(pts
+			(xy 560.07 181.61) (xy 560.07 184.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5cbdeafa-6de4-4306-897d-3f22eedfc26f")
 	)
 	(wire
 		(pts
@@ -10980,16 +10892,6 @@
 	)
 	(wire
 		(pts
-			(xy 552.45 189.23) (xy 544.83 189.23)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ae0744d9-9745-457d-a8e4-cf1233155d9a")
-	)
-	(wire
-		(pts
 			(xy 156.21 276.86) (xy 166.37 276.86)
 		)
 		(stroke
@@ -11607,6 +11509,16 @@
 			(type default)
 		)
 		(uuid "daa3a1bf-4d6e-42e4-ac4c-d777a630ab8a")
+	)
+	(wire
+		(pts
+			(xy 560.07 181.61) (xy 563.88 181.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dab26b85-2125-4557-b5f8-a0ce2c411b58")
 	)
 	(wire
 		(pts
@@ -13147,28 +13059,6 @@
 		(uuid "8d3baa19-0d4b-45d4-a2ce-b0dea417f815")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 218.6433 125.73 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-	)
-	(global_label "OUT"
-		(shape output)
-		(at 563.88 181.61 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 0.762 0.762)
-			)
-			(justify left)
-		)
-		(uuid "8e142c3c-b727-4e72-8778-504540f94b94")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 567.8486 181.61 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18664,7 +18554,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 560.07 185.42 90)
+		(at 548.64 184.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -18673,25 +18563,23 @@
 		(fields_autoplaced yes)
 		(uuid "4597d613-ba1f-4327-a42e-dc25befd7a4f")
 		(property "Reference" "D4"
-			(at 563.88 185.7374 90)
+			(at 547.0525 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(property "Value" "RED_LED"
-			(at 563.88 188.2774 90)
+			(at 547.0525 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(property "Footprint" "LED_SMD:LED_0805_2012Metric"
-			(at 560.07 185.42 0)
+			(at 548.64 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18700,7 +18588,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 560.07 185.42 0)
+			(at 548.64 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18709,7 +18597,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 560.07 185.42 0)
+			(at 548.64 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18718,7 +18606,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 560.07 185.42 0)
+			(at 548.64 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18727,7 +18615,7 @@
 			)
 		)
 		(property "JLCPCB Part #" ""
-			(at 560.07 185.42 0)
+			(at 548.64 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18736,7 +18624,7 @@
 			)
 		)
 		(property "Sim.Device" ""
-			(at 560.07 185.42 0)
+			(at 548.64 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25148,7 +25036,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DFN_QFN:Texas_VQFN-HR-12_2x2.5mm_P0.5mm_ThermalVias"
+		(property "Footprint" "Package_DFN_QFN:Texas_VQFN-HR-12_2x2.5mm_P0.5mm"
 			(at 532.13 196.85 0)
 			(effects
 				(font
@@ -25285,14 +25173,8 @@
 		(pin "9"
 			(uuid "4c7a12dc-5cd2-4e43-93cb-3dc716cdaebc")
 		)
-		(pin "8_1"
-			(uuid "98fa5677-1cfc-4c2a-af1b-7fdd60d9bfac")
-		)
 		(pin "8"
 			(uuid "4d6c843f-4af9-4c4a-ba9c-53f17b5773cc")
-		)
-		(pin "1_1"
-			(uuid "9e8a6577-8f04-4e06-b89e-8d9e7363ea32")
 		)
 		(pin "1"
 			(uuid "8dde02ec-e7ff-46fb-bf81-a4d5fc49e599")
@@ -25309,9 +25191,6 @@
 		(pin "4"
 			(uuid "0785163d-4865-49e9-bdfb-6526dec90130")
 		)
-		(pin "2_1"
-			(uuid "3091d88b-01d3-4333-81d6-971fc4935d91")
-		)
 		(pin "2"
 			(uuid "3d1bfcfe-8579-4caf-abe0-c94da4b14d91")
 		)
@@ -25320,9 +25199,6 @@
 		)
 		(pin "6"
 			(uuid "de0920d1-9e1b-4ea5-8399-f8ecc758fce8")
-		)
-		(pin "7_1"
-			(uuid "650437df-a4e7-43db-a0a2-6860f7a9c481")
 		)
 		(instances
 			(project "Main"
@@ -27838,7 +27714,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 556.26 189.23 270)
+		(at 556.26 184.15 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -27847,7 +27723,7 @@
 		(fields_autoplaced yes)
 		(uuid "b994b989-498e-4be9-acae-b2c510b3bd7c")
 		(property "Reference" "R22"
-			(at 556.26 195.58 90)
+			(at 556.26 190.5 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27855,7 +27731,7 @@
 			)
 		)
 		(property "Value" "R"
-			(at 556.26 193.04 90)
+			(at 556.26 187.96 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27863,7 +27739,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 556.26 187.452 90)
+			(at 556.26 182.372 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27872,7 +27748,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 556.26 189.23 0)
+			(at 556.26 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27881,7 +27757,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 556.26 189.23 0)
+			(at 556.26 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27890,7 +27766,7 @@
 			)
 		)
 		(property "JLCPCB Part #" ""
-			(at 556.26 189.23 90)
+			(at 556.26 184.15 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27899,7 +27775,7 @@
 			)
 		)
 		(property "Sim.Device" ""
-			(at 556.26 189.23 90)
+			(at 556.26 184.15 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -32477,6 +32353,72 @@
 			(project "Main"
 				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
 					(reference "#PWR068")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3.3V")
+		(at 563.88 181.61 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ecc0a5d1-706a-4f83-99cf-cdbed39b613a")
+		(property "Reference" "#PWR083"
+			(at 563.88 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3.3V"
+			(at 563.88 176.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 563.88 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 563.88 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
+			(at 563.88 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f48a5b6d-512f-4f14-b712-22e520c2eb84")
+		)
+		(instances
+			(project "Main"
+				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
+					(reference "#PWR083")
 					(unit 1)
 				)
 			)
