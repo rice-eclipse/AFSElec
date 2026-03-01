@@ -14233,7 +14233,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C11702"
 			(at 133.35 115.57 90)
 			(effects
 				(font
@@ -14732,7 +14732,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25531"
 			(at 367.03 247.65 0)
 			(effects
 				(font
@@ -14817,7 +14817,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25531"
 			(at 335.28 274.32 0)
 			(effects
 				(font
@@ -15940,7 +15940,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25531"
 			(at 364.49 247.65 0)
 			(effects
 				(font
@@ -17248,7 +17248,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25531"
 			(at 341.63 270.51 90)
 			(effects
 				(font
@@ -17328,6 +17328,15 @@
 			)
 		)
 		(property "Description" "Resistor, small US symbol"
+			(at 494.03 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C25741"
 			(at 494.03 201.93 0)
 			(effects
 				(font
@@ -18130,6 +18139,15 @@
 			)
 		)
 		(property "Description" "Resistor, small US symbol"
+			(at 490.22 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C25741"
 			(at 490.22 189.23 0)
 			(effects
 				(font
@@ -20121,7 +20139,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C11702"
 			(at 53.34 110.49 90)
 			(effects
 				(font
@@ -20707,6 +20725,15 @@
 			)
 		)
 		(property "Description" "Resistor, small US symbol"
+			(at 519.43 212.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C25741"
 			(at 519.43 212.09 0)
 			(effects
 				(font
@@ -21757,7 +21784,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25531"
 			(at 361.95 247.65 0)
 			(effects
 				(font
@@ -23594,7 +23621,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C11702"
 			(at 129.54 120.65 90)
 			(effects
 				(font
@@ -23682,7 +23709,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25553"
 			(at 481.33 123.19 0)
 			(effects
 				(font
@@ -25827,7 +25854,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25092"
 			(at 229.87 64.77 90)
 			(effects
 				(font
@@ -26807,7 +26834,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25531"
 			(at 341.63 267.97 90)
 			(effects
 				(font
@@ -26895,7 +26922,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25531"
 			(at 481.33 144.78 0)
 			(effects
 				(font
@@ -29399,7 +29426,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C11702"
 			(at 481.33 130.81 0)
 			(effects
 				(font
@@ -32099,7 +32126,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25900"
 			(at 346.71 97.79 0)
 			(effects
 				(font
@@ -32245,6 +32272,15 @@
 			)
 		)
 		(property "Description" "Resistor, small US symbol"
+			(at 494.03 207.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C25741"
 			(at 494.03 207.01 0)
 			(effects
 				(font
@@ -33799,7 +33835,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25900"
 			(at 356.87 97.79 0)
 			(effects
 				(font
@@ -33879,6 +33915,15 @@
 			)
 		)
 		(property "Description" "Resistor, small US symbol"
+			(at 490.22 184.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "JLCPCB Part #" "C25553"
 			(at 490.22 184.15 0)
 			(effects
 				(font
@@ -35607,7 +35652,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C25092"
 			(at 229.87 53.34 90)
 			(effects
 				(font
@@ -36230,7 +36275,7 @@
 				(hide yes)
 			)
 		)
-		(property "JLCPCB Part #" ""
+		(property "JLCPCB Part #" "C2501"
 			(at 129.54 53.34 90)
 			(effects
 				(font
