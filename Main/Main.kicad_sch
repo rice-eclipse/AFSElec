@@ -12858,6 +12858,28 @@
 			)
 		)
 	)
+	(global_label "LED2"
+		(shape input)
+		(at 212.09 87.63 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4661ad0f-82b0-4d8b-a5ba-f1465e9088d0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 219.7318 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "SPI_SCLK2"
 		(shape input)
 		(at 359.41 255.27 180)
@@ -13760,6 +13782,28 @@
 			)
 		)
 	)
+	(global_label "LED1"
+		(shape input)
+		(at 212.09 138.43 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e21f4fa9-7a01-458b-bbdd-b5c70f660595")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 219.7318 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "SCL"
 		(shape input)
 		(at 374.65 52.07 0)
@@ -14089,6 +14133,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 492.76 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C45783"
 			(at 492.76 123.19 0)
 			(effects
 				(font
@@ -14525,6 +14578,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 261.62 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "e173eebe-0495-4c1a-b47b-65e017141add")
 		)
@@ -14719,6 +14781,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 133.35 115.57 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C11702"
 			(at 133.35 115.57 90)
 			(effects
 				(font
@@ -15130,6 +15201,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 125.73 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "c37c3cba-1dce-485e-8f40-559c3e17576a")
 		)
@@ -15217,6 +15297,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C25531"
+			(at 367.03 247.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "312e932f-f335-42a7-af97-9d7ba11e2273")
 		)
@@ -15294,6 +15383,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 335.28 274.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25531"
 			(at 335.28 274.32 0)
 			(effects
 				(font
@@ -15845,6 +15943,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 204.47 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "d6e4ca7c-0c1d-4c56-9fff-f473febe5e7f")
 		)
@@ -16041,6 +16148,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 351.79 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 351.79 43.18 0)
 			(effects
 				(font
@@ -16407,6 +16523,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C25531"
+			(at 364.49 247.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "a6eeacfb-d363-46cf-87aa-1be732005d85")
 		)
@@ -16748,6 +16873,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 195.58 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C48586483"
 			(at 195.58 198.12 0)
 			(effects
 				(font
@@ -17127,6 +17261,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1713"
+			(at 292.1 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "e36875c3-c191-4138-a2e6-e6036f415c19")
 		)
@@ -17398,6 +17541,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1712"
+			(at 22.86 207.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "aa2acecb-b3ce-4d3b-a8a5-81472170d765")
 		)
@@ -17603,6 +17755,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 509.27 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "0c8bc511-a011-48c1-abed-91212741e18e")
 		)
@@ -17688,6 +17849,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C25531"
+			(at 341.63 270.51 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "88d955d6-ba37-410e-9efc-5b803a8d372e")
 		)
@@ -17750,6 +17920,15 @@
 			)
 		)
 		(property "Description" "Resistor, small US symbol"
+			(at 494.03 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25741"
 			(at 494.03 201.93 0)
 			(effects
 				(font
@@ -17985,6 +18164,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C2296"
+			(at 340.36 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "da89696a-80a9-4bbf-9a7f-e8d68a1ec1ea")
 		)
@@ -18084,7 +18272,7 @@
 				)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "100"
 			(at 347.98 132.08 90)
 			(effects
 				(font
@@ -18129,6 +18317,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 347.98 135.89 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25076"
 			(at 347.98 135.89 90)
 			(effects
 				(font
@@ -18342,6 +18539,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C404329"
+			(at 34.29 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "7"
 			(uuid "1df66d33-ee36-4992-bb54-64ccc078da77")
 		)
@@ -18472,6 +18678,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 118.11 331.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "879afc65-a0e7-4014-849b-902c7932c7f2")
 		)
@@ -18534,6 +18749,15 @@
 			)
 		)
 		(property "Description" "Resistor, small US symbol"
+			(at 490.22 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25741"
 			(at 490.22 189.23 0)
 			(effects
 				(font
@@ -19126,6 +19350,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C2295"
+			(at 548.64 184.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "2550e0f1-463d-49d2-a544-c64c9df8ea0f")
 		)
@@ -19676,6 +19909,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C3684509"
+			(at 166.37 269.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "52235f7d-b1aa-476e-8cd4-8e25b7bb4f7d")
 		)
@@ -19774,6 +20016,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 469.9 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 469.9 123.19 0)
 			(effects
 				(font
@@ -20248,6 +20499,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1713"
+			(at 111.76 205.74 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "46ee05cb-a723-4c47-ba9a-967782067db5")
 		)
@@ -20508,6 +20768,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 53.34 110.49 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C11702"
 			(at 53.34 110.49 90)
 			(effects
 				(font
@@ -21014,6 +21283,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 238.76 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "98210033-2c95-4cb5-849c-680c4ce1d4d9")
 		)
@@ -21083,6 +21361,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C25741"
+			(at 519.43 212.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "cd4a48fa-7f4c-47de-acad-9d53a42c1974")
 		)
@@ -21144,6 +21431,15 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 509.27 210.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1712"
 			(at 509.27 210.82 0)
 			(effects
 				(font
@@ -21488,6 +21784,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 351.79 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "b491500c-9139-4d79-9afe-0b45d956724b")
 		)
@@ -21568,6 +21873,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 118.11 273.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 118.11 273.05 0)
 			(effects
 				(font
@@ -21722,6 +22036,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 303.53 262.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 303.53 262.89 0)
 			(effects
 				(font
@@ -22002,6 +22325,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C97521"
+			(at 48.26 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "6"
 			(uuid "903a2f25-2a2a-419a-b1d8-b0b16a43a855")
 		)
@@ -22099,6 +22431,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 361.95 247.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25531"
 			(at 361.95 247.65 0)
 			(effects
 				(font
@@ -22645,6 +22986,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1548"
+			(at 109.22 115.57 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "600243e5-da1c-4f40-89f5-af813ce606c2")
 		)
@@ -22732,6 +23082,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 340.36 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C2295"
 			(at 340.36 124.46 0)
 			(effects
 				(font
@@ -23011,6 +23370,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C318563"
+			(at 148.59 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "be3bc588-2974-4913-896d-8aedecb6d5b9")
 		)
@@ -23222,6 +23590,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 434.34 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1713"
 			(at 434.34 125.73 0)
 			(effects
 				(font
@@ -23492,6 +23869,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 116.84 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C318563"
 			(at 116.84 73.66 0)
 			(effects
 				(font
@@ -23899,6 +24285,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C11702"
+			(at 129.54 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "53f1754a-2181-47d3-a19e-0d3e9e2ea2ee")
 		)
@@ -23979,6 +24374,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 481.33 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25553"
 			(at 481.33 123.19 0)
 			(effects
 				(font
@@ -24390,6 +24794,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 193.04 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "191e203d-deca-4518-b630-dc71fc328871")
 		)
@@ -24660,6 +25073,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C318563"
+			(at 107.95 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "f1191539-bec0-4abc-ad9c-ba51061b8902")
 		)
@@ -24857,6 +25279,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 364.49 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C34565"
 			(at 364.49 52.07 0)
 			(effects
 				(font
@@ -25210,6 +25641,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 66.04 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C6186"
 			(at 66.04 29.21 0)
 			(effects
 				(font
@@ -25655,6 +26095,15 @@
 					(size 1.27 1.27)
 				)
 				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C485916"
+			(at 532.13 196.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
@@ -26114,6 +26563,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C25092"
+			(at 229.87 64.77 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "eaebd97f-7ab0-47f9-b3a7-2ea57ecfe1e4")
 		)
@@ -26260,6 +26718,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 233.68 331.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 233.68 331.47 0)
 			(effects
 				(font
@@ -26465,6 +26932,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 137.16 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C318563"
 			(at 137.16 57.15 0)
 			(effects
 				(font
@@ -26685,6 +27161,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 53.34 269.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C3684509"
 			(at 53.34 269.24 0)
 			(effects
 				(font
@@ -26915,6 +27400,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 288.29 204.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "acba61ff-2289-47f0-844f-1f7f9fc81bc6")
 		)
@@ -27067,6 +27561,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C25531"
+			(at 341.63 267.97 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "8e8c805a-5785-414f-a2dc-15da65b92b67")
 		)
@@ -27147,6 +27650,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 481.33 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25531"
 			(at 481.33 144.78 0)
 			(effects
 				(font
@@ -27426,6 +27938,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 247.65 191.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "14e91f11-f4d7-47ef-8e3f-29a0182780ac")
 		)
@@ -27570,6 +28091,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 453.39 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C3194237"
 			(at 453.39 124.46 0)
 			(effects
 				(font
@@ -28019,6 +28549,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 181.61 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "72ff89bd-e6bf-4e3a-9013-bae49b5e0a90")
 		)
@@ -28099,6 +28638,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 168.91 327.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C3684509"
 			(at 168.91 327.66 0)
 			(effects
 				(font
@@ -28224,7 +28772,7 @@
 				)
 			)
 		)
-		(property "Value" "60"
+		(property "Value" "100"
 			(at 556.26 180.34 90)
 			(effects
 				(font
@@ -28269,6 +28817,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 556.26 184.15 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25076"
 			(at 556.26 184.15 90)
 			(effects
 				(font
@@ -28768,6 +29325,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C2297"
+			(at 340.36 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "52856d69-77ad-4ba1-b055-255ad3642165")
 		)
@@ -28964,6 +29530,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 403.86 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 403.86 190.5 0)
 			(effects
 				(font
@@ -29384,6 +29959,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C15639"
+			(at 431.8 195.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "7"
 			(uuid "7b65fcb6-69a6-4c69-8f24-a0f613f3894d")
 		)
@@ -29556,6 +30140,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C11702"
+			(at 481.33 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "7b8bd87f-3eb8-495e-8682-c69d90268668")
 		)
@@ -29655,7 +30248,7 @@
 				)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "100"
 			(at 347.98 143.51 90)
 			(effects
 				(font
@@ -29700,6 +30293,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 347.98 147.32 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25076"
 			(at 347.98 147.32 90)
 			(effects
 				(font
@@ -29788,6 +30390,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 231.14 273.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 231.14 273.05 0)
 			(effects
 				(font
@@ -29993,6 +30604,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 488.95 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C49851"
 			(at 488.95 72.39 0)
 			(effects
 				(font
@@ -30354,6 +30974,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 215.9 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 215.9 34.29 0)
 			(effects
 				(font
@@ -30802,6 +31431,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 35.56 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 35.56 68.58 0)
 			(effects
 				(font
@@ -31634,6 +32272,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1713"
+			(at 50.8 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "10faf53d-7b6a-4c60-98de-2cf3f651f93b")
 		)
@@ -32006,6 +32653,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1713"
+			(at 316.23 262.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "0981d420-d1e6-4fd7-a593-fd83a0fd31b7")
 		)
@@ -32211,6 +32867,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C25900"
+			(at 346.71 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "b5a22115-97ce-4932-9487-7e449cf40f9b")
 		)
@@ -32347,6 +33012,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C25741"
+			(at 494.03 207.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "db846767-96a9-47f7-8074-9d24e7428f2b")
 		)
@@ -32446,7 +33120,7 @@
 				)
 			)
 		)
-		(property "Value" "60"
+		(property "Value" "100"
 			(at 347.98 120.65 90)
 			(effects
 				(font
@@ -32491,6 +33165,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 347.98 124.46 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25076"
 			(at 347.98 124.46 90)
 			(effects
 				(font
@@ -32696,6 +33379,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 274.32 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 274.32 34.29 0)
 			(effects
 				(font
@@ -33107,6 +33799,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1713"
+			(at 80.01 33.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "a040c5ea-afdf-4980-9882-a8c5f179e5bb")
 		)
@@ -33378,6 +34079,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C2157908"
+			(at 289.56 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "c8db41da-0292-4868-a55f-e67f0054962b")
 		)
@@ -33605,6 +34315,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 234.95 191.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 234.95 191.77 0)
 			(effects
 				(font
@@ -33884,6 +34603,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C25900"
+			(at 356.87 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "8066349f-dfba-4301-8cd8-3815b0b5c92c")
 		)
@@ -33946,6 +34674,15 @@
 			)
 		)
 		(property "Description" "Resistor, small US symbol"
+			(at 490.22 184.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25553"
 			(at 490.22 184.15 0)
 			(effects
 				(font
@@ -34159,6 +34896,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 227.33 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "06b61538-35bf-445f-b8ee-b1e58a162169")
 		)
@@ -34356,6 +35102,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 137.16 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1525"
 			(at 137.16 34.29 0)
 			(effects
 				(font
@@ -34776,6 +35531,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C1525"
+			(at 250.19 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "97c046ca-a450-4ba7-9c99-c72e46069125")
 		)
@@ -34988,6 +35752,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 53.34 327.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C3684509"
 			(at 53.34 327.66 0)
 			(effects
 				(font
@@ -35211,6 +35984,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 181.61 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C42411118"
 			(at 181.61 102.87 0)
 			(effects
 				(font
@@ -35665,6 +36447,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C25092"
+			(at 229.87 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "d416bebb-166b-4cef-9542-02e0df560a02")
 		)
@@ -35860,6 +36651,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 109.22 101.6 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C1548"
 			(at 109.22 101.6 90)
 			(effects
 				(font
@@ -36070,6 +36870,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C20625731"
+			(at 120.65 107.95 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "4"
 			(uuid "8f07a43e-069d-4868-acff-ea6a1734b28b")
 		)
@@ -36271,6 +37080,15 @@
 			)
 		)
 		(property "Sim.Device" ""
+			(at 129.54 53.34 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C25105"
 			(at 129.54 53.34 90)
 			(effects
 				(font
