@@ -7961,6 +7961,12 @@
 		(uuid "4a2c3832-18f2-4045-8235-0d6fb7e07801")
 	)
 	(junction
+		(at 481.33 132.08)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "4fbafc70-2356-4a43-a378-74344476cf8e")
+	)
+	(junction
 		(at 494.03 204.47)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -8163,12 +8169,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "993599be-c7d7-4649-803a-2ad13055b793")
-	)
-	(junction
-		(at 481.33 139.7)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "9ce41c79-e75a-4fd6-bd7e-11966520c8cc")
 	)
 	(junction
 		(at 179.07 45.72)
@@ -8572,6 +8572,16 @@
 	)
 	(wire
 		(pts
+			(xy 481.33 127) (xy 481.33 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "097bb0db-066d-40f4-8959-95917364d6e0")
+	)
+	(wire
+		(pts
 			(xy 99.06 101.6) (xy 99.06 115.57)
 		)
 		(stroke
@@ -8812,16 +8822,6 @@
 	)
 	(wire
 		(pts
-			(xy 481.33 134.62) (xy 481.33 139.7)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1ad2e2b8-05a9-4803-b712-2f240ad57505")
-	)
-	(wire
-		(pts
 			(xy 250.19 38.1) (xy 261.62 38.1)
 		)
 		(stroke
@@ -8952,7 +8952,7 @@
 	)
 	(wire
 		(pts
-			(xy 481.33 139.7) (xy 463.55 139.7)
+			(xy 481.33 132.08) (xy 463.55 132.08)
 		)
 		(stroke
 			(width 0)
@@ -10192,7 +10192,7 @@
 	)
 	(wire
 		(pts
-			(xy 463.55 139.7) (xy 463.55 127)
+			(xy 463.55 132.08) (xy 463.55 127)
 		)
 		(stroke
 			(width 0)
@@ -10442,7 +10442,7 @@
 	)
 	(wire
 		(pts
-			(xy 481.33 140.97) (xy 481.33 139.7)
+			(xy 481.33 133.35) (xy 481.33 132.08)
 		)
 		(stroke
 			(width 0)
@@ -15297,7 +15297,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25531"
+		(property "LCSC Part Number" "C25744"
 			(at 367.03 247.65 0)
 			(effects
 				(font
@@ -15391,7 +15391,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25531"
+		(property "LCSC Part Number" "C25744"
 			(at 335.28 274.32 0)
 			(effects
 				(font
@@ -16523,7 +16523,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25531"
+		(property "LCSC Part Number" "C25744"
 			(at 364.49 247.65 0)
 			(effects
 				(font
@@ -17261,7 +17261,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1713"
+		(property "LCSC Part Number" "C15850"
 			(at 292.1 34.29 0)
 			(effects
 				(font
@@ -17541,7 +17541,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1712"
+		(property "LCSC Part Number" "C28323"
 			(at 22.86 207.01 0)
 			(effects
 				(font
@@ -17849,7 +17849,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25531"
+		(property "LCSC Part Number" "C25744"
 			(at 341.63 270.51 90)
 			(effects
 				(font
@@ -20499,7 +20499,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1713"
+		(property "LCSC Part Number" "C15850"
 			(at 111.76 205.74 90)
 			(effects
 				(font
@@ -21439,7 +21439,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1712"
+		(property "LCSC Part Number" "C28323"
 			(at 509.27 210.82 0)
 			(effects
 				(font
@@ -21907,7 +21907,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 481.33 148.59 0)
+		(at 481.33 140.97 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -21916,7 +21916,7 @@
 		(fields_autoplaced yes)
 		(uuid "69d1091c-532f-4416-9169-2a956422172d")
 		(property "Reference" "#PWR088"
-			(at 481.33 154.94 0)
+			(at 481.33 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21925,7 +21925,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 481.33 153.67 0)
+			(at 481.33 146.05 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21933,7 +21933,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 481.33 148.59 0)
+			(at 481.33 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21942,7 +21942,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 481.33 148.59 0)
+			(at 481.33 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21951,7 +21951,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 481.33 148.59 0)
+			(at 481.33 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22439,7 +22439,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25531"
+		(property "LCSC Part Number" "C25744"
 			(at 361.95 247.65 0)
 			(effects
 				(font
@@ -22547,7 +22547,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "3.3uH"
+		(property "Value" "3.3u"
 			(at 120.904 72.39 0)
 			(effects
 				(font
@@ -23370,7 +23370,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C318563"
+		(property "LCSC Part Number" "C23733"
 			(at 148.59 34.29 0)
 			(effects
 				(font
@@ -23598,7 +23598,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1713"
+		(property "LCSC Part Number" "C15850"
 			(at 434.34 125.73 0)
 			(effects
 				(font
@@ -23877,7 +23877,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C318563"
+		(property "LCSC Part Number" "C23733"
 			(at 116.84 73.66 0)
 			(effects
 				(font
@@ -24328,7 +24328,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "30k"
+		(property "Value" "47k"
 			(at 483.87 124.4599 0)
 			(effects
 				(font
@@ -25073,7 +25073,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C318563"
+		(property "LCSC Part Number" "C23733"
 			(at 107.95 73.66 0)
 			(effects
 				(font
@@ -26940,7 +26940,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C318563"
+		(property "LCSC Part Number" "C23733"
 			(at 137.16 57.15 0)
 			(effects
 				(font
@@ -27561,7 +27561,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25531"
+		(property "LCSC Part Number" "C25744"
 			(at 341.63 267.97 90)
 			(effects
 				(font
@@ -27587,7 +27587,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 481.33 144.78 0)
+		(at 481.33 137.16 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -27596,7 +27596,7 @@
 		(fields_autoplaced yes)
 		(uuid "a9fa32d0-e1e9-42da-9756-c27838f07abb")
 		(property "Reference" "R21"
-			(at 483.87 143.5099 0)
+			(at 483.87 135.8899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27604,8 +27604,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10k"
-			(at 483.87 146.0499 0)
+		(property "Value" "15k"
+			(at 483.87 138.4299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27614,7 +27614,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 479.552 144.78 90)
+			(at 479.552 137.16 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27623,7 +27623,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 481.33 144.78 0)
+			(at 481.33 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27632,7 +27632,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 481.33 144.78 0)
+			(at 481.33 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27641,7 +27641,7 @@
 			)
 		)
 		(property "JLCPCB Part #" ""
-			(at 481.33 144.78 0)
+			(at 481.33 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27650,7 +27650,7 @@
 			)
 		)
 		(property "Sim.Device" ""
-			(at 481.33 144.78 0)
+			(at 481.33 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -27658,8 +27658,8 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25531"
-			(at 481.33 144.78 0)
+		(property "LCSC Part Number" "C25744"
+			(at 481.33 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -30068,103 +30068,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R")
-		(at 481.33 130.81 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c749688a-c575-4b92-ad19-2d6c157a2608")
-		(property "Reference" "R23"
-			(at 483.87 129.5399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "1k"
-			(at 483.87 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 479.552 130.81 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 481.33 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Resistor"
-			(at 481.33 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "JLCPCB Part #" ""
-			(at 481.33 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Device" ""
-			(at 481.33 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part Number" "C11702"
-			(at 481.33 130.81 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "7b8bd87f-3eb8-495e-8682-c69d90268668")
-		)
-		(pin "1"
-			(uuid "b5b073fa-5464-4692-b59a-1b2af784f351")
-		)
-		(instances
-			(project "Main"
-				(path "/6b66026e-3aa1-4d5a-a331-be21386153c7"
-					(reference "R23")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 331.47 124.46 0)
 		(unit 1)
@@ -32272,7 +32175,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1713"
+		(property "LCSC Part Number" "C15850"
 			(at 50.8 33.02 0)
 			(effects
 				(font
@@ -32520,7 +32423,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Inductor_SMD:L_1008_2520Metric_Pad1.43x2.20mm_HandSolder"
+		(property "Footprint" "otherComponents:AOTA-B201610S3R3-101-T(L_0806_2016metric)"
 			(at 476.25 116.84 0)
 			(effects
 				(font
@@ -32653,7 +32556,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1713"
+		(property "LCSC Part Number" "C15850"
 			(at 316.23 262.89 0)
 			(effects
 				(font
@@ -33799,7 +33702,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1713"
+		(property "LCSC Part Number" "C15850"
 			(at 80.01 33.02 0)
 			(effects
 				(font
