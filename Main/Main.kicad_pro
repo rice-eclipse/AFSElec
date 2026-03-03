@@ -508,8 +508,8 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "gerbers/firstGerberTest/",
-      "pos_files": "gerbers/firstGerberTest/",
+      "plot": "gerbers/finalGerberMaybe/",
+      "pos_files": "gerbers/finalGerberMaybe/",
       "specctra_dsn": "",
       "step": "",
       "svg": "",
@@ -519,7 +519,7 @@
   },
   "schematic": {
     "annotate_start_num": 0,
-    "bom_export_filename": "gerbers\\firstGerberTest\\BOM.csv",
+    "bom_export_filename": "gerbers\\finalGerberMaybe\\BOM.csv",
     "bom_fmt_presets": [],
     "bom_fmt_settings": {
       "field_delimiter": ",",
