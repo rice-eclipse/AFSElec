@@ -19350,7 +19350,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C2295"
+		(property "LCSC Part Number" "C84256"
 			(at 548.64 184.15 0)
 			(effects
 				(font
@@ -23090,7 +23090,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C2295"
+		(property "LCSC Part Number" "C84256"
 			(at 340.36 124.46 0)
 			(effects
 				(font
