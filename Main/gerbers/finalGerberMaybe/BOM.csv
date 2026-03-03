@@ -1,4 +1,4 @@
-"Reference","Qty","Value","Footprint","LCSC Part Number"
+"Designator","Qty","Comment","Footprint","LCSC Part Number"
 "1.1V1,3v3,BATT+1,BATT_3v3,BOOT1,GND1,GND2,ICM_INT1,KX_INT1,MMC_INT1,RST1,USB_3.3,VBUS1,VIN1","14","TestPoint","TestPoint:TestPoint_Pad_D1.0mm",""
 "C1,C2,C3,C4","4","4.7u","Capacitor_SMD:C_0402_1005Metric","C23733"
 "C5,C6,C7,C8,C9,C10,C11,C12,C13,C14,C15,C19,C24,C25,C26,C27,C28,C29,C30,C31,C32,C33,C34,C38,C40","25","100n","Capacitor_SMD:C_0402_1005Metric","C1525"
