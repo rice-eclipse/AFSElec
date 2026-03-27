@@ -1,0 +1,198 @@
+/*
+RICE ECLISPE AFS Basic Code
+
+
+*/
+//sensor libraries
+#include <Temperature_LM75_Derived.h>
+#include <INA226.h>
+#include <MS5611_SPI.h>
+
+//other libraries
+#include <Wire.h>
+
+//pin definitions
+#define led1 25 //yellow indicator led
+#define led2 5 //green indicator led
+
+#define current1 26//4 current detecting pins for servos
+#define current2 27
+#define current3 28
+#define current4 29
+
+#define PWM1 19 //pwm pins
+#define PWM2 22
+#define PWM3 23
+#define PWM4 24
+
+#define I2C_SDA 20 //I2C pins
+#define I2C_SCL 21
+
+#define SPI_SDO 8 //sensor SPI pins
+#define SPI_SDI 11
+#define SPI_SCK 10
+
+#define IMU_CS 13 //6 axis IMU SPI select pin 
+#define MAG_CS 14 //3 axis Magnetometer SPI select pin 
+#define ACC_CS 15 //3 axis high g accelerometer SPI select pin 
+#define BAR_CS 12 //barometer SPI select pin 
+
+//whether to print things or not, printing will slow down program so turn off for real testing maybe?
+bool debug = true;
+
+//define sensors
+Generic_LM75 temperatureSensor;
+INA226 INA(0x40);
+MS5611_SPI MS5611(BAR_CS, SPI_SDO, SPI_SDI, SPI_SCK);
+
+
+void setup() {
+  // initialize pin modes
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+
+  pinMode(current1, INPUT);
+  pinMode(current2, INPUT);
+  pinMode(current3, INPUT);
+  pinMode(current4, INPUT);
+
+  pinMode(PWM1, OUTPUT);
+  pinMode(PWM2, OUTPUT);
+  pinMode(PWM3, OUTPUT);
+  pinMode(PWM4, OUTPUT);
+
+  // FIX: Serial.begin() MUST come BEFORE while(!Serial)
+  Serial.begin(115200);
+
+  // Wait for Serial to initialize (useful for native USB boards like RP2350)
+  while(!Serial) {
+    delay(10);
+  }
+
+  // Configure RP2350 pins for I2C1
+  // GPIO 20 = SDA, GPIO 21 = SCL
+  Wire.setSDA(I2C_SDA);
+  Wire.setSCL(I2C_SCL);
+  Wire.begin();
+
+  //setup INA226
+  if (!INA.begin() )
+  {
+    Serial.println("could not connect to INA226. Fix and Reboot");
+  }
+  INA.setMaxCurrentShunt(15, 0.002);
+
+  //setup MS5611
+  if (debug){
+    Serial.println();
+    Serial.println(__FILE__);
+    Serial.print("MS5611_SPI_LIB_VERSION: ");
+    Serial.println(MS5611_SPI_LIB_VERSION);
+    Serial.println();
+  }
+
+  if (MS5611.begin() == true)
+  {
+    if (debug){
+      Serial.print("MS5611 found: ");
+      Serial.println(MS5611.getDeviceID(), HEX);
+      Serial.println("PROM calibration data:");
+      for (uint8_t i = 0; i < 7; i++)
+      {
+        Serial.print("  C");
+        Serial.print(i);
+        Serial.print(" = ");
+        Serial.println(MS5611.getProm(i));
+      }
+      Serial.print("  CRC = ");
+      Serial.println(MS5611.getCRC());
+    }
+  }
+  else
+  {
+    Serial.println("MS5611 not found. halt.");
+    while (1);
+  }
+
+  MS5611.setOversampling(OSR_ULTRA_HIGH);
+  MS5611.setCompensation(true);
+
+  if (debug) Serial.println();
+
+}
+
+//storing of values
+double temp;
+
+double currDraw1;
+double currDraw2;
+double currDraw3;
+double currDraw4;
+
+double batteryVoltage;
+double shuntVoltage;
+double currentDraw;
+double powerDraw;
+
+
+void updateData(){
+  temp = temperatureSensor.readTemperatureC();
+
+  currDraw1 = map(analogRead(current1),0,1023,-5000,5000)/1000.0;
+  currDraw2 = map(analogRead(current2),0,1023,-5000,5000)/1000.0;
+  currDraw3 = map(analogRead(current3),0,1023,-5000,5000)/1000.0;
+  currDraw4 = map(analogRead(current4),0,1023,-5000,5000)/1000.0;
+
+  batteryVoltage = INA.getBusVoltage();
+  shuntVoltage = INA.getShuntVoltage_mV();
+  currentDraw = INA.getCurrent_mA();
+  powerDraw = INA.getPower_mW();
+
+}
+
+
+void loop() {
+  updateData();
+  
+  if (debug){
+    Serial.print("Temperature = ");
+    Serial.print(temp,1);
+    Serial.print(" C, ");
+
+    Serial.print("Power Draw = ");
+    Serial.print(powerDraw,3);
+    Serial.print(" mW, ");
+
+    Serial.println();
+
+    uint32_t start = micros();
+    int result = MS5611.read();
+    uint32_t stop = micros();
+    if (result == MS5611_READ_OK)
+    {
+      Serial.print("D1:\t");
+      Serial.print(MS5611.getD1());
+      Serial.print("\tD2:\t");
+      Serial.print(MS5611.getD2());
+      Serial.print("\tBaro Temp:\t");
+      Serial.print(MS5611.getTemperature(), 2);
+      Serial.print("\tPressure:\t");
+      Serial.print(MS5611.getPressure(), 2);
+      Serial.print(" mBar\tAlt:\t");
+      Serial.print(MS5611.getAltitude(), 1);
+      Serial.print(" m\tt:\t");
+      Serial.print(stop - start);
+      Serial.println();
+    }
+    else
+    {
+      Serial.print("MS5611 read error: ");
+      Serial.println(result);
+    }
+    delay(2000);
+  }
+}
+
+
+
+//  -- END OF FILE --
