@@ -38,7 +38,6 @@
 
 // =====================================================
 //  ICM-42688 REGISTER MAP (QMI8658 compatible)
-//  Based on the provided datasheet
 // =====================================================
 
 // Chip info
@@ -81,35 +80,21 @@
 #define IMU_WHO_AM_I_VAL   0x05
 
 // CTRL1 fields
-//   Bit 7: SIM  (0=4-wire SPI)
-//   Bit 6: ADDR_AI (1=auto-increment)
-//   Bit 5: BE   (0=Little-Endian, 1=Big-Endian)
-//   Bit 0: SensorDisable (0=clock on)
 #define CTRL1_ADDR_AI      0x40  // Auto-increment ON, Little-Endian, 4-wire SPI
 
 // CTRL2: Accel config
-//   Bits [6:4] aFS:  000=±2g, 001=±4g, 010=±8g, 011=±16g
-//   Bits [3:0] aODR: 0011=1000Hz(accel-only)/896.8Hz(6DOF),
-//                    0100=500/448.4, 0101=250/224.2, 0110=125/112.1
 #define CTRL2_16G_500HZ    0x34  // aFS=011(±16g), aODR=0100(~448Hz 6DOF)
 
 // CTRL3: Gyro config
-//   Bits [6:4] gFS:  000=±16dps, ..., 111=±2048dps
-//   Bits [3:0] gODR: 0100=448.4Hz, 0110=112.1Hz
-#define CTRL3_2048DPS_500HZ 0x74  // gFS=111(±2048dps), gODR=0100(448.4Hz)
+#define CTRL3_2048DPS_500HZ 0x74 // gFS=111(±2048dps), gODR=0100(448.4Hz)
 
 // CTRL7: Sensor enable
-//   Bit 0: aEN (accel enable)
-//   Bit 1: gEN (gyro enable)
-#define CTRL7_ACCEL_GYRO   0x83  // 8 first for sample sync = 1, 0 otherwise, aEN=1, gEN=1
+#define CTRL7_ACCEL_GYRO   0x03  // SyncSample = 0, aEN=1, gEN=1
 
 // Scale factors
-//   Accel ±16g  -> 2048 LSB/g
-//   Gyro ±2048 dps -> 16 LSB/dps
-//   Temp -> raw / 256 °C
 float accelScale = 1.0f / 2048.0f; // g
-float gyroScale  = 1.0f / 16.0f;     // dps
-float tempScale  = 1.0f / 256.0f;    // °C
+float gyroScale  = 1.0f / 16.0f;   // dps
+float tempScale  = 1.0f / 256.0f;  // °C
 
 // SPI settings (1 MHz for safety during debug)
 SPISettings imuSPISettings(1000000, MSBFIRST, SPI_MODE0);
@@ -162,10 +147,40 @@ void imuReadRegs(uint8_t startReg, uint8_t *buf, uint8_t len) {
   SPI1.endTransaction();
 }
 
+bool imuCtrl9Handshake(uint8_t cmd) {
+  imuWriteReg(REG_CTRL9, cmd); // Send command
+  
+  // Wait for CmdDone flag (Bit 7 of STATUSINT)
+  unsigned long t = millis();
+  while ((imuReadReg(REG_STATUSINT) & 0x80) == 0) {
+    if (millis() - t > 100) return false; // Timeout
+    delay(1);
+  }
+  
+  // Acknowledge the command
+  imuWriteReg(REG_CTRL9, 0x00); 
+  
+  // Wait for CmdDone flag to clear
+  t = millis();
+  while ((imuReadReg(REG_STATUSINT) & 0x80) != 0) {
+    if (millis() - t > 100) return false;
+    delay(1);
+  }
+  return true;
+}
+
 bool imuInit() {
   // --- Soft reset ---
   imuWriteReg(REG_RESET, 0xB0);
   delay(100);  // Wait for reset (max 15ms per datasheet)
+
+  // --- Disable AHB Clock Gating to prevent SPI freezing ---
+  imuWriteReg(0x0B, 0x01);       // Write 0x01 to CAL1_L register
+  if (!imuCtrl9Handshake(0x12)) { // Send AHB Clock Gating Command
+    Serial.println("  [ICM42688] CTRL9 Clock Gating Handshake FAILED");
+    return false;
+  }
+  delay(10); // Brief pause to let internal clocks settle
 
   // --- Read WHO_AM_I ---
   uint8_t whoami = imuReadReg(REG_WHO_AM_I);
@@ -202,9 +217,9 @@ bool imuInit() {
   imuWriteReg(REG_CTRL3, CTRL3_2048DPS_500HZ);
   delay(1);
 
-  // --- Enable accel + gyro ---
+  // --- Enable accel + gyro (SyncSample Disabled) ---
   imuWriteReg(REG_CTRL7, CTRL7_ACCEL_GYRO);
-  delay(50); // Wait for sensors to stabilize
+  delay(200); // Wait for sensors to stabilize (requires at least 150ms + 3/ODR)
 
   // Verify config
   uint8_t c2 = imuReadReg(REG_CTRL2);
@@ -233,21 +248,7 @@ bool imuInit() {
 // Little-Endian: first byte = low, second byte = high
 void imuReadAll() {
   
-  // 1. Trigger lock and check status
-  uint8_t statusInt = imuReadReg(0x2D);
-
-  // Check if Data is Available (Bit 0)
-  if ((statusInt & 0x01) == 0x01) {
-    // If Available but NOT Locked (Bit 1 == 0), wait for the lock to finish
-    if ((statusInt & 0x02) == 0x00) {
-      delayMicroseconds(15); // Wait safely beyond the 12us Data_Lock_Delay
-    }
-  } else {
-    // Data not available yet
-    return;
-  }
-
-  // 2. Perform Burst Read
+  // 1. Perform Burst Read Directly (Bypassing early return traps)
   uint8_t buf[14];
   SPI1.beginTransaction(imuSPISettings);
   digitalWrite(IMU_CS, LOW);
@@ -261,8 +262,7 @@ void imuReadAll() {
   digitalWrite(IMU_CS, HIGH);
   SPI1.endTransaction();
 
-  // 3. Process Data (Correcting for Little-Endian)
-  // Ensure we cast to (int16_t) before shifting to handle negative values (two's complement)
+  // 2. Process Data (Correcting for Little-Endian)
   int16_t rawTemp = (int16_t)((buf[1] << 8) | buf[0]);
   int16_t rawAx   = (int16_t)((buf[3] << 8) | buf[2]);
   int16_t rawAy   = (int16_t)((buf[5] << 8) | buf[4]);
@@ -271,7 +271,7 @@ void imuReadAll() {
   int16_t rawGy   = (int16_t)((buf[11] << 8) | buf[10]);
   int16_t rawGz   = (int16_t)((buf[13] << 8) | buf[12]);
 
-  // 4. Apply Scaling
+  // 3. Apply Scaling
   imuTemp = (float)rawTemp * tempScale;
   accelX  = (float)rawAx   * accelScale;
   accelY  = (float)rawAy   * accelScale;
