@@ -45,9 +45,9 @@ public:
     // Initialize the sensor
     bool begin();
 
-    void configure_accel(unit8_t index);
+    void configure_accel(uint8_t index);
 
-    void configure_gyro(unit8_t index);
+    void configure_gyro(uint8_t index);
 
     // Read all sensor data
     void readAll();
