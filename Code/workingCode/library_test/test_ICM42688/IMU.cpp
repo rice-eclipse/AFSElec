@@ -6,7 +6,7 @@ ICM42688::ICM42688(SPIClass &spi, uint8_t cs_pin)
 {
     pinMode(cs_pin, OUTPUT);
     digitalWrite(cs_pin, HIGH);
-    configure_accel(ACCEL_16G); // Default to ±16g
+    configure_accel(ACCEL_16G);   // Default to ±16g
     configure_gyro(GYRO_2000DPS); // Default to ±2000dps
 }
 
@@ -70,25 +70,25 @@ bool ICM42688::begin()
     return true;
 }
 
-
-void ICM42688::configure_accel(accel_range_t index) {
+void ICM42688::configure_accel(accel_range_t index)
+{
     uint8_t accelConfig = 0x00; // Default to ±2g
-    
-    index << = 4; // Shift index to correct position for CTRL2 register
+
+    index <<= 4;          // Shift index to correct position for CTRL2 register
     accelConfig |= index; // Set the desired full-scale range
 
     writeReg(REG_CTRL2, accelConfig);
 }
 
-void ICM42688::configure_gyro(gyro_range_t index) {
+void ICM42688::configure_gyro(gyro_range_t index)
+{
     uint8_t gyroConfig = 0x00; // Default to ±16dps
-    
-    index << = 4; // Shift index to correct position for CTRL3 register
+
+    index <<= 4;         // Shift index to correct position for CTRL3 register
     gyroConfig |= index; // Set the desired full-scale range
 
     writeReg(REG_CTRL3, gyroConfig);
 }
-
 
 // Read all sensor data
 void ICM42688::readAll()
