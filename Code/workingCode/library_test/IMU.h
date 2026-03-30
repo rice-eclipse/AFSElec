@@ -19,19 +19,35 @@
 #define REG_TEMP_H 0x34
 #define REG_RESET 0x60
 
-#define FULL_SCALE_ACCEL_2g 0x00
-#define FULL_SCALE_ACCEL_4g 0x01
-#define FULL_SCALE_ACCEL_8g 0x10
-#define FULL_SCALE_ACCEL_16g 0x11
+typedef enum
+{
+    ACCEL_2G = 0,
+    ACCEL_4G = 1,
+    ACCEL_8G = 2,
+    ACCEL_16G = 3
+} accel_range_t;
+
+typedef enum
+{
+    GYRO_250DPS = 0,
+    GYRO_500DPS = 1,
+    GYRO_1000DPS = 2,
+    GYRO_2000DPS = 3
+} gyro_range_t;
 
 class ICM42688
 {
 public:
     // Constructor: Pass in SPI object and CS pin
     ICM42688(SPIClass &spi, uint8_t cs_pin);
+    ICM42688(SPIClass &spi, uint8_t cs_pin, accel_range_t accelRange, gyro_range_t gyroRange);
 
     // Initialize the sensor
     bool begin();
+
+    void configure_accel(unit8_t index);
+
+    void configure_gyro(unit8_t index);
 
     // Read all sensor data
     void readAll();
@@ -49,6 +65,8 @@ private:
     SPIClass &spi;
     uint8_t cs_pin;
     SPISettings spiSettings;
+    accel_range_t accelRange;
+    gyro_range_t gyroRange;
 
     // Sensor scales
     float accelScale = 1.0f / 2048.0f;

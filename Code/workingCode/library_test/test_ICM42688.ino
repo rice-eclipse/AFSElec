@@ -7,7 +7,7 @@
 #define SPI_SDO 11
 
 // Create ICM42688 instance with SPI1 and CS pin 13
-ICM42688 imu(SPI1, IMU_CS);
+ICM42688 imu(SPI1, IMU_CS, ACCEL_8G, GYRO_1000DPS);
 
 void setup()
 {
