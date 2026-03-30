@@ -72,20 +72,14 @@ bool ICM42688::begin()
 
 void ICM42688::configure_accel(accel_range_t index)
 {
-    uint8_t accelConfig = 0x00; // Default to ±2g
-
-    index <<= 4;          // Shift index to correct position for CTRL2 register
-    accelConfig |= index; // Set the desired full-scale range
+    uint8_t accelConfig = index;
 
     writeReg(REG_CTRL2, accelConfig);
 }
 
 void ICM42688::configure_gyro(gyro_range_t index)
 {
-    uint8_t gyroConfig = 0x00; // Default to ±16dps
-
-    index <<= 4;         // Shift index to correct position for CTRL3 register
-    gyroConfig |= index; // Set the desired full-scale range
+    uint8_t gyroConfig = index;
 
     writeReg(REG_CTRL3, gyroConfig);
 }
