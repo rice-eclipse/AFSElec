@@ -2,21 +2,13 @@
 
 // Constructor
 ICM42688::ICM42688(SPIClass &spi, uint8_t cs_pin)
-    : spi(spi), cs_pin(cs_pin), spiSettings(1000000, MSBFIRST, SPI_MODE0)
+    : spi(spi), cs_pin(cs_pin), spiSettings(1000000, MSBFIRST, SPI_MODE0), accelRange(ACCEL_16G), gyroRange(GYRO_2000DPS)
 {
-    pinMode(cs_pin, OUTPUT);
-    digitalWrite(cs_pin, HIGH);
-    configure_accel(ACCEL_16G);   // Default to ±16g
-    configure_gyro(GYRO_2000DPS); // Default to ±2000dps
 }
 
 ICM42688::ICM42688(SPIClass &spi, uint8_t cs_pin, accel_range_t accelRange, gyro_range_t gyroRange)
     : spi(spi), cs_pin(cs_pin), spiSettings(1000000, MSBFIRST, SPI_MODE0), accelRange(accelRange), gyroRange(gyroRange)
 {
-    pinMode(cs_pin, OUTPUT);
-    digitalWrite(cs_pin, HIGH);
-    configure_accel(accelRange);
-    configure_gyro(gyroRange);
 }
 
 // Write to a register
@@ -45,6 +37,10 @@ uint8_t ICM42688::readReg(uint8_t reg)
 // Initialize the sensor
 bool ICM42688::begin()
 {
+    pinMode(cs_pin, OUTPUT);
+    digitalWrite(cs_pin, HIGH);
+    configure_accel(accelRange);
+    configure_gyro(gyroRange);
     // Reset sensor
     writeReg(REG_RESET, 0xB0);
     delay(100);
