@@ -81,7 +81,7 @@ void ICM42688::configure_gyro(gyro_range_t index)
 }
 
 // Read all sensor data
-void ICM42688::readAll()
+bool ICM42688::readAll()
 {
     // 1. Check if samples are available in FIFO
     uint8_t countL = readReg(REG_FIFO_SMPL_L);
@@ -120,5 +120,8 @@ void ICM42688::readAll()
         // Read Temperature separately (non-FIFO register)
         int16_t rawTemp = (int16_t)((readReg(REG_TEMP_H) << 8) | readReg(REG_TEMP_L));
         imuTemp = (float)rawTemp * tempScale;
+        return true;
+    }else{
+        return false; // No samples available
     }
 }
