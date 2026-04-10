@@ -155,11 +155,11 @@ void setup() {
 }
 
 void loop() {
-  temp = temperatureSensor.readTemperatureC();
-  if (inaReady) {
-    batteryVoltage = INA.getBusVoltage();
-    currentDraw = INA.getCurrent_mA();
-  }
+  // temp = temperatureSensor.readTemperatureC();
+  // if (inaReady) {
+  //   batteryVoltage = INA.getBusVoltage();
+  //   currentDraw = INA.getCurrent_mA();
+  // }
   if (imuReady) imuReadAll();
 
   // Serial.println("----------------------------------------");

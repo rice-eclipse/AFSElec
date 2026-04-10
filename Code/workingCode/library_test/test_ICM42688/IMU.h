@@ -50,7 +50,7 @@ public:
     void configure_gyro(gyro_range_t index);
 
     // Read all sensor data
-    void readAll();
+    bool readAll();
 
     // Getters for sensor data
     float getAccelX() const { return accelX; }

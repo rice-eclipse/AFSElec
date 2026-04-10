@@ -1,18 +1,30 @@
 #include "IMU.h"
 #include <SPI.h>
 
-#define IMU_CS 13
+#define IMU_CS  13
+#define MAG_CS  14
+#define ACC_CS  15
+#define BAR_CS  12
 
-ICM42688 imu(SPI, IMU_CS, ACCEL_8G, GYRO_1000DPS);
+#define SPI_SDO 11
+#define SPI_SDI 8
+#define SPI_SCK 10
+
+ICM42688 imu(SPI1, IMU_CS, ACCEL_8G, GYRO_1000DPS);
 
 void setup() {
     Serial.begin(115200);
     delay(1000);
 
-    SPI.begin();
+    int csPins[] = {IMU_CS, MAG_CS, ACC_CS, BAR_CS};
+    for (int p : csPins) { pinMode(p, OUTPUT); digitalWrite(p, HIGH); }
 
-    pinMode(IMU_CS, OUTPUT);
-    digitalWrite(IMU_CS, HIGH);
+    SPI1.begin();
+    SPI1.setSCK(SPI_SCK); 
+    SPI1.setTX(SPI_SDO); 
+    SPI1.setRX(SPI_SDI); 
+    SPI1.begin();
+
 
     if (imu.begin()) {
         Serial.println("IMU initialized successfully");
@@ -22,7 +34,7 @@ void setup() {
 }
 
 void loop() {
-    imu.readAll();
+    if(imu.readAll()){
 
     Serial.print("Accel: ");
     Serial.print(imu.getAccelX(), 2);
@@ -41,6 +53,6 @@ void loop() {
     Serial.print(" | Temp: ");
     Serial.print(imu.getTemp(), 2);
     Serial.println(" C");
-
+    }
     delay(100);
 }
