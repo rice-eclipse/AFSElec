@@ -49792,7 +49792,7 @@
 		(layers "F.Cu" "B.Cu" "In1.Cu")
 		(uuid "3ce1b081-effd-491d-8faf-7f47be2dfd30")
 		(hatch edge 0.5)
-		(connect_pads yes
+		(connect_pads
 			(clearance 0.15)
 		)
 		(min_thickness 0.1)
