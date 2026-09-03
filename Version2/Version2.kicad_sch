@@ -17023,7 +17023,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 388.62 330.2 0)
 			(effects
 				(font
@@ -17451,7 +17451,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25092"
+		(property "LCSC Part Number" "C23140"
 			(at 184.15 39.37 90)
 			(effects
 				(font
@@ -17507,7 +17507,7 @@
 		(at 181.61 340.36 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "0360c788-e9fe-478a-b776-f3c911b9e3f0")
@@ -17582,7 +17582,7 @@
 		(at 135.89 250.19 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -17956,7 +17956,7 @@
 		(at 105.41 236.22 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -18074,7 +18074,7 @@
 		(at 105.41 265.43 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -18377,7 +18377,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 488.95 116.84 0)
 			(effects
 				(font
@@ -18618,7 +18618,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 217.17 21.59 0)
 			(effects
 				(font
@@ -18674,7 +18674,7 @@
 		(at 412.75 275.59 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "0a3255fe-bb8a-4190-8b8c-0a4ef61b927e")
@@ -19309,7 +19309,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25076"
+		(property "LCSC Part Number" "C22775"
 			(at 215.9 91.44 90)
 			(effects
 				(font
@@ -19550,7 +19550,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 441.96 163.83 0)
 			(effects
 				(font
@@ -19738,7 +19738,7 @@
 		(at 205.74 160.02 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "168a79b6-e8d6-47e1-a530-10d7239a3ae1")
@@ -19973,7 +19973,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -20360,7 +20360,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 160.02 21.59 0)
 			(effects
 				(font
@@ -20483,7 +20483,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "1cd9a930-3342-4ad6-a5db-c29b953c0972")
@@ -20779,7 +20779,7 @@
 		(at 106.68 335.28 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "1eb73634-33c0-4951-a873-acd2ed5bb159")
@@ -21106,7 +21106,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 321.31 63.5 0)
 			(effects
 				(font
@@ -21294,7 +21294,7 @@
 		(at 135.89 265.43 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -21480,7 +21480,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25756"
+		(property "LCSC Part Number" "C22797"
 			(at 400.05 344.17 0)
 			(effects
 				(font
@@ -21536,7 +21536,7 @@
 		(at 147.32 368.3 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "25cbbe0a-85e7-4fb7-8a9b-efcca9f93bd3")
@@ -22323,6 +22323,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "SOT-23-8"
+			(at 420.37 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "5"
 			(uuid "5ff0872b-be9f-44c5-87f7-e72039df4264")
 		)
@@ -22783,7 +22792,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C11702"
+		(property "LCSC Part Number" "C21190"
 			(at 78.74 102.87 90)
 			(effects
 				(font
@@ -23037,7 +23046,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25076"
+		(property "LCSC Part Number" "C23138"
 			(at 532.13 318.77 90)
 			(effects
 				(font
@@ -23291,7 +23300,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25744"
+		(property "LCSC Part Number" " C25804"
 			(at 199.39 254 90)
 			(effects
 				(font
@@ -23347,7 +23356,7 @@
 		(at 130.81 335.28 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "36a02b45-2cca-49fe-b0b6-67b4c11edc06")
@@ -23537,7 +23546,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25741"
+		(property "LCSC Part Number" "C25819"
 			(at 469.9 262.89 0)
 			(effects
 				(font
@@ -23667,7 +23676,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C84256"
+		(property "LCSC Part Number" " C84256"
 			(at 208.28 91.44 0)
 			(effects
 				(font
@@ -24122,6 +24131,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C22367949"
+			(at 248.92 254 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "3"
 			(uuid "8959940d-c4f0-45fa-9893-22f4ecb14471")
 		)
@@ -24224,7 +24242,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25741"
+		(property "LCSC Part Number" "C25803"
 			(at 469.9 247.65 0)
 			(effects
 				(font
@@ -24465,7 +24483,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25900"
+		(property "LCSC Part Number" "C23186"
 			(at 205.74 127 0)
 			(effects
 				(font
@@ -24731,6 +24749,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" " C115357"
+			(at 48.26 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "05e437a3-57ac-4ca3-819c-a3a884882ea0")
 		)
@@ -24751,7 +24778,7 @@
 		(at 135.89 236.22 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -25117,7 +25144,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25741"
+		(property "LCSC Part Number" "C25803"
 			(at 495.3 345.44 0)
 			(effects
 				(font
@@ -25174,7 +25201,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "42ef1a04-0cb0-45bb-bec3-73fbb3006ed2")
@@ -25241,7 +25268,7 @@
 		(at 54.61 285.75 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -25309,7 +25336,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C15850"
+		(property "LCSC Part Number" ""
 			(at 54.61 285.75 0)
 			(effects
 				(font
@@ -25439,7 +25466,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C84256"
+		(property "LCSC Part Number" " C84256"
 			(at 520.7 247.65 0)
 			(effects
 				(font
@@ -25544,7 +25571,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25741"
+		(property "LCSC Part Number" "C25803"
 			(at 473.71 339.09 0)
 			(effects
 				(font
@@ -25600,7 +25627,7 @@
 		(at 481.965 109.22 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "496681b6-cbc9-4696-b7cf-4c2b9cfc3a2a")
@@ -26063,7 +26090,7 @@
 		(at 105.41 279.4 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -26366,7 +26393,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C28323"
+		(property "LCSC Part Number" " C28323"
 			(at 444.5 63.5 0)
 			(effects
 				(font
@@ -26688,7 +26715,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 388.62 279.4 0)
 			(effects
 				(font
@@ -26878,7 +26905,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25744"
+		(property "LCSC Part Number" " C25804"
 			(at 219.71 233.68 0)
 			(effects
 				(font
@@ -27146,7 +27173,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "W25Q128JVS"
+		(property "Value" "W25Q128JVP"
 			(at 33.782 81.026 0)
 			(effects
 				(font
@@ -27317,7 +27344,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C97521"
+		(property "LCSC Part Number" "C190862"
 			(at 40.64 68.58 0)
 			(effects
 				(font
@@ -27526,6 +27553,15 @@
 			)
 		)
 		(property "Manufacturer Part" ""
+			(at 132.08 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C42415655"
 			(at 132.08 100.33 0)
 			(effects
 				(font
@@ -27922,7 +27958,7 @@
 		(at 457.2 54.61 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "5cd7cd3e-c8e4-4117-8dd7-d08bb678a601")
@@ -28504,7 +28540,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C23733"
+		(property "LCSC Part Number" " C1779"
 			(at 95.25 19.05 0)
 			(effects
 				(font
@@ -28744,7 +28780,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 400.05 107.95 0)
 			(effects
 				(font
@@ -28982,7 +29018,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1548"
+		(property "LCSC Part Number" " C1644"
 			(at 54.61 102.87 90)
 			(effects
 				(font
@@ -29221,7 +29257,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C11702"
+		(property "LCSC Part Number" "C21190"
 			(at 30.48 181.61 90)
 			(effects
 				(font
@@ -29344,7 +29380,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 203.2 278.13 0)
 			(effects
 				(font
@@ -29650,7 +29686,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 194.31 21.59 0)
 			(effects
 				(font
@@ -29887,7 +29923,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25741"
+		(property "LCSC Part Number" "C25803"
 			(at 491.49 274.32 0)
 			(effects
 				(font
@@ -30008,7 +30044,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 69.85 224.79 0)
 			(effects
 				(font
@@ -30113,7 +30149,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C28323"
+		(property "LCSC Part Number" " C28323"
 			(at 481.33 274.32 0)
 			(effects
 				(font
@@ -30485,7 +30521,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25900"
+		(property "LCSC Part Number" "C23186"
 			(at 215.9 127 0)
 			(effects
 				(font
@@ -30924,7 +30960,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 72.39 19.05 0)
 			(effects
 				(font
@@ -31315,6 +31351,15 @@
 			)
 		)
 		(property "Manufacturer Part" ""
+			(at 38.1 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C42411119"
 			(at 38.1 40.64 0)
 			(effects
 				(font
@@ -32025,7 +32070,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -32162,7 +32207,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25744"
+		(property "LCSC Part Number" " C25804"
 			(at 224.79 233.68 0)
 			(effects
 				(font
@@ -32353,7 +32398,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C15850"
+		(property "LCSC Part Number" " C14663"
 			(at 74.93 266.7 0)
 			(effects
 				(font
@@ -32847,7 +32892,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C23733"
+		(property "LCSC Part Number" " C1779"
 			(at 29.21 43.18 0)
 			(effects
 				(font
@@ -33234,7 +33279,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25792"
+		(property "LCSC Part Number" "C25819"
 			(at 400.05 279.4 0)
 			(effects
 				(font
@@ -33290,7 +33335,7 @@
 		(at 180.34 325.12 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "870bd3b3-5a39-4cdf-b203-19f35a9a4f78")
@@ -33366,7 +33411,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "8765e449-1dec-460e-83dc-58c4510aba61")
@@ -33564,7 +33609,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25076"
+		(property "LCSC Part Number" "C23138"
 			(at 215.9 102.87 90)
 			(effects
 				(font
@@ -33763,6 +33808,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C699536"
+			(at 427.99 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "6"
 			(uuid "7afacece-7473-462c-a07d-b8de49f143cd")
 		)
@@ -33862,6 +33916,15 @@
 			)
 		)
 		(property "Manufacturer Part" "ICM-45686"
+			(at 372.11 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C22459454"
 			(at 372.11 55.88 0)
 			(effects
 				(font
@@ -34177,7 +34240,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 148.59 21.59 0)
 			(effects
 				(font
@@ -34614,7 +34677,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C23733"
+		(property "LCSC Part Number" " C1779"
 			(at 20.32 43.18 0)
 			(effects
 				(font
@@ -34671,7 +34734,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "911de54e-1802-4d09-8b77-1e68fe61bc1d")
@@ -34739,7 +34802,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -34876,7 +34939,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C15850"
+		(property "LCSC Part Number" " C14663"
 			(at 80.01 285.75 0)
 			(effects
 				(font
@@ -34932,7 +34995,7 @@
 		(at 403.86 236.22 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "936013e3-6aa8-4c20-8980-527fd56ca1f7")
@@ -35130,7 +35193,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25744"
+		(property "LCSC Part Number" " C25804"
 			(at 199.39 256.54 90)
 			(effects
 				(font
@@ -35500,7 +35563,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25105"
+		(property "LCSC Part Number" "C23186"
 			(at 72.39 134.62 90)
 			(effects
 				(font
@@ -35623,7 +35686,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C15850"
+		(property "LCSC Part Number" " C14663"
 			(at 80.01 266.7 0)
 			(effects
 				(font
@@ -36310,7 +36373,7 @@
 		(at 336.55 55.88 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "a038b77c-7ade-44e2-97aa-6d47aa635483")
@@ -36377,7 +36440,7 @@
 		(at 551.18 104.14 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "a090ff88-a612-4809-ae1e-0830a72b9eaa")
@@ -36559,7 +36622,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25741"
+		(property "LCSC Part Number" "C25803"
 			(at 473.71 318.77 0)
 			(effects
 				(font
@@ -36862,7 +36925,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C11702"
+		(property "LCSC Part Number" "C21190"
 			(at 67.31 181.61 90)
 			(effects
 				(font
@@ -36967,7 +37030,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25741"
+		(property "LCSC Part Number" "C25819"
 			(at 473.71 334.01 0)
 			(effects
 				(font
@@ -37285,7 +37348,7 @@
 		(at 357.505 236.22 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "a5a0278b-01af-41dc-89c1-8d6fac460957")
@@ -37537,7 +37600,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C23733"
+		(property "LCSC Part Number" " C1779"
 			(at 49.53 26.67 0)
 			(effects
 				(font
@@ -37593,7 +37656,7 @@
 		(at 181.61 363.22 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "a843612a-4ff1-4616-bcfd-6e672917e776")
@@ -37801,7 +37864,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25756"
+		(property "LCSC Part Number" "C22809"
 			(at 400.05 293.37 0)
 			(effects
 				(font
@@ -37857,7 +37920,7 @@
 		(at 105.41 250.19 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -38159,7 +38222,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C15850"
+		(property "LCSC Part Number" " C28323"
 			(at 365.76 240.03 0)
 			(effects
 				(font
@@ -38377,7 +38440,7 @@
 		(at 413.385 326.39 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "b13063cb-0867-4cf9-9a77-98703d7676fd")
@@ -38645,7 +38708,7 @@
 		(at 135.89 279.4 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -38948,7 +39011,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 137.16 21.59 0)
 			(effects
 				(font
@@ -39134,7 +39197,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25076"
+		(property "LCSC Part Number" "C22775"
 			(at 528.32 247.65 90)
 			(effects
 				(font
@@ -39890,7 +39953,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C28323"
+		(property "LCSC Part Number" " C28323"
 			(at 485.14 345.44 0)
 			(effects
 				(font
@@ -40130,7 +40193,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 378.46 107.95 0)
 			(effects
 				(font
@@ -40395,6 +40458,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" " C115357"
+			(at 77.47 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "1a1fa761-6b21-4a51-a10f-0c1ad762abfb")
 		)
@@ -40481,7 +40553,7 @@
 		(at 205.74 149.86 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "c60f50d2-1ba2-4b10-bf08-a53f6ea3d7bd")
@@ -41483,6 +41555,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C2675635"
+			(at 59.69 245.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "8"
 			(uuid "7d0a8d34-78b1-43b9-a0e8-395b5f3290aa")
 		)
@@ -41696,7 +41777,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C84256"
+		(property "LCSC Part Number" " C84256"
 			(at 524.51 318.77 0)
 			(effects
 				(font
@@ -41826,7 +41907,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C84256"
+		(property "LCSC Part Number" " C84256"
 			(at 208.28 102.87 0)
 			(effects
 				(font
@@ -41966,6 +42047,15 @@
 			)
 		)
 		(property "Manufacturer Part" ""
+			(at 394.97 323.85 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C42411119"
 			(at 394.97 323.85 90)
 			(effects
 				(font
@@ -42508,7 +42598,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 171.45 21.59 0)
 			(effects
 				(font
@@ -42565,7 +42655,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "d5725127-764d-430e-ba0e-fe4a7edcfd40")
@@ -42632,7 +42722,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C15850"
+		(property "LCSC Part Number" ""
 			(at 48.26 285.75 0)
 			(effects
 				(font
@@ -42936,7 +43026,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1548"
+		(property "LCSC Part Number" " C1644"
 			(at 54.61 88.9 90)
 			(effects
 				(font
@@ -43303,7 +43393,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25744"
+		(property "LCSC Part Number" " C25804"
 			(at 222.25 233.68 0)
 			(effects
 				(font
@@ -43610,7 +43700,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 20.32 62.23 0)
 			(effects
 				(font
@@ -43666,7 +43756,7 @@
 		(at 205.74 144.78 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "db041afd-0359-4c4e-a902-4f4edcb2b47e")
@@ -44072,6 +44162,15 @@
 			)
 		)
 		(property "Description" "600mA low dropout linear regulator, with enable pin, 3.8V-6V input voltage range, 3.3V fixed positive output, SOT-23-5"
+			(at 381 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part Number" "C23380830"
 			(at 381 238.76 0)
 			(effects
 				(font
@@ -44532,6 +44631,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC Part Number" "C42411119"
+			(at 394.97 273.05 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "af1986c9-ee99-4e38-b425-43161397e815")
 		)
@@ -44553,7 +44661,7 @@
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -44936,7 +45044,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25741"
+		(property "LCSC Part Number" "C25803"
 			(at 469.9 267.97 0)
 			(effects
 				(font
@@ -45433,7 +45541,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C15850"
+		(property "LCSC Part Number" " C28323"
 			(at 394.97 240.03 0)
 			(effects
 				(font
@@ -45648,7 +45756,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 405.13 68.58 0)
 			(effects
 				(font
@@ -45889,7 +45997,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 229.87 21.59 0)
 			(effects
 				(font
@@ -46796,7 +46904,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 83.82 19.05 0)
 			(effects
 				(font
@@ -46986,7 +47094,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C15850"
+		(property "LCSC Part Number" " C14663"
 			(at 74.93 285.75 0)
 			(effects
 				(font
@@ -47226,7 +47334,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 554.99 110.49 0)
 			(effects
 				(font
@@ -47283,7 +47391,7 @@
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "f37207e8-36f8-4f1a-a278-d388a1de1521")
@@ -47399,7 +47507,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25792"
+		(property "LCSC Part Number" "C25803"
 			(at 469.9 242.57 0)
 			(effects
 				(font
@@ -47637,7 +47745,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25105"
+		(property "LCSC Part Number" "C23186"
 			(at 80.01 132.08 90)
 			(effects
 				(font
@@ -47878,7 +47986,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 182.88 21.59 0)
 			(effects
 				(font
@@ -47999,7 +48107,7 @@
 		(at 205.74 154.94 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "f6be3bb1-c9fc-41de-b29b-ecfe411a842b")
@@ -48418,7 +48526,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C1525"
+		(property "LCSC Part Number" " C14663"
 			(at 205.74 21.59 0)
 			(effects
 				(font
@@ -48927,7 +49035,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25092"
+		(property "LCSC Part Number" "C23140"
 			(at 184.15 41.91 90)
 			(effects
 				(font
@@ -49051,7 +49159,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25792"
+		(property "LCSC Part Number" "C23231"
 			(at 400.05 330.2 0)
 			(effects
 				(font
@@ -49172,7 +49280,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25744"
+		(property "LCSC Part Number" " C25804"
 			(at 193.04 260.35 0)
 			(effects
 				(font
@@ -49277,7 +49385,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25792"
+		(property "LCSC Part Number" "C25803"
 			(at 473.71 313.69 0)
 			(effects
 				(font
@@ -49515,7 +49623,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part Number" "C25105"
+		(property "LCSC Part Number" "C23140"
 			(at 41.91 22.86 90)
 			(effects
 				(font
