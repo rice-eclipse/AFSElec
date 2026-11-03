@@ -1,0 +1,10 @@
+# MS5611 driver (Pico SDK). Link with: target_link_libraries(<target> MS5611)
+add_library(MS5611 INTERFACE)
+target_sources(MS5611 INTERFACE ${CMAKE_CURRENT_LIST_DIR}/MS5611.cpp)
+target_include_directories(MS5611 INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(MS5611 INTERFACE pico_stdlib hardware_spi)
+
+# Optional bench test. Link with: target_link_libraries(<target> MS5611_test)
+add_library(MS5611_test INTERFACE)
+target_sources(MS5611_test INTERFACE ${CMAKE_CURRENT_LIST_DIR}/MS5611_test.cpp)
+target_link_libraries(MS5611_test INTERFACE MS5611)
