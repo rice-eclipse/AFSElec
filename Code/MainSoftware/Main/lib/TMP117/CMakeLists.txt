@@ -1,0 +1,10 @@
+# TMP117 driver (Pico SDK). Link with: target_link_libraries(<target> TMP117)
+add_library(TMP117 INTERFACE)
+target_sources(TMP117 INTERFACE ${CMAKE_CURRENT_LIST_DIR}/TMP117.cpp)
+target_include_directories(TMP117 INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(TMP117 INTERFACE pico_stdlib hardware_i2c)
+
+# Optional bench test. Link with: target_link_libraries(<target> TMP117_test)
+add_library(TMP117_test INTERFACE)
+target_sources(TMP117_test INTERFACE ${CMAKE_CURRENT_LIST_DIR}/TMP117_test.cpp)
+target_link_libraries(TMP117_test INTERFACE TMP117)

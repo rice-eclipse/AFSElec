@@ -1,0 +1,10 @@
+# ICM45686 driver (Pico SDK). Link with: target_link_libraries(<target> ICM45686)
+add_library(ICM45686 INTERFACE)
+target_sources(ICM45686 INTERFACE ${CMAKE_CURRENT_LIST_DIR}/ICM45686.cpp)
+target_include_directories(ICM45686 INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(ICM45686 INTERFACE pico_stdlib hardware_spi)
+
+# Optional bench test. Link with: target_link_libraries(<target> ICM45686_test)
+add_library(ICM45686_test INTERFACE)
+target_sources(ICM45686_test INTERFACE ${CMAKE_CURRENT_LIST_DIR}/ICM45686_test.cpp)
+target_link_libraries(ICM45686_test INTERFACE ICM45686)

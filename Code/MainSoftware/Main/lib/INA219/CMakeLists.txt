@@ -1,0 +1,10 @@
+# INA219 driver (Pico SDK). Link with: target_link_libraries(<target> INA219)
+add_library(INA219 INTERFACE)
+target_sources(INA219 INTERFACE ${CMAKE_CURRENT_LIST_DIR}/INA219.cpp)
+target_include_directories(INA219 INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(INA219 INTERFACE pico_stdlib hardware_i2c)
+
+# Optional bench test. Link with: target_link_libraries(<target> INA219_test)
+add_library(INA219_test INTERFACE)
+target_sources(INA219_test INTERFACE ${CMAKE_CURRENT_LIST_DIR}/INA219_test.cpp)
+target_link_libraries(INA219_test INTERFACE INA219)

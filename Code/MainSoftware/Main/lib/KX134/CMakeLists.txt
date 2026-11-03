@@ -1,0 +1,10 @@
+# KX134 driver (Pico SDK). Link with: target_link_libraries(<target> KX134)
+add_library(KX134 INTERFACE)
+target_sources(KX134 INTERFACE ${CMAKE_CURRENT_LIST_DIR}/KX134.cpp)
+target_include_directories(KX134 INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(KX134 INTERFACE pico_stdlib hardware_spi)
+
+# Optional bench test. Link with: target_link_libraries(<target> KX134_test)
+add_library(KX134_test INTERFACE)
+target_sources(KX134_test INTERFACE ${CMAKE_CURRENT_LIST_DIR}/KX134_test.cpp)
+target_link_libraries(KX134_test INTERFACE KX134)

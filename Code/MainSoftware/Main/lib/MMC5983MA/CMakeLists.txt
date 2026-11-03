@@ -1,0 +1,10 @@
+# MMC5983MA driver (Pico SDK). Link with: target_link_libraries(<target> MMC5983MA)
+add_library(MMC5983MA INTERFACE)
+target_sources(MMC5983MA INTERFACE ${CMAKE_CURRENT_LIST_DIR}/MMC5983MA.cpp)
+target_include_directories(MMC5983MA INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(MMC5983MA INTERFACE pico_stdlib hardware_spi hardware_clocks)
+
+# Optional bench test. Link with: target_link_libraries(<target> MMC5983MA_test)
+add_library(MMC5983MA_test INTERFACE)
+target_sources(MMC5983MA_test INTERFACE ${CMAKE_CURRENT_LIST_DIR}/MMC5983MA_test.cpp)
+target_link_libraries(MMC5983MA_test INTERFACE MMC5983MA)
