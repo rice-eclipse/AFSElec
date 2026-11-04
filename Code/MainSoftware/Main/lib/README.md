@@ -4,14 +4,16 @@ Pico SDK (RP2040 / RP2350) C++ drivers for the flight computer's sensors. Each l
 self-contained (its own folder, header, source and `CMakeLists.txt`) and depends only on the
 Pico SDK. You can copy any one of them into another project on its own.
 
+Full API docs for each driver (every method, enum, units and gotchas) are in the `README.md` in its folder. Click a library name below.
+
 | Library     | Chip                    | Bus | Units                         |
 |-------------|-------------------------|-----|-------------------------------|
-| `ICM45686`  | TDK ICM-45686 6-DoF IMU | SPI | g, deg/s, deg C               |
-| `KX134`     | Kionix KX134 ±64 g accel | SPI | g                             |
-| `MMC5983MA` | MEMSIC magnetometer     | SPI | Gauss (1 G = 100 µT), deg C   |
-| `MS5611`    | TE barometer            | SPI | mbar (hPa), deg C, m          |
-| `TMP117`    | TI temperature sensor   | I2C | deg C                         |
-| `INA219`    | TI current/power monitor | I2C | V, mA, mW                     |
+| [`ICM45686`](ICM45686/README.md)  | TDK ICM-45686 6-DoF IMU | SPI | g, deg/s, deg C               |
+| [`KX134`](KX134/README.md)     | Kionix KX134 ±64 g accel | SPI | g                             |
+| [`MMC5983MA`](MMC5983MA/README.md) | MEMSIC magnetometer     | SPI | Gauss (1 G = 100 µT), deg C   |
+| [`MS5611`](MS5611/README.md)    | TE barometer            | SPI | mbar (hPa), deg C, m          |
+| [`TMP117`](TMP117/README.md)    | TI temperature sensor   | I2C | deg C                         |
+| [`INA219`](INA219/README.md)    | TI current/power monitor | I2C | V, mA, mW                     |
 
 ## Using them in CMake
 
@@ -28,18 +30,18 @@ Link only the libraries you need.
 
 Each folder also has `<Name>_test.h/.cpp`, built as a separate CMake target (`<Name>_test`), so
 the driver library itself doesn't include any test code. Each test is one function that takes an
-already-constructed driver, prints PASS/FAIL lines over stdio, and returns `true` if every check passed:
+already-constructed driver, prints FAIL lines (and, with `verbose`, every PASS line) over stdio, and returns `true` if every check passed:
 
 ```cpp
-bool ICM45686_test(ICM45686& imu, uint32_t samples = 10);
-bool KX134_test(KX134& acc, uint32_t samples = 10);
-bool MMC5983MA_test(MMC5983MA& mag, uint32_t samples = 10);
-bool MS5611_test(MS5611& baro, uint32_t samples = 10);
-bool TMP117_test(TMP117& tmp, uint32_t samples = 5);
-bool INA219_test(INA219& ina, uint32_t samples = 5);
+bool ICM45686_test(ICM45686& imu, bool verbose = false, uint32_t samples = 10);
+bool KX134_test(KX134& acc, bool verbose = false, uint32_t samples = 10);
+bool MMC5983MA_test(MMC5983MA& mag, bool verbose = false, uint32_t samples = 10);
+bool MS5611_test(MS5611& baro, bool verbose = false, uint32_t samples = 10);
+bool TMP117_test(TMP117& tmp, bool verbose = false, uint32_t samples = 5);
+bool INA219_test(INA219& ina, bool verbose = false, uint32_t samples = 5);
 ```
 
-In `Main.cpp`, the `RUN_<NAME>_TEST` flags turn each test on or off at boot, and a summary table
+In `Main.cpp`, the `RUN_<NAME>_TEST` flags turn each test on or off at boot, `VERBOSE_<NAME>_TEST` controls how much each one prints, and a summary table
 is printed at the end. Keep the board still and level, and away from magnets, while the tests run.
 Each test checks that the chip responds, reads back the settings it writes, checks that readings
 are physically plausible (≈1 g, Earth's magnetic field, room temperature and pressure), and exercises
