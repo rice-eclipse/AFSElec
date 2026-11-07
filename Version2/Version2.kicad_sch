@@ -9560,6 +9560,16 @@
 		)
 		(uuid "cdf9d84e-7fb6-441f-99a8-46ab986c5810")
 	)
+	(text "Resistor value may need to be decreased\n if the clock is not reachign a sufficient voltage"
+		(exclude_from_sim no)
+		(at 73.66 107.95 0)
+		(effects
+			(font
+				(size 0.635 0.635)
+			)
+		)
+		(uuid "d78ad91d-b0a3-4fdb-b4ea-4c6719b88d1b")
+	)
 	(text "Micro SD Card"
 		(exclude_from_sim no)
 		(at 187.96 215.646 0)
