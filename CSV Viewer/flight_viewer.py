@@ -87,6 +87,24 @@ PRESETS = [
 ]
 AUTO_LAYOUT_MAX = 5
 
+# How flights are lined up in time when comparing
+ALIGN_MODES = [("start", "File start"), ("launch", "Launch"), ("burnout", "Burnout"), ("apogee", "Apogee"),
+               ("landing", "Landing"), ("peak_accel", "Peak acceleration"), ("manual", "Manual offsets")]
+
+# Accelerometer column sets, with the factor that converts them to g
+ACCEL_SETS = [(("imu_ax_g", "imu_ay_g", "imu_az_g"), 1.0), (("kx_ax_g", "kx_ay_g", "kx_az_g"), 1.0),
+              (("ax_mps2", "ay_mps2", "az_mps2"), 1 / 9.80665)]
+LINE_STYLES = [Qt.PenStyle.SolidLine, Qt.PenStyle.DashLine, Qt.PenStyle.DotLine, Qt.PenStyle.DashDotLine]
+
+
+def format_name(signature) -> str:
+    cols = set(signature)
+    if "flight_state" in cols and "alt_m" in cols:
+        return "nav"
+    if "imu_ax_g" in cols and "baro_mbar" in cols:
+        return "sensor"
+    return f"{len(cols)} cols"
+
 
 def unit_of(col: str) -> str:
     for suffix, unit in UNIT_SUFFIXES:
@@ -117,6 +135,10 @@ class Dataset:
         self.path = os.path.abspath(path)
         self.name = os.path.basename(path)
         self.short = os.path.splitext(self.name)[0]
+        self.label = self.short          # display name, editable in the Flights list
+        self.slot = 0                    # palette slot (color) when comparing flights
+        self.color = None                # user color override
+        self.visible = True
         self.warnings: list[str] = []
 
         df = pd.read_csv(path, on_bad_lines="skip", skipinitialspace=True, low_memory=False)
@@ -136,6 +158,7 @@ class Dataset:
                 self.warnings.append(f"{self.name}: time was not monotonic, rows were sorted")
         self.df = df.reset_index(drop=True)
         self.base_columns = list(self.df.columns)
+        self.signature = tuple(self.base_columns)   # files with equal signatures can be compared
         self.derived: dict[str, str] = {}
         self.time_unit = "auto"
         self.zero_start = True
@@ -284,6 +307,107 @@ class Dataset:
 
     def index_range(self, a, b):
         return np.searchsorted(self.time, a, "left"), np.searchsorted(self.time, b, "right")
+
+    # ---- flight events & metrics (for comparing flights) -------------------------------
+    def accel_g(self):
+        """|acceleration| in g from the first accelerometer column set present, or None."""
+        for cols, k in ACCEL_SETS:
+            present = [c for c in cols if c in self.df]
+            if present:
+                return np.sqrt(sum(self.array(c) ** 2 for c in present)) * k
+        return None
+
+    def alt_col(self):
+        for c in ("alt_m", "baro_alt_m"):
+            if c in self.df and np.isfinite(self.array(c)).any():
+                return c
+        return None
+
+    def _first_second(self):
+        t = self.time
+        fin = t[np.isfinite(t)]
+        return max(1, int(np.searchsorted(t, fin[0] + 1.0))) if len(fin) else 1
+
+    def event_time(self, kind):
+        """Time (current time base) of 'start', 'launch', 'burnout', 'apogee', 'landing', 'peak_accel'."""
+        t = self.time
+        fin = np.isfinite(t)
+        if not fin.any():
+            return None
+        if kind == "start":
+            return float(t[fin][0])
+        st = self.state_column()
+        if st and kind in ("launch", "burnout", "landing"):
+            for t0, _t1, s in self.segments(st):
+                if (kind == "launch" and 1 <= s <= 3) or (kind == "burnout" and s == 2) or \
+                        (kind == "landing" and s == 4):
+                    return float(t0)
+        if kind == "apogee":
+            c = self.alt_col()
+            return float(t[int(np.nanargmax(self.array(c)))]) if c else None
+        if kind in ("launch", "peak_accel"):
+            a = self.accel_g()
+            if a is not None and np.isfinite(a).any():
+                if kind == "peak_accel":
+                    return float(t[int(np.nanargmax(a))])
+                base = np.nanmedian(a[: self._first_second()])
+                idx = np.flatnonzero(a > base + 1.5)          # 1.5 g above the resting reading
+                if len(idx):
+                    return float(t[idx[0]])
+            if kind == "launch":
+                c = self.alt_col()
+                if c:
+                    h = self.array(c)
+                    idx = np.flatnonzero(h > np.nanmedian(h[: self._first_second()]) + 10.0)
+                    if len(idx):
+                        return float(t[idx[0]])
+        return None
+
+    def metrics(self):
+        """Ordered {name: (value, unit)} of headline numbers for the Compare flights table."""
+        m = {}
+        t = self.time
+        fin = t[np.isfinite(t)]
+        if len(fin):
+            m["Duration"] = (fin[-1] - fin[0], "s")
+        dt = np.diff(fin)
+        dt = dt[dt > 0]
+        if len(dt):
+            m["Sample rate"] = (1 / np.median(dt), "Hz")
+        launch, burnout = self.event_time("launch"), self.event_time("burnout")
+        apogee, landing = self.event_time("apogee"), self.event_time("landing")
+        if launch is not None:
+            m["Launch at"] = (launch, "s")
+            if burnout is not None:
+                m["Burn time"] = (burnout - launch, "s")
+            if apogee is not None:
+                m["Time to apogee"] = (apogee - launch, "s")
+            if landing is not None:
+                m["Flight time"] = (landing - launch, "s")
+
+        def peak(col, absval=False):
+            if col in self.df:
+                a = self.array(col)
+                a = np.abs(a) if absval else a
+                if np.isfinite(a).any():
+                    return float(np.nanmax(a))
+            return None
+
+        for col, name, unit, absval in (
+                ("alt_m", "Apogee (EKF)", "m", False), ("baro_alt_m", "Apogee (baro)", "m", False),
+                ("speed_mps", "Max speed", "m/s", False), ("mach", "Max Mach", "", False),
+                ("qbar_pa", "Max dynamic pressure", "Pa", False), ("vd_mps", "Max descent rate", "m/s", False),
+                ("tilt_deg", "Max tilt", "deg", False), ("roll_rate_dps", "Max |roll rate|", "deg/s", True),
+                ("tab_deg", "Max |tab|", "deg", True), ("dropped", "Dropped rows", "", False)):
+            v = peak(col, absval)
+            if v is not None:
+                m[name] = (v, unit)
+        a = self.accel_g()
+        if a is not None and np.isfinite(a).any():
+            m["Peak acceleration"] = (float(np.nanmax(a)), "g")
+        if "bus_v" in self.df and np.isfinite(self.array("bus_v")).any():
+            m["Min bus voltage"] = (float(np.nanmin(self.array("bus_v"))), "V")
+        return m
 
 
 # ----------------------------------------------------------------------------------------------
@@ -527,8 +651,38 @@ class PlotPanel(QtWidgets.QFrame):
         self.title = title
         self.title_lbl.setText(title or "Graph")
 
+    def comparing(self):
+        """True when this graph overlays more than one file: color by file, line style by column."""
+        return self.main.compare_mode and len({s["key"][0] for s in self.series}) > 1
+
+    def restyle(self):
+        for s in self.series:
+            s["item"].setPen(self.pen_for(s))
+        self._rebuild_legend()
+
+    def _rebuild_legend(self):
+        """Comparing: a grid with one legend column per flight and one row per signal."""
+        lg = self.legend
+        lg.clear()
+        order, ncol = self.series, 1
+        if self.comparing():
+            ids = {s["key"][0] for s in self.series}
+            files = [i for i in self.main.datasets if i in ids]
+            cols = list(dict.fromkeys(s["key"][1] for s in self.series))
+            order = sorted(self.series, key=lambda s: (cols.index(s["key"][1]),
+                                                       files.index(s["key"][0]) if s["key"][0] in files else 0))
+            ncol = len(files)
+        lg.setColumnCount(max(1, ncol))
+        for s in order:
+            lg.addItem(s["item"], self.main.series_label(s["key"]))
+
     def pen_for(self, s):
         th = self.main.theme
+        if self.comparing():
+            cols = list(dict.fromkeys(x["key"][1] for x in self.series))
+            style = LINE_STYLES[cols.index(s["key"][1]) % len(LINE_STYLES)] if s["key"][1] in cols else LINE_STYLES[0]
+            color = s.get("color") or self.main.file_color(self.main.datasets.get(s["key"][0]))
+            return pg.mkPen(color, width=2, style=style)
         color = s.get("color") or th["series"][s["slot"] % len(th["series"])]
         style = Qt.PenStyle.SolidLine if s["slot"] < len(th["series"]) else Qt.PenStyle.DashLine
         return pg.mkPen(color, width=2, style=style)
@@ -579,9 +733,10 @@ class PlotPanel(QtWidgets.QFrame):
             slot = next(i for i in range(len(used) + 1) if i not in used)
         s = dict(key=key, slot=slot, color=color)
         s["item"] = self.plot.plot([], [], name=self.main.series_label(key), connect="finite")
-        s["item"].setPen(self.pen_for(s))
-        s["item"].setVisible(visible)
+        ds = self.main.datasets.get(key[0])
+        s["item"].setVisible(visible and (ds is None or ds.visible))
         self.series.append(s)
+        self.restyle()
         self.refresh_series(s)
         if not self.title:
             self.set_title(key[1])
@@ -592,6 +747,7 @@ class PlotPanel(QtWidgets.QFrame):
             if s["key"] == key:
                 self.plot.removeItem(s["item"])
                 self.series.remove(s)
+        self.restyle()
         self.update_axis_label()
         self.main.series_changed()
 
@@ -796,8 +952,10 @@ class XYWindow(QtWidgets.QWidget):
         self.info = QtWidgets.QLabel()
         lay.addWidget(self.info)
 
+        if len(main.datasets) > 1:
+            self.ds_combo.addItem("All visible files (overlay)", -1)
         for ds in main.datasets.values():
-            self.ds_combo.addItem(ds.name, ds.id)
+            self.ds_combo.addItem(ds.label, ds.id)
         self.ds_combo.currentIndexChanged.connect(self._fill_columns)
         for w in (self.x_combo, self.y_combo, self.range_combo):
             w.currentIndexChanged.connect(self.refresh)
@@ -806,10 +964,17 @@ class XYWindow(QtWidgets.QWidget):
         main.view_changed.connect(self.refresh)
         self._fill_columns()
 
-    def _fill_columns(self):
+    def _selected(self):
+        if self.ds_combo.currentData() == -1:
+            return [d for d in self.main.datasets.values() if d.visible]
         ds = self.main.datasets.get(self.ds_combo.currentData())
-        if ds is None:
+        return [ds] if ds is not None else []
+
+    def _fill_columns(self):
+        sel = self._selected()
+        if not sel:
             return
+        ds = sel[0]
         cols = list(ds.df.columns)
         for combo, prefs in ((self.x_combo, ["east_m", "ve_mps"]), (self.y_combo, ["north_m", "vn_mps"])):
             combo.blockSignals(True)
@@ -827,41 +992,154 @@ class XYWindow(QtWidgets.QWidget):
     def refresh(self, *_):
         if not self.isVisible() and _:
             return
-        ds = self.main.datasets.get(self.ds_combo.currentData())
-        if ds is None or not self.x_combo.currentText() or not self.y_combo.currentText():
+        sel = self._selected()
+        xc, yc = self.x_combo.currentText(), self.y_combo.currentText()
+        if not sel or not xc or not yc:
             return
         th = self.main.theme
+        overlay = len(sel) > 1
         self.pw.setBackground(th["bg"])
         for name in ("left", "bottom"):
             self.pw.getAxis(name).setPen(th["fg2"])
             self.pw.getAxis(name).setTextPen(th["fg2"])
         a, b = self.main.range_for(self.range_combo.currentText())
-        i0, i1 = ds.index_range(a, b)
-        xc, yc = self.x_combo.currentText(), self.y_combo.currentText()
-        x, y = ds.array(xc)[i0:i1], ds.array(yc)[i0:i1]
         self.pw.clear()
+        legend = self.pw.addLegend(offset=(8, 6)) if overlay else None
+        if legend is not None:
+            legend.setLabelTextColor(th["fg"])
         self.pw.setLabel("bottom", f"{xc}")
         self.pw.setLabel("left", f"{yc}")
-        self.pw.plot(x, y, pen=pg.mkPen(th["series"][0], width=2), connect="finite")
-        ok = np.isfinite(x) & np.isfinite(y)
-        if self.color_cb.isChecked() and ok.any():
-            idx = np.flatnonzero(ok)
-            idx = idx[:: max(1, len(idx) // 15000)]
-            cmap = pg.ColorMap([0, 1], [QtGui.QColor("#cde2fb"), QtGui.QColor("#0d366b")])
-            tt = ds.time[i0:i1][idx]
-            span = (tt[-1] - tt[0]) or 1.0
-            brushes = cmap.mapToQColor((tt - tt[0]) / span)
-            self.pw.addItem(pg.ScatterPlotItem(x[idx], y[idx], size=4, pen=None, brush=brushes))
-        if ok.any():
-            f, l = np.flatnonzero(ok)[[0, -1]]
-            self.pw.addItem(pg.ScatterPlotItem([x[f]], [y[f]], symbol="o", size=10,
-                                               brush=th["series"][2], pen=pg.mkPen(th["bg"], width=2)))
-            self.pw.addItem(pg.ScatterPlotItem([x[l]], [y[l]], symbol="s", size=10,
-                                               brush=th["series"][7], pen=pg.mkPen(th["bg"], width=2)))
-            span = f"{a:.3f} → {b:.3f} s" if math.isfinite(a) and math.isfinite(b) else "whole file"
-            self.info.setText(f"{ok.sum():,} points, {span}.   ● start   ■ end")
+        total = 0
+        for ds in sel:
+            if xc not in ds.df or yc not in ds.df:
+                continue
+            i0, i1 = ds.index_range(a, b)
+            x, y = ds.array(xc)[i0:i1], ds.array(yc)[i0:i1]
+            color = self.main.file_color(ds) if overlay else th["series"][0]
+            self.pw.plot(x, y, pen=pg.mkPen(color, width=2), connect="finite",
+                         name=ds.label if overlay else None)
+            ok = np.isfinite(x) & np.isfinite(y)
+            total += int(ok.sum())
+            if self.color_cb.isChecked() and ok.any() and not overlay:
+                idx = np.flatnonzero(ok)
+                idx = idx[:: max(1, len(idx) // 15000)]
+                cmap = pg.ColorMap([0, 1], [QtGui.QColor("#cde2fb"), QtGui.QColor("#0d366b")])
+                tt = ds.time[i0:i1][idx]
+                span = (tt[-1] - tt[0]) or 1.0
+                brushes = cmap.mapToQColor((tt - tt[0]) / span)
+                self.pw.addItem(pg.ScatterPlotItem(x[idx], y[idx], size=4, pen=None, brush=brushes))
+            if ok.any():
+                f, l = np.flatnonzero(ok)[[0, -1]]
+                start_b = color if overlay else th["series"][2]
+                end_b = color if overlay else th["series"][7]
+                self.pw.addItem(pg.ScatterPlotItem([x[f]], [y[f]], symbol="o", size=10,
+                                                   brush=start_b, pen=pg.mkPen(th["bg"], width=2)))
+                self.pw.addItem(pg.ScatterPlotItem([x[l]], [y[l]], symbol="s", size=10,
+                                                   brush=end_b, pen=pg.mkPen(th["bg"], width=2)))
+        span = f"{a:.3f} → {b:.3f} s" if math.isfinite(a) and math.isfinite(b) else "whole file"
+        self.info.setText(f"{total:,} points, {span}.   ● start   ■ end")
         self.pw.setAspectLocked(self.aspect_cb.isChecked())
         self.pw.autoRange()
+
+
+class CompareWindow(QtWidgets.QWidget):
+    """Headline numbers of every open flight side by side."""
+
+    def __init__(self, main):
+        super().__init__(main, Qt.WindowType.Window)
+        self.main = main
+        self.setWindowTitle("Compare flights")
+        self.resize(980, 600)
+        lay = QtWidgets.QVBoxLayout(self)
+        top = QtWidgets.QHBoxLayout()
+        self.info = QtWidgets.QLabel()
+        top.addWidget(self.info, 1)
+        self.hidden_cb = QtWidgets.QCheckBox("Include hidden files")
+        self.hidden_cb.toggled.connect(self.refresh)
+        top.addWidget(self.hidden_cb)
+        lay.addLayout(top)
+        self.table = QtWidgets.QTableWidget()
+        self.table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Interactive)
+        self.table.horizontalHeader().setDefaultSectionSize(120)
+        self.table.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        lay.addWidget(self.table, 1)
+        row = QtWidgets.QHBoxLayout()
+        row.addStretch(1)
+        for text, fn in (("Copy", self.copy), ("Save CSV…", self.save), ("Refresh", self.refresh)):
+            b = QtWidgets.QPushButton(text)
+            b.clicked.connect(fn)
+            row.addWidget(b)
+        lay.addLayout(row)
+        main.files_changed.connect(self.refresh)
+        self.refresh()
+
+    def refresh(self, *_):
+        dss = [d for d in self.main.datasets.values() if d.visible or self.hidden_cb.isChecked()]
+        mets = [d.metrics() for d in dss]
+        names, units = [], {}
+        for m in mets:
+            for k, (_v, u) in m.items():
+                if k not in units:
+                    names.append(k)
+                    units[k] = u
+        extra = ["Mean", "Spread (max − min)"] if len(dss) > 1 else []
+        self.table.clear()
+        self.table.setColumnCount(len(dss) + len(extra))
+        self.table.setRowCount(len(names))
+        for c, d in enumerate(dss):
+            it = QtWidgets.QTableWidgetItem(d.label)
+            pm = QtGui.QPixmap(12, 12)
+            pm.fill(QtGui.QColor(self.main.file_color(d)))
+            it.setIcon(QtGui.QIcon(pm))
+            it.setToolTip(d.path)
+            self.table.setHorizontalHeaderItem(c, it)
+        for j, e in enumerate(extra):
+            self.table.setHorizontalHeaderItem(len(dss) + j, QtWidgets.QTableWidgetItem(e))
+        bold = self.table.font()
+        bold.setBold(True)
+        for r, name in enumerate(names):
+            unit = units[name]
+            self.table.setVerticalHeaderItem(r, QtWidgets.QTableWidgetItem(f"{name} [{unit}]" if unit else name))
+            vals = [m.get(name, (math.nan, ""))[0] for m in mets]
+            finite = [v for v in vals if math.isfinite(v)]
+            vmax = max(finite) if len(finite) > 1 else None
+            for c, v in enumerate(vals):
+                it = QtWidgets.QTableWidgetItem(fmt(v))
+                it.setTextAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+                if vmax is not None and v == vmax and min(finite) != vmax:
+                    it.setFont(bold)
+                    it.setToolTip("Highest of the compared files")
+                self.table.setItem(r, c, it)
+            if extra:
+                for j, v in enumerate((np.mean(finite) if finite else math.nan,
+                                       (max(finite) - min(finite)) if finite else math.nan)):
+                    it = QtWidgets.QTableWidgetItem(fmt(float(v)))
+                    it.setTextAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+                    self.table.setItem(r, len(dss) + j, it)
+        mode = dict(ALIGN_MODES).get(self.main.align_mode, "")
+        self.info.setText(f"{len(dss)} file(s). Event times use the current alignment ({mode}). "
+                          "Bold = highest value in the row.")
+
+    def rows(self):
+        hdr = ["metric"] + [self.table.horizontalHeaderItem(c).text() for c in range(self.table.columnCount())]
+        out = [hdr]
+        for r in range(self.table.rowCount()):
+            out.append([self.table.verticalHeaderItem(r).text()] +
+                       [(self.table.item(r, c).text() if self.table.item(r, c) else "")
+                        for c in range(self.table.columnCount())])
+        return out
+
+    def copy(self):
+        QtWidgets.QApplication.clipboard().setText("\n".join("\t".join(r) for r in self.rows()))
+
+    def save(self):
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save comparison", self.main._default_out("_compare.csv"),
+                                                        "CSV (*.csv)")
+        if path:
+            import csv
+            with open(path, "w", newline="", encoding="utf-8") as fh:
+                csv.writer(fh).writerows(self.rows())
 
 
 class TextDialog(QtWidgets.QDialog):
@@ -903,6 +1181,15 @@ KEYS
   S flight-state shading on/off   D derived signal   G new empty graph   T dark/light theme
   Ctrl+0 fit all graphs to the window   Ctrl+Shift+Up / Down active graph taller / shorter
 
+COMPARING FLIGHTS
+  * Open several logs of the same format (File ▸ Open folder… takes e.g. nav_*.csv).
+  * With "Compare mode" on, plotting a column overlays it for every flight of that format:
+    each flight keeps one color, each column gets its own line style.
+  * Flights list: tick to show/hide, double-click a name to rename, double-click the offset to
+    shift a flight, right-click to recolor / show only / close.
+  * "Align on" puts launch, burnout, apogee, landing or peak acceleration at t = 0 for every flight.
+  * Tools ▸ Compare flights (Ctrl+Shift+C): apogee, burn time, max speed, ... side by side.
+
 TIPS
   * Drag columns from the browser onto a graph (or onto the empty area) to plot them.
     Double-click a column to add it to the active graph (blue outline).
@@ -916,6 +1203,7 @@ TIPS
 # ----------------------------------------------------------------------------------------------
 class MainWindow(QtWidgets.QMainWindow):
     view_changed = QtCore.Signal()
+    files_changed = QtCore.Signal()
 
     def __init__(self):
         super().__init__()
@@ -935,6 +1223,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.shade_states = True
         self.dark = self.settings.value("dark", False, type=bool)
         self.wheel_zooms = self.settings.value("wheel_zooms", False, type=bool)
+        self.compare_mode = self.settings.value("compare_mode", True, type=bool)
+        self.align_mode = "start"
+        self._rebuilding_files = False
         self.view_hist, self.view_pos = [], -1
         self._syncing = False
         self._last_range = None
@@ -1074,6 +1365,64 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dock)
         self.data_dock = dock
 
+        # Left dock (top): list of open flights, for comparing several logs
+        fw = QtWidgets.QWidget()
+        fl = QtWidgets.QVBoxLayout(fw)
+        fl.setContentsMargins(4, 4, 4, 4)
+        row = QtWidgets.QHBoxLayout()
+        self.compare_cb = QtWidgets.QCheckBox("Compare mode")
+        self.compare_cb.setToolTip("Plotting a column overlays it for every file with the same format;\n"
+                                   "each file keeps one color, each column gets its own line style")
+        self.compare_cb.setChecked(self.compare_mode)
+        self.compare_cb.toggled.connect(self.set_compare_mode)
+        row.addWidget(self.compare_cb)
+        row.addStretch(1)
+        row.addWidget(QtWidgets.QLabel("Align on"))
+        self.align_combo = QtWidgets.QComboBox()
+        for key, label in ALIGN_MODES:
+            self.align_combo.addItem(label, key)
+        self.align_combo.setToolTip("Shift every file so this event is at t = 0")
+        self.align_combo.activated.connect(lambda _i: self.set_align_mode(self.align_combo.currentData()))
+        row.addWidget(self.align_combo)
+        fl.addLayout(row)
+        self.files_table = QtWidgets.QTableWidget(0, 5)
+        self.files_table.setHorizontalHeaderLabels(["", "Flight", "Format", "Length", "Offset s"])
+        self.files_table.verticalHeader().setVisible(False)
+        self.files_table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+        self.files_table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
+        self.files_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.DoubleClicked |
+                                         QtWidgets.QAbstractItemView.EditTrigger.EditKeyPressed)
+        fh = self.files_table.horizontalHeader()
+        fh.setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        fh.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        self.files_table.verticalHeader().setDefaultSectionSize(22)
+        self.files_table.setToolTip("Tick to show/hide a flight · double-click the name to rename it, "
+                                    "or the offset to shift it · right-click for more")
+        self.files_table.itemChanged.connect(self._files_item_changed)
+        self.files_table.currentCellChanged.connect(self._files_current_changed)
+        self.files_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.files_table.customContextMenuRequested.connect(self._files_menu)
+        fl.addWidget(self.files_table, 1)
+        brow = QtWidgets.QHBoxLayout()
+        for text, fn, tip in (("Open…", self.open_dialog, "Open more CSV logs"),
+                              ("Open folder…", self.open_folder_dialog, "Open every CSV in a folder"),
+                              ("Compare table…", self.open_compare, "Headline numbers of every flight side by side")):
+            b = QtWidgets.QPushButton(text)
+            b.setToolTip(tip)
+            b.clicked.connect(fn)
+            brow.addWidget(b)
+        fl.addLayout(brow)
+        fdock = QtWidgets.QDockWidget("Flights", self)
+        fdock.setObjectName("flightsDock")
+        fdock.setWidget(fw)
+        fdock.setFeatures(QtWidgets.QDockWidget.DockWidgetFeature.DockWidgetMovable |
+                          QtWidgets.QDockWidget.DockWidgetFeature.DockWidgetFloatable |
+                          QtWidgets.QDockWidget.DockWidgetFeature.DockWidgetClosable)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, fdock)
+        self.splitDockWidget(fdock, self.data_dock, Qt.Orientation.Vertical)
+        self.resizeDocks([fdock, self.data_dock], [190, 700], Qt.Orientation.Vertical)
+        self.files_dock = fdock
+
         # Bottom dock: readout table
         rd = QtWidgets.QWidget()
         rl = QtWidgets.QVBoxLayout(rd)
@@ -1106,7 +1455,7 @@ class MainWindow(QtWidgets.QMainWindow):
         rdock.setWidget(rd)
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, rdock)
         self.resizeDocks([rdock], [220], Qt.Orientation.Vertical)
-        self.resizeDocks([dock], [330], Qt.Orientation.Horizontal)
+        self.resizeDocks([dock], [370], Qt.Orientation.Horizontal)
         self.readout_dock = rdock
 
         self.status = self.statusBar()
@@ -1139,6 +1488,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         f = mb.addMenu("&File")
         act(f, "Open CSV…", self.open_dialog, "Ctrl+O", "Open one or more CSV logs", toolbar=True)
+        act(f, "Open folder…", self.open_folder_dialog, "Ctrl+Shift+O", "Open every CSV in a folder to compare them")
         self.recent_menu = f.addMenu("Open recent")
         self.recent_menu.aboutToShow.connect(self._build_recent)
         f.addSeparator()
@@ -1190,6 +1540,7 @@ class MainWindow(QtWidgets.QMainWindow):
                              "Swap what the wheel does over a graph", checkable=True)
         self.wheel_act.setChecked(self.wheel_zooms)
         v.addSeparator()
+        v.addAction(self.files_dock.toggleViewAction())
         v.addAction(self.data_dock.toggleViewAction())
         v.addAction(self.readout_dock.toggleViewAction())
 
@@ -1220,6 +1571,8 @@ class MainWindow(QtWidgets.QMainWindow):
         act(g, "Scroll graphs down", lambda: self._scroll_page(+1), "PgDown")
 
         tl = mb.addMenu("&Tools")
+        act(tl, "Compare flights…", self.open_compare, "Ctrl+Shift+C",
+            "Headline numbers of every open flight side by side", toolbar=True)
         act(tl, "XY plot…", self.open_xy, None, "Plot one column against another (e.g. ground track)",
             toolbar=False)
         act(tl, "Flight summary…", self.flight_summary, None, "Key numbers for each open file")
@@ -1299,7 +1652,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 QtWidgets.QMessageBox.warning(self, "Open", f"Could not read {p}:\n{exc}")
                 continue
             QtWidgets.QApplication.restoreOverrideCursor()
-            self.datasets[ds.id] = ds
+            self._register(ds)
             opened.append(ds)
             self._add_recent(ap)
             self.settings.setValue("last_dir", os.path.dirname(ap))
@@ -1307,18 +1660,284 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.status.showMessage(w, 8000)
         if not opened:
             return []
+        missing = []
+        for ds in opened:
+            self._inherit_derived(ds)
+            if not self._align_dataset(ds):
+                missing.append(ds.label)
         self.rebuild_tree(select=opened[-1])
         if not self.panels:
             self.auto_layout(ds=opened[0])
         else:
+            if self.compare_mode:
+                self._add_to_existing_graphs(opened)
             self.refresh_all()
+        if missing:
+            self._warn_alignment(missing)
         self.setWindowTitle(f"{APP_NAME} — {', '.join(d.name for d in self.datasets.values())}")
         n = sum(d.n for d in opened)
         self.status.showMessage(f"Loaded {', '.join(d.name for d in opened)} ({n:,} rows)", 6000)
         return opened
 
+    # ---- flights (comparing several files) --------------------------------------------
+    def _register(self, ds):
+        used = {d.slot for d in self.datasets.values()}
+        ds.slot = next(i for i in range(len(used) + 1) if i not in used)
+        self.datasets[ds.id] = ds
+
+    def file_color(self, ds):
+        th = self.theme
+        if ds is None:
+            return th["fg2"]
+        return ds.color or th["series"][ds.slot % len(th["series"])]
+
+    def same_format(self, ds):
+        return [d for d in self.datasets.values() if d.signature == ds.signature]
+
+    def expand_compare(self, keys):
+        """(file, column) -> that column in every visible file of the same format."""
+        out = []
+        for ds_id, col in keys:
+            ds = self.datasets[ds_id]
+            for d in self.same_format(ds):
+                k = (d.id, col)
+                if col in d.df and (d.id == ds_id or d.visible) and k not in out:
+                    out.append(k)
+        return out
+
+    def _inherit_derived(self, ds):
+        for other in self.same_format(ds):
+            if other is not ds:
+                for name, expr in other.derived.items():
+                    if name not in ds.derived:
+                        try:
+                            ds.set_derived(name, expr)
+                        except Exception:
+                            pass
+
+    def _add_to_existing_graphs(self, new_datasets):
+        for ds in new_datasets:
+            for p in self.panels:
+                cols = []
+                for s in p.series:
+                    d = self.datasets.get(s["key"][0])
+                    if d is not None and d is not ds and d.signature == ds.signature and s["key"][1] not in cols:
+                        cols.append(s["key"][1])
+                for c in cols:
+                    if c in ds.df:
+                        p.add((ds.id, c))
+
+    def set_compare_mode(self, on):
+        self.compare_mode = on
+        self.settings.setValue("compare_mode", on)
+        if self.compare_cb.isChecked() != on:
+            self.compare_cb.setChecked(on)
+        if on:   # overlay the other flights on every existing graph
+            for p in self.panels:
+                for k in self.expand_compare([s["key"] for s in p.series]):
+                    p.add(k)
+            self.refresh_all()
+        for p in self.panels:
+            p.restyle()
+        self.series_changed()
+
+    def set_align_mode(self, mode):
+        self.align_mode = mode
+        i = self.align_combo.findData(mode)
+        if i >= 0 and self.align_combo.currentIndex() != i:
+            self.align_combo.setCurrentIndex(i)
+        if mode == "manual":
+            return
+        missing = [ds.label for ds in self.datasets.values() if not self._align_dataset(ds)]
+        self.crop, self.crop_history = None, []      # crop was in the old time base
+        self._update_mode_label()
+        self.rebuild_files()
+        self._sync_time_controls()
+        self.refresh_all()
+        self.fit_all()
+        if missing:
+            self._warn_alignment(missing)
+
+    def _align_dataset(self, ds) -> bool:
+        """Shift ds so the alignment event is at t = 0. False if the event wasn't found."""
+        mode = self.align_mode
+        if mode == "manual":
+            return True
+        ds.offset = 0.0
+        ds.compute_time()
+        if mode == "start":
+            return True
+        e = ds.event_time(mode)
+        if e is None:
+            return False
+        ds.offset = -e
+        ds.compute_time()
+        return True
+
+    def _warn_alignment(self, labels):
+        name = dict(ALIGN_MODES).get(self.align_mode, self.align_mode)
+        self.status.showMessage(f"No '{name}' event found in {', '.join(labels)}; left at file start", 10000)
+
+    def set_file_visible(self, ds, on):
+        ds.visible = on
+        for p in self.panels:
+            for s in p.series:
+                if s["key"][0] == ds.id:
+                    s["item"].setVisible(on)
+        self.refresh_state_shading()
+        self.series_changed()
+        self.files_changed.emit()
+
+    def show_all(self):
+        for d in self.datasets.values():
+            self.set_file_visible(d, True)
+        self.rebuild_files()
+
+    def show_only(self, ds):
+        for d in self.datasets.values():
+            self.set_file_visible(d, d is ds)
+        self.rebuild_files()
+
+    def rebuild_files(self):
+        self._rebuilding_files = True
+        tbl = self.files_table
+        tbl.setRowCount(len(self.datasets))
+        groups = {}
+        for d in self.datasets.values():
+            groups.setdefault(d.signature, []).append(d)
+        cur = self.current_dataset()
+        for r, ds in enumerate(self.datasets.values()):
+            t = ds.time[np.isfinite(ds.time)]
+            dur = t[-1] - t[0] if len(t) else 0.0
+            n_same = len(groups[ds.signature])
+            fmt_txt = format_name(ds.signature) + (f" ×{n_same}" if n_same > 1 else "")
+            items = [QtWidgets.QTableWidgetItem(""), QtWidgets.QTableWidgetItem(ds.label),
+                     QtWidgets.QTableWidgetItem(fmt_txt), QtWidgets.QTableWidgetItem(f"{dur:.1f} s"),
+                     QtWidgets.QTableWidgetItem(f"{ds.offset:.3f}")]
+            items[0].setToolTip("Show / hide this flight")
+            items[3].setToolTip(f"{ds.n:,} rows")
+            base = Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+            items[0].setFlags(base | Qt.ItemFlag.ItemIsUserCheckable)
+            items[0].setCheckState(Qt.CheckState.Checked if ds.visible else Qt.CheckState.Unchecked)
+            items[1].setFlags(base | Qt.ItemFlag.ItemIsEditable)
+            items[1].setData(Qt.ItemDataRole.DecorationRole, QtGui.QColor(self.file_color(ds)))
+            items[1].setToolTip(f"{ds.path}\nDouble-click to rename")
+            items[2].setToolTip(f"{n_same} open file(s) share this column layout and can be overlaid")
+            items[4].setFlags(base | Qt.ItemFlag.ItemIsEditable)
+            items[4].setToolTip("Seconds added to this file's time (double-click to edit)")
+            for c, it in enumerate(items):
+                if c not in (0, 1, 4):
+                    it.setFlags(base)
+                if c >= 3:
+                    it.setTextAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+                it.setData(Qt.ItemDataRole.UserRole, ds.id)
+                tbl.setItem(r, c, it)
+            if cur is not None and ds.id == cur.id:
+                tbl.selectRow(r)
+        self._rebuilding_files = False
+        self.files_changed.emit()
+
+    def _files_item_changed(self, it):
+        if self._rebuilding_files:
+            return
+        ds = self.datasets.get(it.data(Qt.ItemDataRole.UserRole))
+        if ds is None:
+            return
+        if it.column() == 0:
+            self.set_file_visible(ds, it.checkState() == Qt.CheckState.Checked)
+        elif it.column() == 1:
+            ds.label = it.text().strip() or ds.short
+            for p in self.panels:
+                p._relabel()
+            self.rebuild_files()
+            self.series_changed()
+        elif it.column() == 4:
+            try:
+                ds.offset = float(it.text())
+            except ValueError:
+                self.rebuild_files()
+                return
+            self.set_align_mode("manual")
+            ds.compute_time()
+            self.rebuild_files()
+            self._sync_time_controls()
+            self.refresh_all()
+
+    def _files_current_changed(self, row, _col, _prow, _pcol):
+        if self._rebuilding_files or row < 0:
+            return
+        it = self.files_table.item(row, 0)
+        ds_id = it.data(Qt.ItemDataRole.UserRole) if it else None
+        for i in range(self.tree.topLevelItemCount()):
+            top = self.tree.topLevelItem(i)
+            if top.data(0, Qt.ItemDataRole.UserRole + 1) == ds_id:
+                self.tree.setCurrentItem(top)
+                self.tree.scrollToItem(top, QtWidgets.QAbstractItemView.ScrollHint.PositionAtTop)
+                break
+
+    def _files_menu(self, pos):
+        it = self.files_table.itemAt(pos)
+        ds = self.datasets.get(it.data(Qt.ItemDataRole.UserRole)) if it else None
+        m = QtWidgets.QMenu(self)
+        if ds is not None:
+            m.addAction(f"Show only {ds.label}", lambda: self.show_only(ds))
+            m.addAction("Change color…", lambda: self._recolor_file(ds))
+            if ds.color:
+                m.addAction("Reset color", lambda: (setattr(ds, "color", None), self._colors_changed()))
+            m.addAction("Rename…", lambda: self.files_table.editItem(self.files_table.item(it.row(), 1)))
+            m.addAction("Close file", lambda: self.close_file(ds))
+            m.addSeparator()
+        m.addAction("Show all", self.show_all)
+        m.addAction("Compare table…", self.open_compare)
+        m.addAction("Open folder…", self.open_folder_dialog)
+        m.exec(self.files_table.viewport().mapToGlobal(pos))
+
+    def _recolor_file(self, ds):
+        c = QtWidgets.QColorDialog.getColor(QtGui.QColor(self.file_color(ds)), self, f"Color of {ds.label}")
+        if c.isValid():
+            ds.color = c.name()
+            self._colors_changed()
+
+    def _colors_changed(self):
+        for p in self.panels:
+            p.restyle()
+        self.rebuild_files()
+        self.series_changed()
+
+    def open_folder_dialog(self):
+        d = QtWidgets.QFileDialog.getExistingDirectory(self, "Open every CSV in a folder",
+                                                       self.settings.value("last_dir", ""))
+        if not d:
+            return
+        pattern, ok = QtWidgets.QInputDialog.getText(
+            self, "Open folder", "Files to open (e.g. nav_*.csv, flight_*.csv, *.csv):",
+            text=self.settings.value("folder_pattern", "*.csv"))
+        if not ok or not pattern.strip():
+            return
+        self.settings.setValue("folder_pattern", pattern.strip())
+        import glob
+        paths = []
+        for pat in pattern.replace(";", ",").split(","):
+            paths += glob.glob(os.path.join(d, pat.strip()))
+        paths = sorted({p for p in paths if os.path.isfile(p)})
+        if not paths:
+            QtWidgets.QMessageBox.information(self, "Open folder", f"No files matching '{pattern}' in\n{d}")
+            return
+        self.open_files(paths)
+
+    def open_compare(self):
+        if not self.datasets:
+            return
+        if getattr(self, "_compare_win", None) is None:
+            self._compare_win = CompareWindow(self)
+        self._compare_win.refresh()
+        self._compare_win.show()
+        self._compare_win.raise_()
+
     def close_current_file(self):
-        ds = self.current_dataset()
+        self.close_file(self.current_dataset())
+
+    def close_file(self, ds):
         if ds is None:
             return
         for p in self.panels:
@@ -1363,7 +1982,8 @@ class MainWindow(QtWidgets.QMainWindow):
         bold = self.tree.font()
         bold.setBold(True)
         for ds in self.datasets.values():
-            top = QtWidgets.QTreeWidgetItem([ds.name, "", f"{ds.n:,} rows"])
+            name = ds.name if ds.label == ds.short else f"{ds.label} ({ds.name})"
+            top = QtWidgets.QTreeWidgetItem([name, "", f"{ds.n:,} rows"])
             top.setFont(0, bold)
             top.setData(0, Qt.ItemDataRole.UserRole + 1, ds.id)
             top.setToolTip(0, ds.path)
@@ -1385,6 +2005,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tree.setCurrentItem(top)
         self._apply_filter(self.filter_edit.text())
         self._sync_time_controls()
+        self.rebuild_files()
 
     def _apply_filter(self, text):
         terms = text.lower().split()
@@ -1423,6 +2044,10 @@ class MainWindow(QtWidgets.QMainWindow):
             m.addAction("Add to active graph", lambda: self.add_series(keys, self.active_panel))
             m.addAction("Plot in new graph", lambda: self.add_series(keys, None))
             m.addAction("Each in its own graph", lambda: [self.add_series([k], None) for k in keys])
+            if len(self.datasets) > 1:
+                m.addAction("Compare across all flights (new graph)",
+                            lambda: self.add_series(keys, None, expand=True))
+                m.addAction("This file only (new graph)", lambda: self.add_series(keys, None, expand=False))
             m.addSeparator()
             ds = self.datasets[keys[0][0]]
             same = all(k[0] == ds.id for k in keys)
@@ -1470,11 +2095,14 @@ class MainWindow(QtWidgets.QMainWindow):
         ds = self.current_dataset()
         if ds is None:
             return
+        if self.offset_spin.value() != ds.offset:
+            self.set_align_mode("manual")      # hand-edited offset overrides automatic alignment
         ds.time_col = self.time_col_combo.currentData()
         ds.time_unit = self.time_unit_combo.currentText()
         ds.zero_start = self.zero_cb.isChecked()
         ds.offset = self.offset_spin.value()
         ds.compute_time()
+        self.rebuild_files()
         if ds.time_col and not np.all(np.diff(ds.time[np.isfinite(ds.time)]) >= 0):
             self.status.showMessage(f"Warning: '{ds.time_col}' is not monotonic; readout may be off", 8000)
         self.refresh_all()
@@ -1496,16 +2124,25 @@ class MainWindow(QtWidgets.QMainWindow):
         dlg = DerivedDialog(self, ds, name, expr)
         if dlg.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             new = dlg.name_edit.text().strip()
+            if self.compare_mode:   # same signal for every flight of this format
+                for d in self.same_format(ds):
+                    if d is not ds:
+                        try:
+                            d.set_derived(new, ds.derived[new])
+                        except Exception as exc:
+                            self.status.showMessage(f"{new} failed for {d.label}: {exc}", 8000)
             self.rebuild_tree(select=ds)
             if dlg.add_cb.isChecked() and not editing:
                 self.add_series([(ds.id, new)], self.active_panel)
             self.refresh_all()
 
     def delete_derived(self, ds, name):
-        for p in self.panels:
-            if p.has((ds.id, name)):
-                p.remove((ds.id, name))
-        ds.remove_derived(name)
+        targets = [d for d in self.same_format(ds) if name in d.derived] if self.compare_mode else [ds]
+        for d in targets:
+            for p in self.panels:
+                if p.has((d.id, name)):
+                    p.remove((d.id, name))
+            d.remove_derived(name)
         self.rebuild_tree(select=ds)
 
     # ---- panels -----------------------------------------------------------------------
@@ -1625,10 +2262,12 @@ class MainWindow(QtWidgets.QMainWindow):
         if p is not None:
             p.apply_theme(True)
 
-    def add_series(self, keys, panel=None, title=None):
+    def add_series(self, keys, panel=None, title=None, expand=None):
         keys = [k for k in keys if k[0] in self.datasets and k[1] in self.datasets[k[0]].df]
         if not keys:
             return None
+        if self.compare_mode if expand is None else expand:
+            keys = self.expand_compare(keys)
         if panel is None or panel not in self.panels:
             panel = self.new_panel(title or (keys[0][1] if len(keys) == 1 else ""))
             self._ensure_visible(panel)
@@ -1645,7 +2284,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ds = self.datasets.get(key[0])
         if ds is None:
             return key[1]
-        return key[1] if len(self.datasets) <= 1 else f"{ds.short}:{key[1]}"
+        return key[1] if len(self.datasets) <= 1 else f"{ds.label} · {key[1]}"
 
     def auto_layout(self, ds=None, clear=False):
         ds = ds or self.current_dataset()
@@ -1784,7 +2423,7 @@ class MainWindow(QtWidgets.QMainWindow):
         segs = []
         if self.shade_states:
             for ds in self.datasets.values():
-                col = ds.state_column()
+                col = ds.state_column() if ds.visible else None
                 if col:
                     segs = ds.segments(col)
                     break
@@ -2065,7 +2704,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def find_events(self):
         events = []
         for ds in self.datasets.values():
-            pre = "" if len(self.datasets) == 1 else f"{ds.short}: "
+            if not ds.visible:
+                continue
+            pre = "" if len(self.datasets) == 1 else f"{ds.label}: "
             col = ds.state_column()
             if col:
                 for t0, _t1, st in ds.segments(col)[1:]:
@@ -2108,7 +2749,7 @@ class MainWindow(QtWidgets.QMainWindow):
             t = ds.time[np.isfinite(ds.time)]
             dt = np.diff(t)
             dt = dt[dt > 0]
-            lines.append(f"=== {ds.name} ===")
+            lines.append(f"=== {ds.label} ({ds.name}) ===")
             lines.append(f"rows {ds.n:,}   columns {len(ds.base_columns)}   time column {ds.time_col}")
             if len(t):
                 lines.append(f"duration {t[-1] - t[0]:.3f} s   ({t[0]:.3f} → {t[-1]:.3f} s)")
@@ -2220,8 +2861,10 @@ class MainWindow(QtWidgets.QMainWindow):
         ids = list(self.datasets)
         return {
             "version": 1,
+            "compare_mode": self.compare_mode, "align": self.align_mode,
             "files": [{"path": d.path, "time_col": d.time_col, "time_unit": d.time_unit,
-                       "zero_start": d.zero_start, "offset": d.offset, "derived": d.derived}
+                       "zero_start": d.zero_start, "offset": d.offset, "derived": d.derived,
+                       "label": d.label, "color": d.color, "visible": d.visible}
                       for d in self.datasets.values()],
             "graphs": [{"title": p.title, "log_y": p.log_btn.isChecked(), "height": p.height(),
                         "series": [{"file": ids.index(s["key"][0]), "column": s["key"][1], "slot": s["slot"],
@@ -2268,7 +2911,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     ds = Dataset(p)
                 finally:
                     QtWidgets.QApplication.restoreOverrideCursor()
-                self.datasets[ds.id] = ds
+                self._register(ds)
+            ds.label = f.get("label") or ds.short
+            ds.color = f.get("color")
+            ds.visible = f.get("visible", True)
             ds.time_col = f.get("time_col", ds.time_col)
             ds.time_unit = f.get("time_unit", "auto")
             ds.zero_start = f.get("zero_start", True)
@@ -2280,6 +2926,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 except Exception as exc:
                     self.status.showMessage(f"Derived {name} failed: {exc}", 8000)
             files.append(ds)
+        # Restore compare settings without re-aligning (the saved offsets already encode it)
+        self.compare_mode = lay.get("compare_mode", self.compare_mode)
+        self.compare_cb.blockSignals(True)
+        self.compare_cb.setChecked(self.compare_mode)
+        self.compare_cb.blockSignals(False)
+        self.align_mode = lay.get("align", "manual")
+        self.align_combo.setCurrentIndex(max(0, self.align_combo.findData(self.align_mode)))
         self.clear_panels()
         self.crop = tuple(lay["crop"]) if lay.get("crop") else None
         self.crop_history = []
