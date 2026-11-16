@@ -10,9 +10,10 @@
  *              no sooner than MIN_BURN_MS after launch
  *   apogee:    EKF vertical speed < 0 for APOGEE_HOLD_MS, or altitude APOGEE_ALT_DROP_M below the
  *              highest altitude reached (backup), no sooner than MIN_COAST_MS after burnout
- *   touchdown: |vertical speed| < LANDED_VS_MPS, |specific force| within LANDED_ACCEL_TOL_G of 1 g,
- *              rotation < LANDED_GYRO_DPS and altitude steady within LANDED_ALT_BAND_M, all for
- *              LANDED_HOLD_MS
+ *   touchdown: EITHER settled: |vertical speed| < LANDED_VS_MPS, |specific force| within
+ *              LANDED_ACCEL_TOL_G of 1 g and rotation < LANDED_GYRO_DPS, all for LANDED_HOLD_MS
+ *              OR impact: |specific force| > LANDED_IMPACT_G for LANDED_IMPACT_HOLD_MS, at least
+ *              LANDED_IMPACT_AFTER_MS after apogee
  *
  * Altitude and vertical speed come from the NavEKF, which ignores the barometer while the rocket
  * is transonic (see machNumber() and navFeed() in loop.cpp).
@@ -76,6 +77,5 @@ private:
     FlightState state_ = FlightState::Launchpad;
     uint64_t stateSinceUs_ = 0;
     float maxAlt_ = 0.0f;
-    Hold launch_, launchBackup_, burnout_, apogee_, landed_;
-    float landedAltMin_ = 0.0f, landedAltMax_ = 0.0f;   // altitude band while the landed hold runs
+    Hold launch_, launchBackup_, burnout_, apogee_, landed_, impact_;
 };

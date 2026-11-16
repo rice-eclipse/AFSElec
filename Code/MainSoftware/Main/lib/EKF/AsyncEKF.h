@@ -24,6 +24,11 @@
  *
  * Updates use the Joseph form (P stays symmetric positive-definite), an optional chi-square
  * innovation gate (outlier rejection), and are rolled back if they would produce NaN/Inf.
+ *
+ * Soft gate (setSoftGate(true)): a measurement past the gate is not thrown away but fused with its
+ * noise inflated (Huber weighting), so it counts as if it were exactly sqrt(gate) sigma off: a
+ * spike moves the state only a little, and a filter that has drifted is pulled back steadily
+ * instead of rejecting everything until its own uncertainty grows enough.
  */
 #pragma once
 
@@ -47,12 +52,14 @@ enum class UpdateStatus : uint8_t {
     Stale,       // measurement older than maxLagUs, state unchanged
     Numerical,   // S not positive definite, or the result was not finite; state unchanged
     Skipped,     // deliberately not fused (e.g. used as a reference instead); state unchanged
+    Deweighted,  // outlier with the soft gate on: fused, but with its noise inflated
 };
 
 struct UpdateResult {
     UpdateStatus status;
-    float nis;     // normalized innovation squared y^T S^-1 y (expected value = M)
-    bool accepted() const { return status == UpdateStatus::Accepted; }
+    float nis;     // normalized innovation squared y^T S^-1 y (expected value = M), before any de-weighting
+    /** True if the state was updated (fully, or de-weighted by the soft gate). */
+    bool accepted() const { return status == UpdateStatus::Accepted || status == UpdateStatus::Deweighted; }
 };
 
 template <int N>
@@ -69,7 +76,7 @@ public:
         P_ = P0;
         symmetrize(P_);
         tUs_ = tUs;
-        predictions_ = accepted_ = gated_ = stale_ = numerical_ = 0;
+        predictions_ = accepted_ = gated_ = deweighted_ = stale_ = numerical_ = 0;
     }
 
     // ---------------- State access ----------------
@@ -93,6 +100,19 @@ public:
      * fusing a baro at 1 kHz). P is symmetrized and floored either way.
      */
     void setJosephForm(bool on) { joseph_ = on; }
+    /**
+     * false (default): a measurement past its gate is rejected (UpdateStatus::Gated).
+     * true: it is fused with its noise inflated (UpdateStatus::Deweighted): S is scaled by
+     *       (nis / gate)^exponent.
+     *   exponent 0.5: Huber weighting. Every outlier makes the correction a sqrt(gate)-sigma
+     *                 innovation would make, however large it is.
+     *   exponent 1:   stronger. The correction shrinks as the outlier grows (~1 / its size), so a
+     *                 big disagreement is followed slowly, faster as the filter's uncertainty grows.
+     */
+    void setSoftGate(bool on, float exponent = 0.5f) {
+        softGate_ = on;
+        softExp_ = exponent > 0.0f ? exponent : 0.5f;
+    }
 
     // ---------------- Prediction ----------------
     /** Propagates the state by dt seconds (no timestamp change). */
@@ -158,9 +178,15 @@ public:
             return {UpdateStatus::Numerical, NAN};
         }
         const float nis = (y.T() * Sinv * y)(0, 0);
-        if (gate > 0.0f && !(nis <= gate)) {
+        const float f = gateFactor(nis, gate);
+        if (f == 0.0f) {
             gated_++;
             return {UpdateStatus::Gated, nis};
+        }
+        Mat<M, M> Reff = R;
+        if (f > 1.0f) {   // soft gate: S -> f S, i.e. R -> f R + (f - 1) H P H^T
+            Reff = R * f + (S - R) * (f - 1.0f);
+            Sinv = Sinv * (1.0f / f);
         }
 
         const Mat<N, M> K = PHt * Sinv;
@@ -169,7 +195,7 @@ public:
         if (joseph_) {
             // Joseph form: P = (I - KH) P (I - KH)^T + K R K^T  (stays symmetric positive definite)
             const Matrix IKH = Matrix::identity() - K * H;
-            PNew = IKH * P_ * IKH.T() + K * R * K.T();
+            PNew = IKH * P_ * IKH.T() + K * Reff * K.T();
         } else {
             // Short form: P = P - K H P = P - K (P H^T)^T
             PNew = P_ - K * PHt.T();
@@ -183,8 +209,7 @@ public:
         x_ = xNew;
         P_ = PNew;
         floorVariance();
-        accepted_++;
-        return {UpdateStatus::Accepted, nis};
+        return finishUpdate(nis, f);
     }
 
     /**
@@ -207,9 +232,14 @@ public:
             return {UpdateStatus::Numerical, NAN};
         }
         const float nis = (y.T() * Sinv * y)(0, 0);
-        if (gate > 0.0f && !(nis <= gate)) {
+        const float f = gateFactor(nis, gate);
+        if (f == 0.0f) {
             gated_++;
             return {UpdateStatus::Gated, nis};
+        }
+        if (f > 1.0f) {   // soft gate: S -> f S (the P update below uses this S)
+            S = S * f;
+            Sinv = Sinv * (1.0f / f);
         }
 
         Mat<N, M> K = U * Sinv;
@@ -228,8 +258,7 @@ public:
         x_ = xNew;
         P_ = PNew;
         floorVariance();
-        accepted_++;
-        return {UpdateStatus::Accepted, nis};
+        return finishUpdate(nis, f);
     }
 
     /** Convenience for scalar measurements. */
@@ -243,12 +272,29 @@ public:
 
     // ---------------- Statistics ----------------
     uint32_t predictions() const { return predictions_; }
-    uint32_t acceptedUpdates() const { return accepted_; }
-    uint32_t gatedUpdates() const { return gated_; }
+    uint32_t acceptedUpdates() const { return accepted_; }      // fused at full weight
+    uint32_t gatedUpdates() const { return gated_; }            // rejected (soft gate off)
+    uint32_t deweightedUpdates() const { return deweighted_; }  // outliers fused at reduced weight (soft gate on)
+    uint32_t outlierUpdates() const { return gated_ + deweighted_; }   // past the gate either way
     uint32_t staleUpdates() const { return stale_; }
     uint32_t numericalFailures() const { return numerical_; }
 
 private:
+    /** 1 = fuse normally, 0 = reject, > 1 = soft gate: scale S by this. */
+    float gateFactor(float nis, float gate) const {
+        if (!(gate > 0.0f) || nis <= gate) return 1.0f;
+        if (!softGate_ || !isfinite(nis)) return 0.0f;
+        return softExp_ == 0.5f ? sqrtf(nis / gate) : powf(nis / gate, softExp_);
+    }
+    UpdateResult finishUpdate(float nis, float f) {
+        if (f > 1.0f) {
+            deweighted_++;
+            return {UpdateStatus::Deweighted, nis};
+        }
+        accepted_++;
+        return {UpdateStatus::Accepted, nis};
+    }
+
     void floorVariance() {
         for (int i = 0; i < N; i++)
             if (P_(i, i) < minVar_) P_(i, i) = minVar_;
@@ -260,7 +306,9 @@ private:
     float maxStep_ = 0.01f;
     float minVar_ = 1e-9f;
     bool joseph_ = true;
-    uint32_t predictions_ = 0, accepted_ = 0, gated_ = 0, stale_ = 0, numerical_ = 0;
+    bool softGate_ = false;
+    float softExp_ = 0.5f;
+    uint32_t predictions_ = 0, accepted_ = 0, gated_ = 0, deweighted_ = 0, stale_ = 0, numerical_ = 0;
 };
 
 } // namespace ekf

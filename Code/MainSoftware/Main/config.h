@@ -177,11 +177,19 @@ constexpr uint32_t MIN_BURN_MS           = 300;     // no burnout earlier than t
 constexpr uint32_t APOGEE_HOLD_MS        = 300;     // apogee: EKF vertical speed < 0 for this long ...
 constexpr float    APOGEE_ALT_DROP_M     = 10.0f;   // ... or altitude this far below the maximum
 constexpr uint32_t MIN_COAST_MS          = 1000;    // no apogee earlier than this after burnout
-constexpr float    LANDED_VS_MPS         = 1.0f;    // landed: |vertical speed| below this,
+// Landed = (settled) OR (impact):
+//   settled: |vertical speed|, |specific force| - 1 g and rotation all below their limits, held for LANDED_HOLD_MS
+//   impact:  |specific force| above LANDED_IMPACT_G for LANDED_IMPACT_HOLD_MS, no sooner than
+//            LANDED_IMPACT_AFTER_MS after apogee (so the parachute opening shock doesn't count).
+//            With a dual-deploy (main opened low), make LANDED_IMPACT_AFTER_MS longer than the time
+//            from apogee to main deployment.
+constexpr float    LANDED_VS_MPS         = 1.0f;    // settled: |vertical speed| below this,
 constexpr float    LANDED_ACCEL_TOL_G    = 0.2f;    //   |specific force| within 1 g +- this,
 constexpr float    LANDED_GYRO_DPS       = 20.0f;   //   rotation below this,
-constexpr float    LANDED_ALT_BAND_M     = 3.0f;    //   altitude within a band this wide,
 constexpr uint32_t LANDED_HOLD_MS        = 3000;    //   all for this long
+constexpr float    LANDED_IMPACT_G       = 4.0f;    // impact: |specific force| above this ...
+constexpr uint32_t LANDED_IMPACT_HOLD_MS = 5;       //   ... for this long ...
+constexpr uint32_t LANDED_IMPACT_AFTER_MS = 20'000; //   ... at least this long after apogee (DESCENT)
 
 // High-g takeover: the ICM45686 accelerometer clips at +-16 g, so once the KX134 (+-64 g) reads
 // more than HIGHG_SWITCH_G (|accel|), the ICM45686 accelerometer is ignored and the KX134 feeds the

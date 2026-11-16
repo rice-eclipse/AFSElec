@@ -97,6 +97,7 @@ bool NavEKF::begin(float padPressureMbar, const Vec3& accelBody, const Vec3& mag
     magCount_ = 0;
     inFlight_ = false;
     stale_ = 0;
+    magDisturbed_ = 0;
     baroNisSum_ = magNisSum_ = 0.0f;
     baroNisN_ = magNisN_ = 0;
 
@@ -115,6 +116,7 @@ bool NavEKF::begin(float padPressureMbar, const Vec3& accelBody, const Vec3& mag
     ekf_.reset(Vec<N>::zeros(), P0, tUs);
     ekf_.setJosephForm(false);
     ekf_.setMinVariance(1e-10f);
+    ekf_.setSoftGate(cfg_.softGates, cfg_.softGateExponent);
     return true;
 }
 
@@ -256,6 +258,7 @@ void NavEKF::injectError() {
 void NavEKF::accumulateNis(const ekf::UpdateResult& r, float& sum, uint32_t& n) {
     if (!r.accepted()) return;
     injectError();
+    if (r.status == ekf::UpdateStatus::Deweighted) return;   // outliers would swamp the consistency average
     sum += r.nis;
     n++;
 }
@@ -302,12 +305,20 @@ ekf::UpdateResult NavEKF::baroPressure(uint64_t tUs, float mbar) {
 
 ekf::UpdateResult NavEKF::magnetometer(uint64_t tUs, const Vec3& field) {
     if (!magEnabled_ || !finite3(field)) return {ekf::UpdateStatus::Stale, NAN};
+    // Disturbed field (motor, pyro wiring, ...): wrong strength. With soft gates the reading is
+    // trusted less the further off it is (noise x deviation / tolerance); without, it is rejected.
     const float strength = ekf::norm(field);
-    if (fabsf(strength - magStrength_) > cfg_.magStrengthTolerance * magStrength_)
-        return {ekf::UpdateStatus::Gated, NAN};   // disturbed field (motor, pyro wiring, ...)
+    const float allowed = cfg_.magStrengthTolerance * magStrength_;
+    const float deviation = fabsf(strength - magStrength_);
+    float noiseScale = 1.0f;
+    if (deviation > allowed) {
+        magDisturbed_++;
+        if (!cfg_.softGates || !(allowed > 0.0f)) return {ekf::UpdateStatus::Gated, NAN};
+        noiseScale = deviation / allowed;
+    }
     float lag;
     if (!sync(tUs, lag)) return {ekf::UpdateStatus::Stale, NAN};
-    if (!inFlight_) return padHeading(field);
+    if (!inFlight_) return padHeading(field, noiseScale);
 
     // Predicted direction in the body frame: m = R^T m_ref. With q_true = q exp(dtheta):
     // m_true = (I - [dtheta]x) m = m + [m]x dtheta  ->  H = [m]x on the attitude error.
@@ -317,7 +328,8 @@ ekf::UpdateResult NavEKF::magnetometer(uint64_t tUs, const Vec3& field) {
     const Vec3 y = ekf::normalized(field) - predicted;
     Mat<3, N> H = Mat<3, N>::zeros();
     setBlock(H, 0, TX, ekf::skew(predicted));
-    const float r2 = cfg_.magNoise * cfg_.magNoise;
+    const float sigma = cfg_.magNoise * noiseScale;
+    const float r2 = sigma * sigma;
     const float rd[3] = {r2, r2, r2};
 
     ekf::UpdateResult r = ekf_.update<3>(y, H, Mat3::diagonal(rd), cfg_.magGate);
@@ -354,7 +366,7 @@ ekf::UpdateResult NavEKF::stationary(uint64_t tUs) {
  * attitude error phi = R dtheta (true = Exp(phi) * estimate), the projected field is rotated by
  * -phi, so  azimuth(measured) - azimuth(reference) = -phi_z = -R.row(2) . dtheta.
  */
-ekf::UpdateResult NavEKF::padHeading(const Vec3& field) {
+ekf::UpdateResult NavEKF::padHeading(const Vec3& field, float noiseScale) {
     magAvg_ = magCount_ == 0 ? field : magAvg_ + (field - magAvg_) * 0.02f;   // ~50-sample average
     magCount_++;
 
@@ -369,7 +381,7 @@ ekf::UpdateResult NavEKF::padHeading(const Vec3& field) {
     if (y < -3.14159265f) y += 6.28318531f;
     Mat<1, N> H = Mat<1, N>::zeros();
     for (int j = 0; j < 3; j++) H(0, TX + j) = -R(2, j);
-    const float sigma = cfg_.magNoise / hRef;   // direction noise -> azimuth noise
+    const float sigma = cfg_.magNoise * noiseScale / hRef;   // direction noise -> azimuth noise
 
     ekf::UpdateResult r = ekf_.update1(y, H, sigma * sigma, ekf::GATE_1DOF_999);
     if (r.accepted()) injectError();

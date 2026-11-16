@@ -322,9 +322,9 @@ void navFlightTest(Checker& check) {
 
     const ekf::AsyncEKF<NavEKF::NSTATES>& f = nav.filter();
     const double n = nErr ? nErr : 1;
-    VLOG("  %lu predictions, %lu accepted, %lu gated, %lu stale, %lu numerical\n", (unsigned long)f.predictions(),
-         (unsigned long)f.acceptedUpdates(), (unsigned long)f.gatedUpdates(), (unsigned long)nav.staleUpdates(),
-         (unsigned long)f.numericalFailures());
+    VLOG("  %lu predictions, %lu accepted, %lu de-weighted, %lu gated, %lu stale, %lu numerical\n",
+         (unsigned long)f.predictions(), (unsigned long)f.acceptedUpdates(), (unsigned long)f.deweightedUpdates(),
+         (unsigned long)f.gatedUpdates(), (unsigned long)nav.staleUpdates(), (unsigned long)f.numericalFailures());
     VLOG("  on the pad: tilt error %.3f deg, heading error %.2f deg, gyro bias error %.5f rad/s\n", tiltErrPad,
          headErrPad, maxGyroBiasErr);
     VLOG("  attitude error: RMS %.2f deg, max %.2f deg (1-sigma at end: tilt %.2f, heading %.2f)\n",
@@ -349,7 +349,8 @@ void navFlightTest(Checker& check) {
     check("3D: horizontal error within 3 sigma of the filter's own uncertainty (no GPS)", maxHorizSigma < 3.0);
     check("3D: apogee detected within 0.5 s", estApogeeT > 0 && fabs(estApogeeT - apogeeT) < 0.5);
     check("3D: apogee altitude within 5 m", fabs(estApogeeH - apogeeH) < 5.0);
-    check("3D: baro spike rejected", f.gatedUpdates() >= 1);
+    // Soft gates: the spike is fused at reduced weight; the altitude error checks above show it barely moved
+    check("3D: baro spike caught as an outlier", f.outlierUpdates() >= 1);
     check("3D: no stale or numerical failures", nav.staleUpdates() == 0 && f.numericalFailures() == 0);
     check("3D: filter consistent (mean NIS: baro 0.3-3, mag 0.5-10)",
           nav.meanBaroNis() > 0.3f && nav.meanBaroNis() < 3.0f && nav.meanMagNis() > 0.5f && nav.meanMagNis() < 10.0f);

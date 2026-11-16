@@ -41,16 +41,16 @@ pico_sdk_init()
 
 add_executable(Main
         Main.cpp
-        boot.cpp
-        loop.cpp
-        devices.cpp
-        shared.cpp
-        servo.cpp
-        servo_tune.cpp
-        roll_test.cpp
-        serial_in.cpp
-        leds.cpp
-        flight_state.cpp
+        src/boot.cpp
+        src/loop.cpp
+        src/devices.cpp
+        src/shared.cpp
+        src/servo.cpp
+        src/servo_tune.cpp
+        src/roll_test.cpp
+        src/serial_in.cpp
+        src/leds.cpp
+        src/flight_state.cpp
         )
 
 pico_set_program_name(Main "Main")
@@ -70,6 +70,7 @@ target_link_libraries(Main
 # Add the standard include files to the build
 target_include_directories(Main PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}/src
         ${CMAKE_CURRENT_LIST_DIR}/include
 )
 

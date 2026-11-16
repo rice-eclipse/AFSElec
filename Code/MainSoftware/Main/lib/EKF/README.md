@@ -107,6 +107,21 @@ Limits:
 * **Magnetometer calibration:** hard and soft-iron calibration matters. The default `magNoise` of
   0.02 (~1.1°) allows for some residual error.
 
+### Outliers: soft gates
+
+With hard gates (`softGates = false`), a filter that drifts away from the barometer while it is
+confident rejects every reading. It then runs on the IMU alone until its own uncertainty has grown
+enough, and jumps back in one step. In flight this happened from burnout: about 37 s on the IMU
+alone, then a jump of about 200 m.
+
+With soft gates, an outlier is still fused, but its noise is inflated so that it counts as a
+gate-sized error. Each sample pulls only a little, so a drift is corrected within a second or two
+and the altitude never jumps.
+
+The cost is that a barometer error lasting more than a fraction of a second is now partly
+followed. A 3 mbar, 1.5 s disturbance moves the altitude by up to ~30 m instead of ~0. The
+transonic Mach lockout in the nav loop still removes the barometer completely near Mach 1.
+
 ### Tuning (`NavEKF::Config`)
 
 | Field | Default | Meaning |
@@ -114,11 +129,13 @@ Limits:
 | `accelNoiseDensity` | 0.3 (m/s²)/√Hz | Flight accel uncertainty (vibration, scale, misalignment) |
 | `padAccelNoiseDensity` | 0.01 | Pad accel uncertainty |
 | `gyroNoiseDensity` | 0.002 (rad/s)/√Hz | Gyro noise |
-| `accelBiasWalk` / `gyroBiasWalk` | 0.01 / 1e-4 | Bias drift rates |
+| `accelBiasWalk` / `gyroBiasWalk` | 0.05 / 3e-4 | Bias drift rates. Larger keeps the biases re-learned in flight and stops the altitude uncertainty from collapsing |
+| `softGates` | true | Measurements past their gate are fused at reduced weight instead of being thrown away (see below) |
+| `softGateExponent` | 0.5 | How hard outliers are de-weighted: 0.5 = Huber, 1 = stronger |
 | `baroNoiseMbar`, `baroGate` | 0.1 mbar, 16 | As in AltitudeEKF |
 | `baroVerticalOnly` | true | Baro may not correct attitude/horizontal states |
 | `magNoise` | 0.02 | 1σ of the normalized field direction |
-| `magStrengthTolerance` | 0.3 | Reject readings whose strength differs from the pad by more than this |
+| `magStrengthTolerance` | 0.3 | Readings whose strength differs from the pad by more than this are de-weighted in proportion (rejected if `softGates` is off) |
 | `magDeclinationDeg` | 0 | Declination (east +). 0 means yaw is relative to magnetic north |
 | `zeroVelocityStd`, `zeroRateStd` | 0.02 m/s, 0.002 rad/s | `stationary()` noise |
 | `rocketAxis` | {1, 0, 0} | Nose direction in the IMU frame (used by `tilt()`) |
@@ -196,7 +213,8 @@ if (f.syncTo(model, measTimeUs, /*maxLagUs*/ 20000)) {
 ```
 
 * Measurements can have any size `M`, and each sensor has its own `H` and `R`. Status values are
-  Accepted, Gated (outlier), Stale, Numerical and Skipped. Each result also carries its NIS.
+  Accepted, Gated (outlier), Deweighted (outlier fused with `setSoftGate(true)`), Stale, Numerical
+  and Skipped. Each result also carries its NIS. `accepted()` is true for Accepted and Deweighted.
 * `updateMasked()` lets a measurement correct only the states you choose (a "consider" update).
   It keeps the covariance correct, using the expanded Joseph form.
 * `setJosephForm(false)` switches to the cheaper P − K H P covariance update, which costs N²M

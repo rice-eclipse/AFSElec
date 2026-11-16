@@ -13,14 +13,18 @@
  *      still for NAV_ALIGN_MS first), and this task logs its state to flights/nav_NNN.csv.
  *
  * Files:
- *   config.h        every tunable setting (tests, rates, durations, board geometry, task layout)
- *   devices.h/.cpp  the sensor and SD card objects
- *   shared.h/.cpp   data passed between tasks (Sample, NavRow, RunStats, queues, events)
- *   boot.h/.cpp     startup tests, sensor setup, log file creation
- *   servo.h/.cpp    servo PWM outputs and the startup sweep task
- *   servo_tune.h/.cpp  serial console to set each servo's pulse width by hand
- *   leds.h/.cpp     indicator LEDs on GPIO 0-3
- *   loop.h/.cpp     speed test (sensor/logger tasks, report) and navigation (nav task, logger)
+ *   config.h            every tunable setting (tests, rates, durations, board geometry, task layout)
+ *   src/devices.h/.cpp  the sensor and SD card objects
+ *   src/shared.h/.cpp   data passed between tasks (Sample, NavRow, RunStats, queues, events)
+ *   src/boot.h/.cpp     startup tests, sensor setup, log file creation
+ *   src/servo.h/.cpp    servo PWM outputs and the startup sweep task
+ *   src/servo_tune.h/.cpp  serial console to set each servo's pulse width by hand
+ *   src/serial_in.h/.cpp   serial (UART0) input, read a line at a time
+ *   src/leds.h/.cpp     indicator LEDs on GPIO 0-3
+ *   src/flight_state.h/.cpp  flight state machine (LAUNCHPAD ... LANDED)
+ *   src/roll_test.h/.cpp     in-flight roll test (fin tab doublets during coast)
+ *   src/loop.h/.cpp     speed test (sensor/logger tasks, report) and navigation (nav task, logger)
+ *   sim/                replays a flight's nav CSV on the PC with different settings
  */
 #include <stdio.h>
 #include "pico/stdlib.h"

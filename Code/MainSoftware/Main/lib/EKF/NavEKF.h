@@ -56,9 +56,31 @@ public:
         float padAccelNoiseDensity = 0.01f;
         /** Gyro noise density [(rad/s)/sqrt(Hz)]. */
         float gyroNoiseDensity = 0.002f;
-        /** Bias random walks [(m/s^2)/sqrt(s)] and [(rad/s)/sqrt(s)]. */
-        float accelBiasWalk = 0.01f;
-        float gyroBiasWalk = 1e-4f;
+        /**
+         * Bias random walks [(m/s^2)/sqrt(s)] and [(rad/s)/sqrt(s)]: how fast the biases may drift.
+         * Larger = the filter keeps re-learning the biases (temperature drift, vibration) and its
+         * altitude uncertainty doesn't collapse, so a drifting accelerometer is corrected by the baro.
+         */
+        float accelBiasWalk = 0.05f;
+        float gyroBiasWalk = 3e-4f;
+
+        // ---- Outliers ----
+        /**
+         * true: a measurement that fails its gate (baro, magnetometer, position fix) is still fused,
+         * with its noise inflated so it counts as a gate-sized error (Huber weighting): spikes move
+         * the state only a little, and a filter that has drifted away is pulled back steadily.
+         * A magnetometer reading with the wrong field strength is de-weighted the same way.
+         * false: such measurements are thrown away (the old behaviour; a filter that has drifted
+         * then ignores the sensor until its own uncertainty has grown enough, and jumps back).
+         * stationary() and horizontalPosition() have no gate: they are always fused fully.
+         */
+        bool softGates = true;
+        /**
+         * How strongly outliers are de-weighted (softGates): their noise is scaled so that S grows
+         * by (NIS / gate)^this. 0.5 = Huber (each outlier sample pulls a fixed small amount),
+         * 1 = stronger (the further off, the less it pulls). See AsyncEKF::setSoftGate().
+         */
+        float softGateExponent = 0.5f;
         /** Launch is detected when the upward acceleration (excluding gravity) exceeds this [m/s^2]. */
         float launchAccel = 2.0f * 9.80665f;
 
@@ -80,7 +102,10 @@ public:
         /** Noise of the normalized field direction, 1 sigma (0.02 ~ 1.1 deg). */
         float magNoise = 0.02f;
         float magGate = ekf::GATE_3DOF_999;
-        /** Reject readings whose strength differs from the pad reference by more than this fraction. */
+        /**
+         * Readings whose strength differs from the pad reference by more than this fraction are
+         * disturbed: de-weighted in proportion (softGates) or rejected.
+         */
         float magStrengthTolerance = 0.3f;
         /** Magnetic declination [deg, east positive]. 0 = yaw is relative to magnetic north. */
         float magDeclinationDeg = 0.0f;
@@ -218,6 +243,8 @@ public:
     Config& config() { return cfg_; }
     const ekf::AsyncEKF<NSTATES>& filter() const { return ekf_; }
     uint32_t staleUpdates() const { return stale_; }
+    /** Measurements past their gate so far (de-weighted with softGates, rejected without). */
+    uint32_t outliers() const { return ekf_.outlierUpdates() + magDisturbed_; }
     float meanBaroNis() const { return baroNisN_ ? baroNisSum_ / baroNisN_ : 0.0f; }
     float meanMagNis() const { return magNisN_ ? magNisSum_ / magNisN_ : 0.0f; }   // ideal ~3
     /** Pressure the model predicts at altitude h [mbar], and its inverse. */
@@ -243,7 +270,7 @@ private:
      */
     bool sync(uint64_t tUs, float& lagS);
     void injectError();                // fold the EKF error state into the nominal state
-    ekf::UpdateResult padHeading(const ekf::Vec3& field);   // heading-only mag update (pad)
+    ekf::UpdateResult padHeading(const ekf::Vec3& field, float noiseScale);   // heading-only mag update (pad)
     void accumulateNis(const ekf::UpdateResult& r, float& sum, uint32_t& n);
 
     Config cfg_;
@@ -282,6 +309,7 @@ private:
     float padPressure_ = 1013.25f;
     bool inFlight_ = false;
     uint32_t stale_ = 0;
+    uint32_t magDisturbed_ = 0;   // magnetometer readings with the wrong field strength
     float baroNisSum_ = 0.0f, magNisSum_ = 0.0f;
     uint32_t baroNisN_ = 0, magNisN_ = 0;
 };

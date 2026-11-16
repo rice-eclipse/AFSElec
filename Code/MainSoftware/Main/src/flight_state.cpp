@@ -37,7 +37,7 @@ void FlightStateMachine::enter(FlightState s, uint64_t tUs)
 {
     state_ = s;
     stateSinceUs_ = tUs;
-    launch_.reset(); launchBackup_.reset(); burnout_.reset(); apogee_.reset(); landed_.reset();
+    launch_.reset(); launchBackup_.reset(); burnout_.reset(); apogee_.reset(); landed_.reset(); impact_.reset();
 }
 
 bool FlightStateMachine::advance(uint64_t tUs)
@@ -80,14 +80,15 @@ bool FlightStateMachine::update(uint64_t tUs, const FlightInputs& in)
         break;
 
     case FlightState::Descent: {
+        // Settled on the ground: slow, ~1 g and not rotating, all held for LANDED_HOLD_MS
         const bool still = fabsf(in.vertSpeed) < LANDED_VS_MPS &&
                            fabsf(in.accelG - 1.0f) < LANDED_ACCEL_TOL_G &&
                            in.gyroDps < LANDED_GYRO_DPS;
-        if (!still || !landed_.active) { landedAltMin_ = landedAltMax_ = in.altM; }
-        if (in.altM < landedAltMin_) landedAltMin_ = in.altM;
-        if (in.altM > landedAltMax_) landedAltMax_ = in.altM;
-        const bool steady = landedAltMax_ - landedAltMin_ < LANDED_ALT_BAND_M;
-        if (landed_.update(still && steady, tUs, LANDED_HOLD_MS))
+        const bool settled = landed_.update(still, tUs, LANDED_HOLD_MS);
+        // Or the touchdown impact itself, once the parachute opening shock is long past
+        const bool impact = inStateUs >= (uint64_t)LANDED_IMPACT_AFTER_MS * 1000 &&
+                            impact_.update(in.accelG > LANDED_IMPACT_G, tUs, LANDED_IMPACT_HOLD_MS);
+        if (settled || impact)
             enter(FlightState::Landed, tUs);
         break;
     }

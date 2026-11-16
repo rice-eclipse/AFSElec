@@ -80,17 +80,25 @@ Either of these:
 
 ### DESCENT → LANDED (touchdown)
 
-**All** of these at once, held for **3 s** (`LANDED_HOLD_MS`):
+Either of two ways (**OR**):
+
+**1. Settled:** **all** of these at once, held for **3 s** (`LANDED_HOLD_MS`):
 
 | Condition | Value |
 |---|---|
 | Vertical speed (up or down) | under **1 m/s** |
 | Total acceleration | within **1 g ± 0.2 g** |
 | Rotation rate | under **20 °/s** |
-| Altitude | stays within a **3 m** band for the whole 3 s |
 
-- A steady descent under a parachute also reads about 1 g and little rotation. The vertical-speed and altitude-band checks are what tell it apart from being on the ground.
+- A steady descent under a parachute also reads about 1 g and little rotation. The vertical-speed check is what tells it apart from being on the ground.
+- If any one condition fails on a single IMU sample, the 3 s starts over.
 - Touchdown is about **3 s before** the logged change.
+
+**2. Impact:** total acceleration above **4 g** (`LANDED_IMPACT_G`) for **5 ms** (`LANDED_IMPACT_HOLD_MS`), at least **20 s after apogee** (`LANDED_IMPACT_AFTER_MS`).
+
+- This catches the touchdown hit itself, almost with no delay.
+- It still lands the rocket if the settled checks never pass, for example when it's being dragged by the parachute or the EKF's vertical speed has drifted.
+- The 20 s wait keeps the parachute opening shock from counting. With a dual-deploy (main opened lower down), set it longer than the time from apogee to main deployment.
 
 **At landing:**
 - Logging drops back to 10 Hz.
@@ -106,7 +114,7 @@ Either of these:
 | burnout + ~6.2 s | Roll test ends (climb rate below 15 m/s), tabs centered |
 | burnout + ~7.7 s | Apogee |
 | apogee + ~0.3 s | DESCENT logged |
-| touchdown + 3 s | LANDED logged |
+| touchdown (impact, if > 4 g) or touchdown + 3 s | LANDED logged |
 
 ### Bench testing (serial `state` command)
 
