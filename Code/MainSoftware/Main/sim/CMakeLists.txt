@@ -13,7 +13,7 @@ set(FW  ${CMAKE_CURRENT_SOURCE_DIR}/..)
 set(GEN ${CMAKE_CURRENT_BINARY_DIR}/fw)
 
 foreach(f flight_state.h flight_state.cpp roll_test.h roll_test.cpp)
-    configure_file(${FW}/${f} ${GEN}/${f} COPYONLY)
+    configure_file(${FW}/src/${f} ${GEN}/${f} COPYONLY)
 endforeach()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h ${GEN}/config.h COPYONLY)
 

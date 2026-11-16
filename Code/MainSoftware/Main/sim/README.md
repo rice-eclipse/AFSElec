@@ -3,6 +3,12 @@
 Runs a flight's `nav_*.csv` back through the flight software with different settings and writes a
 new CSV with the same columns as the board's log.
 
+**Window:** double-click `sim/sim_gui.pyw`. Pick the CSV and press Run. It has buttons to edit the
+settings files, open the result, show the result in Explorer, and open the result in the repo's CSV
+Viewer (`AFSElec/CSV Viewer`). The CSV Viewer can open the original flight alongside, to compare.
+
+**Command line:**
+
 ```powershell
 .\sim\run_sim.ps1 flights\nav_003.csv              # -> flights\nav_003_sim.csv
 .\sim\run_sim.ps1 flights\nav_003.csv out.csv
@@ -21,7 +27,7 @@ the C++ workload.
 | `sim/sim_settings.h` | Sim-only options (step size, pad temperature, synthetic magnetometer) and `simEkfConfig()` for EKF tuning (`NavEKF::Config`). |
 
 The simulator compiles the firmware's own `NavEKF.cpp`, `flight_state.cpp` and `roll_test.cpp`,
-so it behaves exactly like the board. `sim.cpp` copies the nav loop from `navTask()` in `loop.cpp`.
+so it behaves exactly like the board. `sim.cpp` copies the nav loop from `navTask()` in `src/loop.cpp`.
 If you change that loop, make the same change in `sim.cpp`.
 
 ## Inputs taken from the flight log

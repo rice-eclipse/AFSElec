@@ -40,6 +40,9 @@ constexpr bool SIM_PRINT_EVENTS = true;
  * Change any field here to try different tuning, for example:
  *     cfg.baroNoiseMbar = 0.2f;
  *     cfg.accelNoiseDensity = 0.5f;
+ *     cfg.softGates = false;                       // old behaviour: outliers thrown away
+ *     cfg.accelBiasWalk = 0.01f; cfg.gyroBiasWalk = 1e-4f;   // old bias walks
+ *     cfg.softGateExponent = 1.0f;                 // de-weight outliers harder
  */
 inline void simEkfConfig(NavEKF::Config& cfg)
 {
