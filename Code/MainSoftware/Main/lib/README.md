@@ -14,6 +14,9 @@ Full API docs for each driver (every method, enum, units and gotchas) are in the
 | [`MS5611`](MS5611/README.md)    | TE barometer            | SPI | mbar (hPa), deg C, m          |
 | [`TMP117`](TMP117/README.md)    | TI temperature sensor   | I2C | deg C                         |
 | [`INA219`](INA219/README.md)    | TI current/power monitor | I2C | V, mA, mW                     |
+| [`SDCard`](SDCard/README.md)    | microSD card + FAT/exFAT files, CSV logging | SPI | files                |
+| [`FreeRTOS`](FreeRTOS/README.md)  | FreeRTOS kernel (both cores) + C++ wrappers | n/a | ms                  |
+| [`EKF`](EKF/README.md)       | Asynchronous Extended Kalman Filters: 3D INS (orientation, position, altitude) and 1D altitude | n/a | m, m/s, deg |
 
 ## Using them in CMake
 
@@ -21,7 +24,7 @@ Full API docs for each driver (every method, enum, units and gotchas) are in the
 
 ```cmake
 add_subdirectory(lib)
-target_link_libraries(Main ICM45686 MS5611 MMC5983MA KX134 TMP117 INA219)
+target_link_libraries(Main ICM45686 MS5611 MMC5983MA KX134 TMP117 INA219 SDCard)
 ```
 
 Link only the libraries you need.
@@ -39,6 +42,7 @@ bool MMC5983MA_test(MMC5983MA& mag, bool verbose = false, uint32_t samples = 10)
 bool MS5611_test(MS5611& baro, bool verbose = false, uint32_t samples = 10);
 bool TMP117_test(TMP117& tmp, bool verbose = false, uint32_t samples = 5);
 bool INA219_test(INA219& ina, bool verbose = false, uint32_t samples = 5);
+bool SDCard_test(SDCard& sd, bool verbose = false, uint32_t speedKB = 512);   // non-destructive
 ```
 
 In `Main.cpp`, the `RUN_<NAME>_TEST` flags turn each test on or off at boot, `VERBOSE_<NAME>_TEST` controls how much each one prints, and a summary table

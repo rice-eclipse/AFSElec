@@ -1,102 +1,95 @@
+/**
+ * Main.cpp - AFS flight computer firmware (FreeRTOS on both RP2350 cores).
+ *
+ * At power-up the boot task:
+ *   1. runs every bench test (including the simulated-flight EKF test),
+ *   2. sets every sensor to its fastest rate and opens a new CSV log on the SD card,
+ *   3. runs the sensor task (core 0) and logger task (core 1) for RECORD_DURATION_MS,
+ *   4. prints the measured sensor and logging rates,
+ *      (the green LED turns on if every enabled test passed and every sensor started),
+ *   5. sweeps servos PWM1-PWM8 +-SERVO_SWEEP_DEG around their centers for SERVO_SWEEP_MS,
+ *   6. runs the serial servo tuning console until "Done." is sent,
+ *   7. then navigates forever: the NavEKF runs on core 0 at full sensor speed (keep the board
+ *      still for NAV_ALIGN_MS first), and this task logs its state to flights/nav_NNN.csv.
+ *
+ * Files:
+ *   config.h        every tunable setting (tests, rates, durations, board geometry, task layout)
+ *   devices.h/.cpp  the sensor and SD card objects
+ *   shared.h/.cpp   data passed between tasks (Sample, NavRow, RunStats, queues, events)
+ *   boot.h/.cpp     startup tests, sensor setup, log file creation
+ *   servo.h/.cpp    servo PWM outputs and the startup sweep task
+ *   servo_tune.h/.cpp  serial console to set each servo's pulse width by hand
+ *   leds.h/.cpp     indicator LEDs on GPIO 0-3
+ *   loop.h/.cpp     speed test (sensor/logger tasks, report) and navigation (nav task, logger)
+ */
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "hardware/spi.h"
-#include "hardware/i2c.h"
-#include "hardware/dma.h"
-#include "hardware/pio.h"
-#include "hardware/interp.h"
-#include "hardware/timer.h"
-#include "hardware/watchdog.h"
-#include "hardware/clocks.h"
-#include "hardware/uart.h"
-#include "blink.pio.h"
+#include "rtos.h"
 
-#include "board_pins.h"
+#include "config.h"
+#include "devices.h"
+#include "shared.h"
+#include "boot.h"
+#include "loop.h"
+#include "servo.h"
+#include "servo_tune.h"
+#include "leds.h"
+#include "EKF_test.h"
 
-#include "ICM45686_test.h"
-#include "KX134_test.h"
-#include "MMC5983MA_test.h"
-#include "MS5611_test.h"
-#include "TMP117_test.h"
-#include "INA219_test.h"
-
-// ============================================================================
-// Sensor bench tests: set each one to true/false to run it at boot or skip it
-// ============================================================================
-constexpr bool RUN_ICM45686_TEST  = true;
-constexpr bool RUN_KX134_TEST     = true;
-constexpr bool RUN_MMC5983MA_TEST = true;
-constexpr bool RUN_MS5611_TEST    = true;
-constexpr bool RUN_TMP117_TEST    = true;
-constexpr bool RUN_INA219_TEST    = true;
-
-// Verbose: true = print every PASS line and the sample readings,
-//          false = print only FAIL lines, diagnostics and each test's one-line result
-constexpr bool VERBOSE_ICM45686_TEST  = false;
-constexpr bool VERBOSE_KX134_TEST     = false;
-constexpr bool VERBOSE_MMC5983MA_TEST = false;
-constexpr bool VERBOSE_MS5611_TEST    = false;
-constexpr bool VERBOSE_TMP117_TEST    = false;
-constexpr bool VERBOSE_INA219_TEST    = false;
-
-// INA219 shunt resistor and maximum expected current. TODO: set these to the board's real values.
-constexpr float INA219_SHUNT_OHMS = 0.002f;
-constexpr float INA219_MAX_AMPS   = 3.2f;
-
-// ============================================================================
-// Sensors (pins and buses in include/board_pins.h)
-// ============================================================================
-ICM45686  imu (SENSOR_SPI, IMU_CS, SPI_SCK_SEN, SPI_MOSI_SEN, SPI_MISO_SEN, IMU_INT1);
-KX134     acc (SENSOR_SPI, ACC_CS, SPI_SCK_SEN, SPI_MOSI_SEN, SPI_MISO_SEN, ACC_INT);
-MMC5983MA mag (SENSOR_SPI, MAG_CS, SPI_SCK_SEN, SPI_MOSI_SEN, SPI_MISO_SEN, MAG_INT);
-MS5611    baro(SENSOR_SPI, BAR_CS, SPI_SCK_SEN, SPI_MOSI_SEN, SPI_MISO_SEN);
-TMP117    temp(SENSOR_I2C, SDA, SCL, TMP117::ADDR_GND);
-INA219    pwr (SENSOR_I2C, SDA, SCL, INA219::DEFAULT_ADDRESS, INA219_SHUNT_OHMS, INA219_MAX_AMPS);
-
-static void deselectAllSpiDevices()
+static void bootTask(void*)
 {
-    // Several sensors also speak I2C/I3C; keep every CS high so none of them respond to
-    // traffic meant for another device on the shared bus.
-    for (uint cs : SENSOR_SPI_CS_PINS) {
-        gpio_init(cs);
-        gpio_set_dir(cs, GPIO_OUT);
-        gpio_put(cs, 1);
+    ledsInit();
+    sleep_ms(2000);   // give the serial terminal time to connect
+
+    // 1. Self-test everything
+    deselectAllSpiDevices();
+    bool bootOk = runStartupTests();
+    if constexpr (RUN_EKF_TEST) bootOk &= EKF_test(VERBOSE_EKF_TEST);
+
+    // 2. Set every sensor to its fastest rate (needed by navigation too)
+    g_status = startSensorsMaxRate();
+    const SensorStatus& st = g_status;
+    bootOk &= st.imu && st.acc && st.mag && st.baro && st.temp && st.pwr;
+
+    // Green LED = every enabled test passed and every sensor started
+    ledSet(LED_GREEN, bootOk);
+    printf("Boot checks: %s\n", bootOk ? "all passed (green LED on)" : "FAILED (green LED off)");
+
+    if constexpr (RUN_SPEED_TEST) {
+        // 3. Speed test: sensors on core 0, SD logging on core 1, until both are done
+        g_stats.fileOk = openLogFile(g_logName, sizeof g_logName);
+        if (g_stats.fileOk) printf("Starting write: %s\n", g_logName);
+        rtos::spawn(loggerTask, "logger",  LOGGER_STACK_WORDS, LOGGER_PRIORITY, nullptr, LOGGER_CORE);
+        rtos::spawn(sensorTask, "sensors", SENSOR_STACK_WORDS, SENSOR_PRIORITY, nullptr, SENSOR_CORE);
+        g_events.wait(EVT_SENSOR_DONE | EVT_LOGGER_DONE, /*all*/ true);
+
+        // 4. Report
+        printRunReport();
     }
-}
 
-static void runSensorTests()
-{
-    struct Result { const char* name; bool ran; bool passed; };
-    Result results[6] = {
-        {"ICM45686", false, false}, {"KX134", false, false}, {"MMC5983MA", false, false},
-        {"MS5611", false, false},   {"TMP117", false, false}, {"INA219", false, false},
-    };
-
-    if constexpr (RUN_ICM45686_TEST)  { results[0].ran = true; results[0].passed = ICM45686_test(imu, VERBOSE_ICM45686_TEST); }
-    if constexpr (RUN_KX134_TEST)     { results[1].ran = true; results[1].passed = KX134_test(acc, VERBOSE_KX134_TEST); }
-    if constexpr (RUN_MMC5983MA_TEST) { results[2].ran = true; results[2].passed = MMC5983MA_test(mag, VERBOSE_MMC5983MA_TEST); }
-    if constexpr (RUN_MS5611_TEST)    { results[3].ran = true; results[3].passed = MS5611_test(baro, VERBOSE_MS5611_TEST); }
-    if constexpr (RUN_TMP117_TEST)    { results[4].ran = true; results[4].passed = TMP117_test(temp, VERBOSE_TMP117_TEST); }
-    if constexpr (RUN_INA219_TEST)    { results[5].ran = true; results[5].passed = INA219_test(pwr, VERBOSE_INA219_TEST); }
-
-    printf("\n========== Sensor test summary ==========\n");
-    for (const Result& r : results) {
-        printf("  %-10s %s\n", r.name, !r.ran ? "skipped" : r.passed ? "PASS" : "FAIL");
+    // 5. Servo sweep: wait for it to finish before navigating
+    if constexpr (RUN_SERVO_SWEEP) {
+        rtos::spawn(servoTask, "servos", SERVO_STACK_WORDS, SERVO_PRIORITY, nullptr, SERVO_CORE);
+        g_events.wait(EVT_SERVO_DONE);
     }
-    printf("=========================================\n\n");
+
+    // 6. Servo tuning over the serial port: waits until "Done." is sent
+    if constexpr (RUN_SERVO_TUNE) {
+        rtos::spawn(servoTuneTask, "servo_tune", SERVO_TUNE_STACK_WORDS, SERVO_PRIORITY, nullptr, SERVO_CORE);
+        g_events.wait(EVT_SERVO_TUNE_DONE);
+    }
+
+    // 7. Navigate forever: EKF on core 0, this task becomes its logger
+    startNavigation();
+    navLoggerLoop();   // never returns
 }
 
 int main()
 {
     stdio_init_all();
-    sleep_ms(2000); // give the serial terminal time to connect
 
-    deselectAllSpiDevices();
-    runSensorTests();
+    if (!g_samples.valid()) panic("not enough FreeRTOS heap for the sample queue");
 
-    while (true)
-    {
-        //printf("Hello, world!\n");
-        sleep_ms(1000);
-    }
+    rtos::spawn(bootTask, "boot", BOOT_STACK_WORDS, BOOT_PRIORITY, nullptr, BOOT_CORE);
+    rtos::start();   // never returns
 }

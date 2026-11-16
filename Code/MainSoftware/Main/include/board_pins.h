@@ -19,6 +19,12 @@ constexpr uint GPIO_01 = 1; // Pin 78
 constexpr uint GPIO_02 = 2; // Pin 79
 constexpr uint GPIO_03 = 3; // Pin 80
 
+// Indicator LEDs on GPIO 0-3
+constexpr uint LED_BLUE_PIN   = GPIO_00;
+constexpr uint LED_RED_PIN    = GPIO_01;
+constexpr uint LED_YELLOW_PIN = GPIO_02;
+constexpr uint LED_GREEN_PIN  = GPIO_03;
+
 // ============================================================================
 // PWM outputs
 // ============================================================================

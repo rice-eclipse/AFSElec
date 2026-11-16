@@ -39,7 +39,19 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Main Main.cpp )
+add_executable(Main
+        Main.cpp
+        boot.cpp
+        loop.cpp
+        devices.cpp
+        shared.cpp
+        servo.cpp
+        servo_tune.cpp
+        roll_test.cpp
+        serial_in.cpp
+        leds.cpp
+        flight_state.cpp
+        )
 
 pico_set_program_name(Main "Main")
 pico_set_program_version(Main "0.1")
@@ -67,27 +79,36 @@ target_link_libraries(Main
         hardware_i2c
         hardware_dma
         hardware_pio
+        hardware_pwm
         hardware_interp
         hardware_timer
         hardware_watchdog
         hardware_clocks
         )
 
-# Sensor driver libraries (lib/)
+# Driver libraries (lib/)
 add_subdirectory(lib)
-target_link_libraries(Main
+set(AFS_LIBS
         ICM45686
         MS5611
         MMC5983MA
         KX134
         TMP117
         INA219
+        SDCard
+        FreeRTOS
+        EKF
         ICM45686_test
         MS5611_test
         MMC5983MA_test
         KX134_test
         TMP117_test
         INA219_test
+        SDCard_test
+        FreeRTOS_test
+        EKF_test
         )
+target_link_libraries(Main ${AFS_LIBS})
 
 pico_add_extra_outputs(Main)
+

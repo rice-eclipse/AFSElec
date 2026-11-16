@@ -1,0 +1,3 @@
+Vendored from https://github.com/raspberrypi/FreeRTOS-Kernel
+commit 4f7299d6ea746b27a9dd19e87af568e34bd65b15 (2024-08-08), kernel V11.1.0+ (SMP)
+Only the kernel core, include/, portable/MemMang and the RP2350_ARM_NTZ port are kept. Files are unmodified.
