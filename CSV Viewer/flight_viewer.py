@@ -57,7 +57,7 @@ TIME_CANDIDATES = ["t_us", "time_us", "timestamp_us", "t_ms", "time_ms", "timest
                    "time_s", "time", "timestamp", "t", "micros", "millis", "seconds", "sec"]
 TIME_UNITS = {"s": 1.0, "ms": 1e-3, "us": 1e-6, "ns": 1e-9}
 
-UNIT_SUFFIXES = [("_mps2", "m/s²"), ("_mps", "m/s"), ("_dps", "deg/s"), ("_deg", "deg"),
+UNIT_SUFFIXES = [("_mps2", "m/s²"), ("_mps", "m/s"), ("_dps", "deg/s"), ("_deg", "deg"), ("_rad", "rad"),
                  ("_mbar", "mbar"), ("_pa", "Pa"), ("_pct", "%"), ("_ma", "mA"), ("_mw", "mW"),
                  ("_us", "µs"), ("_ms", "ms"), ("_g", "g"), ("_G", "gauss"), ("_c", "°C"),
                  ("_m", "m"), ("_v", "V"), ("_s", "s")]
@@ -111,6 +111,24 @@ def unit_of(col: str) -> str:
         if col.endswith(suffix):
             return unit
     return ""
+
+
+# Angle units that wrap around, and their period (for "Unwrap" on a graph)
+ANGLE_PERIODS = {"deg": 360.0, "rad": 2 * math.pi}
+
+
+def is_angle(col: str) -> bool:
+    return unit_of(col) in ANGLE_PERIODS
+
+
+def unwrap_angle(a: np.ndarray, period: float) -> np.ndarray:
+    """Remove ±period/2 wrap-around jumps (e.g. +179° -> -179° becomes +181°), so the angle
+    accumulates continuously: two full rolls read 720° instead of a sawtooth. NaNs stay NaN."""
+    out = a.copy()
+    ok = np.isfinite(a)
+    if ok.sum() > 1:
+        out[ok] = np.unwrap(a[ok], period=period)
+    return out
 
 
 def fmt(v, digits=6) -> str:
@@ -201,6 +219,17 @@ class Dataset:
             self._cache[col] = a
         return a
 
+    def values(self, col: str, unwrap=False) -> np.ndarray:
+        """Column values; unwrapped (continuous) if requested and the column is an angle."""
+        if not (unwrap and is_angle(col)):
+            return self.array(col)
+        key = "\0unwrap:" + col
+        a = self._cache.get(key)
+        if a is None:
+            a = unwrap_angle(self.array(col), ANGLE_PERIODS[unit_of(col)])
+            self._cache[key] = a
+        return a
+
     def compute_time(self):
         if self.time_col is None or self.time_col not in self.df:
             raw = np.arange(self.n, dtype=float)
@@ -278,11 +307,13 @@ class Dataset:
         res = np.broadcast_to(np.asarray(res, dtype=float), (self.n,)).copy()
         self.df[name] = res
         self._cache.pop(name, None)
+        self._cache.pop("\0unwrap:" + name, None)
         self.derived[name] = expr
 
     def remove_derived(self, name):
         self.derived.pop(name, None)
         self._cache.pop(name, None)
+        self._cache.pop("\0unwrap:" + name, None)
         if name in self.df:
             del self.df[name]
 
@@ -604,6 +635,10 @@ class PlotPanel(QtWidgets.QFrame):
         tb("Fit Y", "Autoscale Y to the visible data", self.fit_y)
         tb("−", "Make this graph shorter", lambda: self.set_height(self.height() - 60))
         tb("+", "Make this graph taller", lambda: self.set_height(self.height() + 60))
+        self.unwrap = False
+        self.unwrap_btn = tb("Unwrap", "Unwrap angles in this graph: remove the ±180° jumps so roll / yaw / "
+                                       "heading accumulate continuously (two full rolls read 720°)",
+                             self._set_unwrap, checkable=True)
         self.log_btn = tb("Log Y", "Logarithmic Y axis", self._set_log, checkable=True)
         tb("▲", "Move graph up", lambda: main.move_panel(self, -1))
         tb("▼", "Move graph down", lambda: main.move_panel(self, +1))
@@ -714,6 +749,10 @@ class PlotPanel(QtWidgets.QFrame):
     def update_axis_label(self):
         units = {unit_of(s["key"][1]) for s in self.series}
         unit = units.pop() if len(units) == 1 else ""
+        has_angle = any(is_angle(s["key"][1]) for s in self.series)
+        self.unwrap_btn.setVisible(has_angle or self.unwrap)
+        if self.unwrap and has_angle:
+            unit = f"{unit} (unwrapped)" if unit else "(angles unwrapped)"
         self.plot.setLabel("left", unit)
         ax = self.plot.getAxis("left")
         if self.series and all(s["key"][1] in STATE_COLUMNS for s in self.series):
@@ -752,7 +791,7 @@ class PlotPanel(QtWidgets.QFrame):
         self.main.series_changed()
 
     def refresh_series(self, s):
-        xy = self.main.series_xy(s["key"])
+        xy = self.main.series_xy(s["key"], self.unwrap)
         if xy is None:
             s["item"].setData([], [])
         else:
@@ -773,6 +812,12 @@ class PlotPanel(QtWidgets.QFrame):
     def fit_y(self):
         self.vb.enableAutoRange(axis="y")
         self.vb.setAutoVisible(y=True)
+
+    def _set_unwrap(self, on):
+        self.unwrap = on
+        self.refresh_all()
+        self.fit_y()
+        self.main.series_changed()
 
     def _set_log(self, on):
         self.plot.setLogMode(y=on)
@@ -1191,6 +1236,8 @@ COMPARING FLIGHTS
   * Tools ▸ Compare flights (Ctrl+Shift+C): apogee, burn time, max speed, ... side by side.
 
 TIPS
+  * "Unwrap" in a graph's header (shown when it has angle columns, *_deg / *_rad) removes the
+    +180° -> -180° jumps so roll/yaw/heading become one continuous angle (two rolls = 720°).
   * Drag columns from the browser onto a graph (or onto the empty area) to plot them.
     Double-click a column to add it to the active graph (blue outline).
   * Several files can be open at once; use the per-file time offset to align them.
@@ -2324,11 +2371,12 @@ class MainWindow(QtWidgets.QMainWindow):
                                             for t, cols in PRESETS if any(c in ds.df for c in cols)])
 
     # ---- data access ------------------------------------------------------------------
-    def series_xy(self, key):
+    def series_xy(self, key, unwrap=False):
         ds = self.datasets.get(key[0])
         if ds is None or key[1] not in ds.df:
             return None
-        t, y = ds.time, ds.array(key[1])
+        # unwrapping runs on the whole file before cropping, so the angle is continuous from the start
+        t, y = ds.time, ds.values(key[1], unwrap)
         if self.crop:
             i0, i1 = ds.index_range(*self.crop)
             return t[i0:i1], y[i0:i1]
@@ -2347,7 +2395,7 @@ class MainWindow(QtWidgets.QMainWindow):
             lo, hi = max(lo, self.crop[0]), min(hi, self.crop[1])
         return (lo, hi) if lo < hi else None
 
-    def value_at(self, key, t):
+    def value_at(self, key, t, unwrap=False):
         ds = self.datasets.get(key[0])
         if ds is None or t is None or not len(ds.time) or key[1] not in ds.df:
             return math.nan
@@ -2358,7 +2406,7 @@ class MainWindow(QtWidgets.QMainWindow):
         i = min(max(i, 0), len(tt) - 1)
         if i > 0 and abs(tt[i - 1] - t) < abs(tt[i] - t):
             i -= 1
-        return float(ds.array(key[1])[i])
+        return float(ds.values(key[1], unwrap)[i])
 
     def x_range(self):
         if not self.panels:
@@ -2630,18 +2678,18 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.crop:
             a, b = max(a, self.crop[0]), min(b, self.crop[1])
         self._stats = {}
-        for _p, s in self._rows():
+        for p, s in self._rows():
             key = s["key"]
             ds = self.datasets.get(key[0])
             if ds is None or key[1] not in ds.df:
                 continue
             i0, i1 = ds.index_range(a, b)
-            y = ds.array(key[1])[i0:i1]
+            y = ds.values(key[1], p.unwrap)[i0:i1]
             y = y[np.isfinite(y)]
             if len(y):
-                self._stats[key] = (y.min(), y.max(), y.mean(), y.std())
+                self._stats[(key, p.unwrap)] = (y.min(), y.max(), y.mean(), y.std())
             else:
-                self._stats[key] = (math.nan,) * 4
+                self._stats[(key, p.unwrap)] = (math.nan,) * 4
         self.update_readout()
 
     def update_readout(self):
@@ -2656,12 +2704,14 @@ class MainWindow(QtWidgets.QMainWindow):
         tA, tB = self.t_ab["A"], self.t_ab["B"]
         for r, (p, s) in enumerate(rows):
             key = s["key"]
-            vc = self.value_at(key, self.cursor_t)
-            va = self.value_at(key, tA) if self.measure_on else math.nan
-            vb = self.value_at(key, tB) if self.measure_on else math.nan
-            st = stats.get(key, (math.nan,) * 4)
+            uw = p.unwrap
+            vc = self.value_at(key, self.cursor_t, uw)
+            va = self.value_at(key, tA, uw) if self.measure_on else math.nan
+            vb = self.value_at(key, tB, uw) if self.measure_on else math.nan
+            st = stats.get((key, uw), (math.nan,) * 4)
             unit = unit_of(key[1])
-            vals = [p.title, self.series_label(key) + (f" [{unit}]" if unit else ""), fmt(vc), fmt(va),
+            suffix = " ↻ unwrapped" if uw and is_angle(key[1]) else ""
+            vals = [p.title, self.series_label(key) + (f" [{unit}]" if unit else "") + suffix, fmt(vc), fmt(va),
                     fmt(vb), fmt(vb - va), *[fmt(x) for x in st]]
             for c, v in enumerate(vals):
                 it = self.table.item(r, c)
@@ -2866,7 +2916,7 @@ class MainWindow(QtWidgets.QMainWindow):
                        "zero_start": d.zero_start, "offset": d.offset, "derived": d.derived,
                        "label": d.label, "color": d.color, "visible": d.visible}
                       for d in self.datasets.values()],
-            "graphs": [{"title": p.title, "log_y": p.log_btn.isChecked(), "height": p.height(),
+            "graphs": [{"title": p.title, "log_y": p.log_btn.isChecked(), "height": p.height(), "unwrap": p.unwrap,
                         "series": [{"file": ids.index(s["key"][0]), "column": s["key"][1], "slot": s["slot"],
                                     "color": s.get("color"), "visible": s["item"].isVisible()}
                                    for s in p.series]} for p in self.panels],
@@ -2946,6 +2996,8 @@ class MainWindow(QtWidgets.QMainWindow):
                           visible=s.get("visible", True))
             if g.get("log_y"):
                 p.log_btn.setChecked(True)
+            if g.get("unwrap"):
+                p.unwrap_btn.setChecked(True)
         self.rebuild_tree()
         self.refresh_all()
         self._update_mode_label()
