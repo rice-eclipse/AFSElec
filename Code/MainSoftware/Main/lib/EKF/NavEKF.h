@@ -20,6 +20,10 @@
  *   stationary(t)         "on the pad, not moving": zero velocity + zero rotation rate
  *                         (aligns tilt, learns gyro and vertical accel bias)
  *   position(t, n, e, up, std)  optional external fix (e.g. GPS, converted to local NED)
+ *   horizontalPosition(t, n, e, std)        north/east only (e.g. pad hold)
+ *   noseDirection(t, pitch, yaw, std)       the rocket's lean (e.g. standing on the pad)
+ *   gravityDirection(t, accel, std)         leveling: accelerometer = straight up while not accelerating
+ *   horizontalVelocity(t, vn, ve, std)      north/east velocity (e.g. a weak "about 0" after apogee)
  *
  *   static NavEKF nav;                          // ~2.5 kB, keep it out of small stacks
  *   nav.begin(padMbar, accelAvg, magAvg, time_us_64());   // averaged on the pad, at rest
@@ -168,6 +172,20 @@ public:
     ekf::UpdateResult position(uint64_t tUs, float north, float east, float up, float stdM);
     /** Horizontal-only position fix (north, east) [m] with 1-sigma stdM per axis (e.g. "still on the pad"). */
     ekf::UpdateResult horizontalPosition(uint64_t tUs, float north, float east, float stdM);
+    /**
+     * Nose-direction fix (e.g. "standing on the pad at a known angle"): the rocket's pitch and yaw as
+     * defined by rocketAngles() [deg], with 1-sigma stdDeg each. Only the direction of the nose is
+     * corrected; roll (spin about the nose) is left free.
+     */
+    ekf::UpdateResult noseDirection(uint64_t tUs, float pitchDeg, float yawDeg, float stdDeg);
+    /**
+     * Leveling: the accelerometer reading [m/s^2, body] taken while not accelerating (still, or a
+     * steady descent), so it points straight up. Corrects tilt (not heading), with 1-sigma stdDeg.
+     * Pass an average over a short window for less noise. Soft-gated like the other sensors.
+     */
+    ekf::UpdateResult gravityDirection(uint64_t tUs, const ekf::Vec3& accelBody, float stdDeg);
+    /** Horizontal velocity fix (north, east) [m/s] with 1-sigma stdMps per axis (e.g. a weak "about 0"). */
+    ekf::UpdateResult horizontalVelocity(uint64_t tUs, float vn, float ve, float stdMps);
 
     /**
      * Moves the barometric altitude reference: altitude 0 is now where the pressure is `mbar`.

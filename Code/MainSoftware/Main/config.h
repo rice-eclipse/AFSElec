@@ -150,6 +150,30 @@ constexpr float PAD_STILL_GYRO_DPS    = 3.0f;    // max rotation rate counted as
 constexpr float PAD_STILL_ACCEL_G     = 0.05f;   // max | |accel| - 1 g | counted as still
 constexpr float PAD_HOLD_POS_STD_M    = 0.05f;   // how tightly the horizontal position is held at 0
 constexpr float PAD_PRESSURE_TAU_S    = 20.0f;   // time constant of the pad pressure (altitude zero) follower
+// Pad hold also holds the rocket's pitch and yaw (logged pitch_deg / yaw_deg, i.e. which way the nose
+// leans) at these angles; roll is left free. They must match how the rocket really stands: on a
+// tilted rail set them to the rail's lean (yaw = toward north, pitch = toward east), otherwise the
+// filter starts the flight with that much tilt error. PAD_HOLD_TILT_STD_DEG = how tightly.
+constexpr bool  PAD_HOLD_TILT         = true;
+constexpr float PAD_HOLD_PITCH_DEG    = 0.0f;
+constexpr float PAD_HOLD_YAW_DEG      = 0.0f;
+constexpr float PAD_HOLD_TILT_STD_DEG = 0.5f;
+
+// After apogee (DESCENT and LANDED), nothing measures horizontal motion, so any tilt error makes
+// gravity leak sideways and the horizontal velocity grows without limit. Two fixes:
+//   Leveling: whenever the IMU is still (or in a steady descent) the accelerometer only measures
+//             gravity, so its direction is fed to the EKF as "this way is up" (corrects tilt, so the
+//             leak stops). Checked NAV_STATIONARY_HZ times a second with its own stillness limits.
+//   Velocity prior: a weak "horizontal velocity is about 0" once a second, loose in descent (wind
+//             drift is real) and tighter after landing. Pulls built-up velocity back to 0.
+constexpr bool     LEVEL_WHEN_STILL      = true;
+constexpr float    LEVEL_STILL_GYRO_DPS  = 5.0f;    // max rotation rate counted as still
+constexpr float    LEVEL_STILL_ACCEL_G   = 0.05f;   // max | |accel| - 1 g | counted as still
+constexpr float    LEVEL_STD_DEG         = 2.0f;    // how much each leveling update is trusted
+constexpr bool     HVEL_PRIOR            = true;
+constexpr float    HVEL_DESCENT_STD_MPS  = 10.0f;   // 1-sigma in DESCENT (covers wind drift)
+constexpr float    HVEL_LANDED_STD_MPS   = 1.0f;    // 1-sigma in LANDED
+constexpr uint32_t HVEL_PRIOR_HZ         = 1;
 
 // Log rate (the filter always runs at the full IMU rate, and every sensor stays at its maximum rate):
 //   LAUNCHPAD, LANDED and alignment: NAV_LOG_IDLE_HZ

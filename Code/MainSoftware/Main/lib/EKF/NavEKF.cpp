@@ -404,6 +404,71 @@ ekf::UpdateResult NavEKF::horizontalPosition(uint64_t tUs, float north, float ea
     return r;
 }
 
+/*
+ * Nose direction in NED from rocketAngles(): yaw = atan2(north, up), pitch = asin(east), so
+ *   nose = (cos p sin y, sin p, -cos p cos y).
+ * The north and east components are measured. With q_true = q exp(dtheta), the true nose is
+ * R (I + [dtheta]x) a = R a - R [a]x dtheta, so H = -(R [a]x) (rows N, E) on the attitude error.
+ */
+ekf::UpdateResult NavEKF::noseDirection(uint64_t tUs, float pitchDeg, float yawDeg, float stdDeg) {
+    float lag;
+    if (!isfinite(pitchDeg) || !isfinite(yawDeg) || !(stdDeg > 0.0f) || !sync(tUs, lag))
+        return {ekf::UpdateStatus::Stale, NAN};
+    const float p = pitchDeg * DEG2RAD, y = yawDeg * DEG2RAD;
+    const Mat3 R = q_.toMatrix();
+    const Vec3 nose = R * axis_;
+    Vec<2> innov;
+    innov[0] = cosf(p) * sinf(y) - nose[0];
+    innov[1] = sinf(p) - nose[1];
+    const Mat3 HR = R * ekf::skew(axis_) * -1.0f;
+    Mat<2, N> H = Mat<2, N>::zeros();
+    for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 3; j++) H(i, TX + j) = HR(i, j);
+    const float s = stdDeg * DEG2RAD;   // small angles: a unit-vector component ~ an angle in rad
+    const float rd[2] = {s * s, s * s};
+    ekf::UpdateResult r = ekf_.update<2>(innov, H, Mat<2, 2>::diagonal(rd));
+    if (r.accepted()) injectError();
+    return r;
+}
+
+/*
+ * Leveling: at rest the specific force points straight up, i.e. (0, 0, -1) in NED. Predicted in the
+ * body frame: u = R^T (0, 0, -1). With q_true = q exp(dtheta): u_true = u + [u]x dtheta, so
+ * H = [u]x on the attitude error (rotation about the vertical is unobservable, as it should be).
+ */
+ekf::UpdateResult NavEKF::gravityDirection(uint64_t tUs, const Vec3& accelBody, float stdDeg) {
+    float lag;
+    if (!finite3(accelBody) || !(stdDeg > 0.0f) || !sync(tUs, lag)) return {ekf::UpdateStatus::Stale, NAN};
+    const Vec3 f = accelBody - ba_;
+    if (ekf::norm(f) < 0.5f * G) return {ekf::UpdateStatus::Skipped, NAN};   // not a gravity reading
+    const Vec3 predicted = q_.toMatrix().T() * ekf::vec3(0.0f, 0.0f, -1.0f);
+    const Vec3 y = ekf::normalized(f) - predicted;
+    Mat<3, N> H = Mat<3, N>::zeros();
+    setBlock(H, 0, TX, ekf::skew(predicted));
+    const float s = stdDeg * DEG2RAD;
+    const float rd[3] = {s * s, s * s, s * s};
+    ekf::UpdateResult r = ekf_.update<3>(y, H, Mat3::diagonal(rd), ekf::GATE_3DOF_999);
+    if (r.accepted()) injectError();
+    return r;
+}
+
+ekf::UpdateResult NavEKF::horizontalVelocity(uint64_t tUs, float vn, float ve, float stdMps) {
+    float lag;
+    if (!isfinite(vn) || !isfinite(ve) || !(stdMps > 0.0f) || !sync(tUs, lag))
+        return {ekf::UpdateStatus::Stale, NAN};
+    Vec<2> y;
+    y[0] = vn - v_[0];
+    y[1] = ve - v_[1];
+    Mat<2, N> H = Mat<2, N>::zeros();
+    H(0, VN) = 1.0f;
+    H(1, VE) = 1.0f;
+    const float r2 = stdMps * stdMps;
+    const float rd[2] = {r2, r2};
+    ekf::UpdateResult r = ekf_.update<2>(y, H, Mat<2, 2>::diagonal(rd));   // a weak prior: never gated
+    if (r.accepted()) injectError();
+    return r;
+}
+
 void NavEKF::setPadPressure(float mbar) {
     if (isfinite(mbar) && mbar > 0.0f) padPressure_ = mbar;
 }

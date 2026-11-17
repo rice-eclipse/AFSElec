@@ -468,7 +468,10 @@ static void navTask(void*)
     EkfTimer timer;
     NavCounts counts;
     float padPressure = padP;                    // pad hold: slowly follows the measured pressure
-    float maxGyroDps = 0.0f, maxAccelDevG = 0.0f;   // pad hold: motion since the last stationary tick
+    float maxGyroDps = 0.0f, maxAccelDevG = 0.0f;   // pad hold / leveling: motion since the last tick
+    ekf::Vec3 levelAccSum = ekf::Vec3::zeros();     // leveling: accelerometer sum since the last tick
+    uint32_t levelN = 0;
+    uint64_t nextHvel = nextLog;                    // velocity prior: next update
     uint32_t stateRequestsDone = 0;                 // "state" commands applied
     bool servosHeld = true;                         // servos centered by startNavigation() just before this task
     const uint64_t servosHeldSinceUs = start;
@@ -501,6 +504,8 @@ static void navTask(void*)
             navAccSum = navAccSum + a;
             navRollRateSum += rollRateDps;
             navAvgN++;
+            levelAccSum = levelAccSum + navAccel;
+            levelN++;
 
             // Flight state machine, once per IMU sample after alignment
             if (phase == NavPhase::Navigating) {
@@ -552,6 +557,7 @@ static void navTask(void*)
             if (maxGyroDps < PAD_STILL_GYRO_DPS && maxAccelDevG < PAD_STILL_ACCEL_G) {
                 nav.stationary(now);
                 nav.horizontalPosition(now, 0.0f, 0.0f, PAD_HOLD_POS_STD_M);
+                if (PAD_HOLD_TILT) nav.noseDirection(now, PAD_HOLD_PITCH_DEG, PAD_HOLD_YAW_DEG, PAD_HOLD_TILT_STD_DEG);
                 if (isfinite(navLastPressure)) {
                     padPressure += (navLastPressure - padPressure) * (stationaryDt / PAD_PRESSURE_TAU_S);
                     nav.setPadPressure(padPressure);
@@ -561,6 +567,31 @@ static void navTask(void*)
             }
             timer.add(t0);
             maxGyroDps = maxAccelDevG = 0.0f;
+        }
+
+        // After apogee: leveling when still, and a weak "horizontal velocity ~ 0", so a tilt error
+        // can't make the horizontal velocity grow without limit (nothing else measures it)
+        const bool afterApogee = phase == NavPhase::Navigating &&
+                                 (flight.state() == FlightState::Descent || flight.state() == FlightState::Landed);
+        if (afterApogee && now >= nextStationary) {
+            nextStationary += stationaryPeriod;
+            if (nextStationary < now) nextStationary = now + stationaryPeriod;
+            const uint32_t t0 = time_us_32();
+            if (LEVEL_WHEN_STILL && levelN > 0 && maxGyroDps < LEVEL_STILL_GYRO_DPS &&
+                maxAccelDevG < LEVEL_STILL_ACCEL_G)
+                nav.gravityDirection(now, levelAccSum * (1.0f / levelN), LEVEL_STD_DEG);
+            if (HVEL_PRIOR && now >= nextHvel) {
+                nextHvel = now + 1'000'000 / HVEL_PRIOR_HZ;
+                nav.horizontalVelocity(now, 0.0f, 0.0f, flight.state() == FlightState::Landed
+                                                            ? HVEL_LANDED_STD_MPS : HVEL_DESCENT_STD_MPS);
+            }
+            timer.add(t0);
+            maxGyroDps = maxAccelDevG = 0.0f;
+            levelAccSum = ekf::Vec3::zeros();   // next averaging window
+            levelN = 0;
+        } else if (!afterApogee) {
+            levelAccSum = ekf::Vec3::zeros();   // only collect after apogee
+            levelN = 0;
         }
 
         if (phase == NavPhase::Aligning) {

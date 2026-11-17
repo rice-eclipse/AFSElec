@@ -421,6 +421,9 @@ int main(int argc, char** argv)
     NavPhase phase = NavPhase::Aligning;
     float padPressure = padP;
     float maxGyroDps = 0.0f, maxAccelDevG = 0.0f;
+    Vec3 levelAccSum = Vec3::zeros();
+    uint32_t levelN = 0;
+    uint64_t nextHvel = t0;
     bool servosHeld = true;
     const uint64_t servosHeldSinceUs = start;
     RollTest::Status lastRollStatus = RollTest::Status::Waiting;
@@ -457,6 +460,8 @@ int main(int argc, char** argv)
                 navAccSum = navAccSum + a;
                 navRollRateSum += rollRateDps;
                 navAvgN++;
+                levelAccSum = levelAccSum + navAccel;
+                levelN++;
 
                 if (phase == NavPhase::Navigating) {
                     if (!(NAV_SERIAL_STATE_CMD && NAV_SERIAL_STATE_MANUAL))
@@ -510,6 +515,7 @@ int main(int argc, char** argv)
                 if (maxGyroDps < PAD_STILL_GYRO_DPS && maxAccelDevG < PAD_STILL_ACCEL_G) {
                     nav.stationary(now);
                     nav.horizontalPosition(now, 0.0f, 0.0f, PAD_HOLD_POS_STD_M);
+                    if (PAD_HOLD_TILT) nav.noseDirection(now, PAD_HOLD_PITCH_DEG, PAD_HOLD_YAW_DEG, PAD_HOLD_TILT_STD_DEG);
                     if (std::isfinite(navLastPressure)) {
                         padPressure += (navLastPressure - padPressure) * (stationaryDt / PAD_PRESSURE_TAU_S);
                         nav.setPadPressure(padPressure);
@@ -518,6 +524,28 @@ int main(int argc, char** argv)
                     nav.clearStationaryWindow();
                 }
                 maxGyroDps = maxAccelDevG = 0.0f;
+            }
+
+            // After apogee: leveling when still, and a weak "horizontal velocity ~ 0"
+            const bool afterApogee = phase == NavPhase::Navigating &&
+                                     (flight.state() == FlightState::Descent || flight.state() == FlightState::Landed);
+            if (afterApogee && now >= nextStationary) {
+                nextStationary += stationaryPeriod;
+                if (nextStationary < now) nextStationary = now + stationaryPeriod;
+                if (LEVEL_WHEN_STILL && levelN > 0 && maxGyroDps < LEVEL_STILL_GYRO_DPS &&
+                    maxAccelDevG < LEVEL_STILL_ACCEL_G)
+                    nav.gravityDirection(now, levelAccSum * (1.0f / levelN), LEVEL_STD_DEG);
+                if (HVEL_PRIOR && now >= nextHvel) {
+                    nextHvel = now + 1'000'000 / HVEL_PRIOR_HZ;
+                    nav.horizontalVelocity(now, 0.0f, 0.0f, flight.state() == FlightState::Landed
+                                                                ? HVEL_LANDED_STD_MPS : HVEL_DESCENT_STD_MPS);
+                }
+                maxGyroDps = maxAccelDevG = 0.0f;
+                levelAccSum = Vec3::zeros();
+                levelN = 0;
+            } else if (!afterApogee) {
+                levelAccSum = Vec3::zeros();
+                levelN = 0;
             }
 
             if (phase == NavPhase::Aligning) {
