@@ -30,6 +30,9 @@ import pandas as pd
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui, QtWidgets
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import analysis as an  # noqa: E402  (lives next to this file)
+
 Qt = QtCore.Qt
 APP_NAME = "AFS Flight Data Viewer"
 SERIES_MIME = "application/x-afs-series"
@@ -296,7 +299,15 @@ class Dataset:
             "log10", "degrees", "radians", "hypot", "minimum", "maximum", "where", "clip", "pi",
             "sign", "floor", "ceil", "cumsum", "unwrap", "isfinite", "nan")}
         ns.update(np=np, t=t, ddt=ddt, integ=integ, smooth=smooth, median=median, lowpass=lowpass,
-                  mag=mag, col=col, g0=9.80665)
+                  mag=mag, col=col, g0=9.80665,
+                  fft_lowpass=lambda x, fc: an.fft_filter(t, x, "lowpass", fc),
+                  fft_highpass=lambda x, fc: an.fft_filter(t, x, "highpass", fc),
+                  fft_bandpass=lambda x, f1, f2: an.fft_filter(t, x, "bandpass", f1, f2),
+                  fft_bandstop=lambda x, f1, f2: an.fft_filter(t, x, "bandstop", f1, f2),
+                  unwrap_deg=lambda x: unwrap_angle(np.asarray(x, float), 360.0),
+                  unwrap_rad=lambda x: unwrap_angle(np.asarray(x, float), 2 * math.pi))
+        for stat in an.ROLLING_STATS:
+            ns[f"rolling_{stat}"] = (lambda s: lambda x, sec: an.rolling(t, x, sec, s))(stat)
         for c in self.df.columns:
             if c.isidentifier():
                 ns[c] = self.array(c)
@@ -838,10 +849,13 @@ class PlotPanel(QtWidgets.QFrame):
             vis.setCheckable(True)
             vis.setChecked(s["item"].isVisible())
             vis.toggled.connect(lambda on, s=s: (s["item"].setVisible(on), self.main.series_changed()))
+            sub.addAction("Analyze…", lambda s=s: self.main.open_analysis([s["key"]]))
             sub.addAction("Change color…", lambda s=s: self._recolor(s))
             sub.addAction("Plot alone in a new graph", lambda s=s: self.main.add_series([s["key"]], None))
             sub.addAction("Remove", lambda k=s["key"]: self.remove(k))
         m.addSeparator()
+        if self.series:
+            m.addAction("Analyze this graph…", lambda: self.main.open_analysis([s["key"] for s in self.series]))
         m.addAction("Rename graph…", self._rename)
         m.addAction("Remove all series", self._clear)
 
@@ -911,6 +925,9 @@ DERIVED_HELP = """<b>Expression</b> uses column names directly (or <code>col("na
 <br><code>mag(a, b, c)</code> vector magnitude &nbsp; <code>ddt(x)</code> derivative &nbsp; <code>integ(x)</code> integral
 <br><code>smooth(x, n)</code> moving average &nbsp; <code>median(x, n)</code> median filter
 &nbsp; <code>lowpass(x, fc_hz)</code>
+<br><code>fft_lowpass(x, fc)</code> <code>fft_highpass(x, fc)</code> <code>fft_bandpass(x, f1, f2)</code>
+<code>fft_bandstop(x, f1, f2)</code> (zero-phase)
+<br><code>rolling_mean/std/rms/min/max/median(x, seconds)</code> &nbsp; <code>unwrap_deg(x)</code> <code>unwrap_rad(x)</code>
 <br>sqrt abs sin cos tan arctan2 degrees radians exp log where clip unwrap …
 <br><i>e.g.</i> <code>mag(imu_ax_g, imu_ay_g, imu_az_g)</code>, <code>-vd_mps</code>,
 <code>ddt(baro_alt_m)</code>, <code>smooth(tab_deg, 25)</code>"""
@@ -967,13 +984,51 @@ class DerivedDialog(QtWidgets.QDialog):
         self.accept()
 
 
-class XYWindow(QtWidgets.QWidget):
+class ToolWindow(QtWidgets.QWidget):
+    """A separate top-level window (XY plot, compare, analysis).
+
+    Deliberately *not* owned by the main window: owned windows on Windows have no taskbar /
+    Alt+Tab entry and get lost behind other apps. This one stacks like any normal window (it
+    sits just under whatever you open next), and the main window keeps a reference to it.
+    """
+
+    def __init__(self, main, title):
+        super().__init__(None, Qt.WindowType.Window)
+        self.main = main
+        self.base_title = title
+        self._links = []
+        self.setWindowTitle(f"{title} — {APP_NAME}")
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        main.register_tool_window(self)
+
+    def listen(self, signal, slot):
+        """Connect to a main-window signal; disconnected again when this window closes."""
+        signal.connect(slot)
+        self._links.append((signal, slot))
+
+    def bring_up(self):
+        if self.isMinimized():
+            self.showNormal()
+        self.show()
+        self.raise_()
+        self.activateWindow()
+
+    def closeEvent(self, ev):
+        for signal, slot in self._links:
+            try:
+                signal.disconnect(slot)
+            except (RuntimeError, TypeError):
+                pass
+        self._links = []
+        self.main.unregister_tool_window(self)
+        super().closeEvent(ev)
+
+
+class XYWindow(ToolWindow):
     """One column against another (e.g. east vs north ground track)."""
 
     def __init__(self, main):
-        super().__init__(main, Qt.WindowType.Window)
-        self.main = main
-        self.setWindowTitle("XY plot")
+        super().__init__(main, "XY plot")
         self.resize(760, 640)
         lay = QtWidgets.QVBoxLayout(self)
         row = QtWidgets.QHBoxLayout()
@@ -1006,7 +1061,7 @@ class XYWindow(QtWidgets.QWidget):
             w.currentIndexChanged.connect(self.refresh)
         self.aspect_cb.toggled.connect(self.refresh)
         self.color_cb.toggled.connect(self.refresh)
-        main.view_changed.connect(self.refresh)
+        self.listen(main.view_changed, self.refresh)
         self._fill_columns()
 
     def _selected(self):
@@ -1087,13 +1142,11 @@ class XYWindow(QtWidgets.QWidget):
         self.pw.autoRange()
 
 
-class CompareWindow(QtWidgets.QWidget):
+class CompareWindow(ToolWindow):
     """Headline numbers of every open flight side by side."""
 
     def __init__(self, main):
-        super().__init__(main, Qt.WindowType.Window)
-        self.main = main
-        self.setWindowTitle("Compare flights")
+        super().__init__(main, "Compare flights")
         self.resize(980, 600)
         lay = QtWidgets.QVBoxLayout(self)
         top = QtWidgets.QHBoxLayout()
@@ -1116,7 +1169,7 @@ class CompareWindow(QtWidgets.QWidget):
             b.clicked.connect(fn)
             row.addWidget(b)
         lay.addLayout(row)
-        main.files_changed.connect(self.refresh)
+        self.listen(main.files_changed, self.refresh)
         self.refresh()
 
     def refresh(self, *_):
@@ -1187,6 +1240,845 @@ class CompareWindow(QtWidgets.QWidget):
                 csv.writer(fh).writerows(self.rows())
 
 
+SEQ_BLUE = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
+DIVERGING = {"light": ("#2a78d6", "#f0efec", "#e34948"), "dark": ("#3987e5", "#383835", "#e66767")}
+FILTER_KINDS = [("Low-pass", "lowpass"), ("High-pass", "highpass"), ("Band-pass", "bandpass"),
+                ("Band-stop (notch)", "bandstop")]
+
+
+def blend(c1, c2, f):
+    a, b = QtGui.QColor(c1), QtGui.QColor(c2)
+    f = min(max(f, 0.0), 1.0)
+    return QtGui.QColor(int(a.red() + (b.red() - a.red()) * f), int(a.green() + (b.green() - a.green()) * f),
+                        int(a.blue() + (b.blue() - a.blue()) * f))
+
+
+def safe_name(s):
+    return "".join(ch if ch.isalnum() or ch == "_" else "p" if ch == "." else "_" for ch in s)
+
+
+class AnalysisWindow(ToolWindow):
+    """Statistics, spectra, spectrogram, histogram, correlation, rolling stats and filters."""
+
+    RANGES = ["Visible range", "Crop range", "A–B range", "Whole file"]
+
+    def __init__(self, main, keys):
+        super().__init__(main, "Signal analysis")
+        self.resize(1320, 840)
+        self.keys: list[tuple] = []
+        self._filter_cache = {}
+        outer = QtWidgets.QHBoxLayout(self)
+
+        # ---- left: signals and range ----
+        leftw = QtWidgets.QWidget()
+        leftw.setFixedWidth(290)
+        left = QtWidgets.QVBoxLayout(leftw)
+        left.setContentsMargins(0, 0, 0, 0)
+        left.addWidget(QtWidgets.QLabel("<b>Signals</b> (tick to analyze)"))
+        self.sig_list = QtWidgets.QListWidget()
+        self.sig_list.itemChanged.connect(lambda *_: self._signals_changed())
+        left.addWidget(self.sig_list, 1)
+        br = QtWidgets.QHBoxLayout()
+        for text, fn, tip in (("Add column…", self._add_column, "Analyze any column of any open file"),
+                              ("From graphs", self._from_graphs, "Add every series that is plotted"),
+                              ("Remove", self._remove_selected, "Remove the highlighted signal")):
+            b = QtWidgets.QPushButton(text)
+            b.setToolTip(tip)
+            b.clicked.connect(fn)
+            br.addWidget(b)
+        left.addLayout(br)
+        form = QtWidgets.QFormLayout()
+        self.range_combo = QtWidgets.QComboBox()
+        self.range_combo.addItems(self.RANGES)
+        self.range_combo.setToolTip("Time span analyzed. Visible / A–B follow the main window.")
+        self.range_combo.currentIndexChanged.connect(self.schedule)
+        form.addRow("Range", self.range_combo)
+        self.unwrap_cb = QtWidgets.QCheckBox("Unwrap angles (±180° jumps)")
+        self.unwrap_cb.toggled.connect(self.schedule)
+        form.addRow(self.unwrap_cb)
+        self.follow_cb = QtWidgets.QCheckBox("Follow the main view")
+        self.follow_cb.setChecked(True)
+        self.follow_cb.setToolTip("Recompute when you zoom, pan, crop or move the A/B cursors")
+        form.addRow(self.follow_cb)
+        rb = QtWidgets.QPushButton("Recompute")
+        rb.clicked.connect(self.refresh)
+        form.addRow(rb)
+        left.addLayout(form)
+        self.range_lbl = QtWidgets.QLabel()
+        self.range_lbl.setWordWrap(True)
+        left.addWidget(self.range_lbl)
+        outer.addWidget(leftw)
+
+        # ---- right: tools ----
+        self.tabs = QtWidgets.QTabWidget()
+        outer.addWidget(self.tabs, 1)
+        self._build_stats()
+        self._build_spectrum()
+        self._build_spectrogram()
+        self._build_histogram()
+        self._build_correlation()
+        self._build_rolling()
+        self._build_filter()
+        self.tabs.currentChanged.connect(lambda *_: self.refresh())
+
+        self.timer = QtCore.QTimer(self)
+        self.timer.setSingleShot(True)
+        self.timer.setInterval(250)
+        self.timer.timeout.connect(self.refresh)
+        self.listen(main.view_changed, self._main_changed)
+        self.listen(main.ab_changed, self._main_changed)
+        self.add_keys(keys, check=True)
+        if not self.keys:
+            self._from_graphs()
+        self.refresh()
+
+    # ---- signals list ---------------------------------------------------------------
+    def add_keys(self, keys, check=True):
+        self.sig_list.blockSignals(True)
+        for k in keys:
+            k = tuple(k)
+            if k in self.keys or k[0] not in self.main.datasets:
+                continue
+            self.keys.append(k)
+            it = QtWidgets.QListWidgetItem(self.main.series_label(k) + (f"  [{unit_of(k[1])}]" if unit_of(k[1]) else ""))
+            it.setFlags(it.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            it.setCheckState(Qt.CheckState.Checked if check else Qt.CheckState.Unchecked)
+            it.setData(Qt.ItemDataRole.DecorationRole, QtGui.QColor(self.color(k)))
+            self.sig_list.addItem(it)
+        self.sig_list.blockSignals(False)
+        self._signals_changed()
+
+    def focus_keys(self, keys):
+        """Make exactly these signals the ticked ones (adding them if needed)."""
+        keys = [tuple(k) for k in keys]
+        self.add_keys(keys, check=True)
+        self.sig_list.blockSignals(True)
+        for i, k in enumerate(self.keys):
+            self.sig_list.item(i).setCheckState(Qt.CheckState.Checked if k in keys else Qt.CheckState.Unchecked)
+        self.sig_list.blockSignals(False)
+        self._signals_changed()
+
+    def _add_column(self):
+        items, keys = [], []
+        for ds in self.main.datasets.values():
+            for c in ds.df.columns:
+                if c != ds.time_col:
+                    items.append(self.main.series_label((ds.id, c)) if len(self.main.datasets) > 1 else c)
+                    keys.append((ds.id, c))
+        if not items:
+            return
+        text, ok = QtWidgets.QInputDialog.getItem(self, "Add column", "Column:", items, 0, True)
+        if ok and text in items:
+            self.add_keys([keys[items.index(text)]])
+
+    def _from_graphs(self):
+        self.add_keys([s["key"] for p in self.main.panels for s in p.series], check=not self.keys)
+
+    def _remove_selected(self):
+        row = self.sig_list.currentRow()
+        if row >= 0:
+            self.keys.pop(row)
+            self.sig_list.takeItem(row)
+            self._signals_changed()
+
+    def _signals_changed(self):
+        sel = self.selected()
+        for combo in (self.sg_combo, self.ca_combo, self.cb_combo, self.ro_combo, self.fi_combo):
+            prev = combo.currentData()
+            combo.blockSignals(True)
+            combo.clear()
+            for k in sel:
+                combo.addItem(self.main.series_label(k), k)
+            i = combo.findData(prev)
+            combo.setCurrentIndex(i if i >= 0 else 0)
+            combo.blockSignals(False)
+        if self.cb_combo.count() > 1 and self.cb_combo.currentData() == self.ca_combo.currentData():
+            self.cb_combo.setCurrentIndex(1)
+        self.schedule()
+
+    def selected(self):
+        out = []
+        for i, k in enumerate(self.keys):
+            ds = self.main.datasets.get(k[0])
+            if ds is not None and k[1] in ds.df and \
+                    self.sig_list.item(i).checkState() == Qt.CheckState.Checked:
+                out.append(k)
+        return out
+
+    def color(self, key):
+        th = self.main.theme
+        i = self.keys.index(key) if key in self.keys else len(self.keys)
+        return th["series"][i % len(th["series"])]
+
+    # ---- data -----------------------------------------------------------------------
+    def span(self):
+        name = self.range_combo.currentText()
+        if name == "Whole file":
+            return -math.inf, math.inf
+        if name.startswith("A") and not self.main.measure_on:
+            name = "Visible range"
+        return self.main.range_for(name)
+
+    def full(self, key):
+        ds = self.main.datasets[key[0]]
+        return ds.time, ds.values(key[1], self.unwrap_cb.isChecked())
+
+    def data(self, key):
+        ds = self.main.datasets[key[0]]
+        t, y = self.full(key)
+        a, b = self.span()
+        i0, i1 = ds.index_range(a, b)
+        return t[i0:i1], y[i0:i1]
+
+    def ref_expr(self, key):
+        """Expression text for a column, wrapped in unwrap_deg/rad if unwrapping applies."""
+        col = key[1]
+        ref = col if col.isidentifier() else f'col("{col}")'
+        if self.unwrap_cb.isChecked() and is_angle(col):
+            ref = f"unwrap_{unit_of(col)}({ref})"
+        return ref
+
+    def _main_changed(self):
+        if self.follow_cb.isChecked() and self.isVisible() and \
+                self.range_combo.currentText() in ("Visible range", "A–B range", "Crop range"):
+            self.schedule()
+
+    def schedule(self, *_):
+        self.timer.start()
+
+    def _style(self, pw):
+        th = self.main.theme
+        pw.setBackground(th["bg"])
+        for ax in ("left", "bottom"):
+            pw.getAxis(ax).setPen(th["fg2"])
+            pw.getAxis(ax).setTextPen(th["fg2"])
+
+    def _plot(self):
+        pw = pg.PlotWidget()
+        pw.showGrid(x=True, y=True, alpha=0.15)
+        return pw
+
+    def _legend(self, pw):
+        lg = pw.addLegend(offset=(8, 6), labelTextSize="9pt")
+        return lg
+
+    def _reset(self, pw, legend=None):
+        pw.clear()
+        if legend is not None:
+            legend.clear()
+            legend.setLabelTextColor(self.main.theme["fg"])
+            c = QtGui.QColor(self.main.theme["bg"])
+            c.setAlpha(215)
+            legend.setBrush(pg.mkBrush(c))
+        self._style(pw)
+
+    def _copy_table(self, table):
+        rows = [["", *[table.horizontalHeaderItem(c).text() for c in range(table.columnCount())]]]
+        for r in range(table.rowCount()):
+            vh = table.verticalHeaderItem(r)
+            rows.append([vh.text() if vh else "", *[(table.item(r, c).text() if table.item(r, c) else "")
+                                                     for c in range(table.columnCount())]])
+        return rows
+
+    def _save_table(self, table, suffix):
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save table", self.main._default_out(suffix),
+                                                        "CSV (*.csv)")
+        if path:
+            import csv
+            with open(path, "w", newline="", encoding="utf-8") as fh:
+                csv.writer(fh).writerows(self._copy_table(table))
+
+    def _row(self, *widgets):
+        h = QtWidgets.QHBoxLayout()
+        for w in widgets:
+            if w is None:
+                h.addStretch(1)
+            elif isinstance(w, str):
+                h.addWidget(QtWidgets.QLabel(w))
+            else:
+                h.addWidget(w)
+        return h
+
+    def _combo(self, items, current=None):
+        c = QtWidgets.QComboBox()
+        c.addItems(items)
+        if current is not None:
+            c.setCurrentText(current)
+        c.currentIndexChanged.connect(self.schedule)
+        return c
+
+    def _check(self, text, on=False):
+        c = QtWidgets.QCheckBox(text)
+        c.setChecked(on)
+        c.toggled.connect(self.schedule)
+        return c
+
+    def _spin(self, value, lo, hi, decimals=3, suffix=""):
+        s = QtWidgets.QDoubleSpinBox()
+        s.setRange(lo, hi)
+        s.setDecimals(decimals)
+        s.setValue(value)
+        s.setSuffix(suffix)
+        s.setKeyboardTracking(False)
+        s.valueChanged.connect(self.schedule)
+        return s
+
+    # ---- refresh --------------------------------------------------------------------
+    def refresh(self, *_):
+        self.timer.stop()
+        a, b = self.span()
+        rng = "whole file" if not (math.isfinite(a) and math.isfinite(b)) else f"{a:.3f} → {b:.3f} s (Δ {b - a:.3f} s)"
+        self.range_lbl.setText(f"Analyzing: {rng}")
+        fn = [self._update_stats, self._update_spectrum, self._update_spectrogram, self._update_histogram,
+              self._update_correlation, self._update_rolling, self._update_filter][self.tabs.currentIndex()]
+        QtWidgets.QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        try:
+            fn()
+        except Exception as exc:   # keep the window alive on odd data
+            self.main.status.showMessage(f"Analysis failed: {exc}", 10000)
+        finally:
+            QtWidgets.QApplication.restoreOverrideCursor()
+
+    # ---- Statistics -----------------------------------------------------------------
+    def _build_stats(self):
+        w = QtWidgets.QWidget()
+        lay = QtWidgets.QVBoxLayout(w)
+        self.thr_edit = QtWidgets.QLineEdit()
+        self.thr_edit.setPlaceholderText("optional, e.g. 300")
+        self.thr_edit.setMaximumWidth(160)
+        self.thr_edit.setToolTip("Adds time above, fraction above, crossings, first/last time above")
+        self.thr_edit.editingFinished.connect(self.schedule)
+        copy_b = QtWidgets.QPushButton("Copy")
+        copy_b.clicked.connect(lambda: QtWidgets.QApplication.clipboard().setText(
+            "\n".join("\t".join(r) for r in self._copy_table(self.st_table))))
+        save_b = QtWidgets.QPushButton("Save CSV…")
+        save_b.clicked.connect(lambda: self._save_table(self.st_table, "_stats.csv"))
+        lay.addLayout(self._row("Threshold", self.thr_edit, None, copy_b, save_b))
+        self.st_table = QtWidgets.QTableWidget()
+        self.st_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.st_table.horizontalHeader().setDefaultSectionSize(170)
+        self.st_table.verticalHeader().setDefaultSectionSize(22)
+        lay.addWidget(self.st_table, 1)
+        self.tabs.addTab(w, "Statistics")
+
+    def _update_stats(self):
+        keys = self.selected()
+        try:
+            thr = float(self.thr_edit.text()) if self.thr_edit.text().strip() else None
+        except ValueError:
+            thr = None
+        results = [an.describe(*self.data(k), unit_of(k[1]), thr) for k in keys]
+        names = []
+        for res in results:
+            for name, _v, _u in res:
+                if name not in names:
+                    names.append(name)
+        tbl = self.st_table
+        tbl.clear()
+        tbl.setColumnCount(len(keys))
+        tbl.setRowCount(len(names))
+        for c, k in enumerate(keys):
+            it = QtWidgets.QTableWidgetItem(self.main.series_label(k))
+            pm = QtGui.QPixmap(12, 12)
+            pm.fill(QtGui.QColor(self.color(k)))
+            it.setIcon(QtGui.QIcon(pm))
+            tbl.setHorizontalHeaderItem(c, it)
+        for r, name in enumerate(names):
+            tbl.setVerticalHeaderItem(r, QtWidgets.QTableWidgetItem(name))
+        for c, res in enumerate(results):
+            for name, v, u in res:
+                txt = (f"{int(v):,}" if isinstance(v, int) or (name in ("Samples", "Missing (NaN)") or
+                                                                 "crossings" in name.lower()) and math.isfinite(v)
+                       else fmt(v)) + (f" {u}" if u and math.isfinite(v) else "")
+                it = QtWidgets.QTableWidgetItem(txt)
+                it.setTextAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+                tbl.setItem(names.index(name), c, it)
+
+    # ---- Spectrum -------------------------------------------------------------------
+    def _build_spectrum(self):
+        w = QtWidgets.QWidget()
+        lay = QtWidgets.QVBoxLayout(w)
+        self.sp_mode = self._combo(["Amplitude spectrum (FFT)", "Power spectral density (Welch)"])
+        self.sp_win = self._combo(list(an.WINDOWS), "Hann")
+        self.sp_det = self._combo(list(an.DETREND_MODES), "Linear")
+        self.sp_seg = self._combo([str(2 ** i) for i in range(6, 17)], "4096")
+        self.sp_seg.setToolTip("Welch segment length (samples): longer = finer frequency resolution, noisier")
+        self.sp_db = self._check("dB")
+        self.sp_logx = self._check("Log frequency")
+        lay.addLayout(self._row(self.sp_mode, "Window", self.sp_win, "Detrend", self.sp_det,
+                                "Segment", self.sp_seg, self.sp_db, self.sp_logx, None))
+        split = QtWidgets.QSplitter(Qt.Orientation.Horizontal)
+        self.sp_pw = self._plot()
+        self.sp_legend = self._legend(self.sp_pw)
+        split.addWidget(self.sp_pw)
+        self.sp_peaks = QtWidgets.QTableWidget(0, 4)
+        self.sp_peaks.setHorizontalHeaderLabels(["Signal", "Freq (Hz)", "Period (s)", "Amplitude"])
+        self.sp_peaks.verticalHeader().setVisible(False)
+        self.sp_peaks.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.sp_peaks.horizontalHeader().setStretchLastSection(True)
+        self.sp_peaks.setToolTip("Largest spectral peaks (DC excluded)")
+        split.addWidget(self.sp_peaks)
+        split.setSizes([820, 470])
+        lay.addWidget(split, 1)
+        self.sp_info = QtWidgets.QLabel()
+        self.sp_info.setWordWrap(True)
+        lay.addWidget(self.sp_info)
+        self.tabs.addTab(w, "Spectrum (FFT)")
+
+    def _update_spectrum(self):
+        welch = self.sp_mode.currentIndex() == 1
+        self.sp_seg.setEnabled(welch)
+        self._reset(self.sp_pw, self.sp_legend)
+        db, logx = self.sp_db.isChecked(), self.sp_logx.isChecked()
+        self.sp_pw.setLogMode(x=logx, y=False)
+        peaks_rows, info = [], []
+        sel = self.selected()
+        units = {unit_of(k[1]) for k in sel}
+        # Different units can't share one amplitude axis: show each relative to its own largest peak
+        normalize = len(units) > 1
+        for k in sel:
+            u = an.uniform(*self.data(k))
+            if u is None or len(u[1]) < 16:
+                info.append(f"{self.main.series_label(k)}: not enough samples")
+                continue
+            tt, yy, dt = u
+            fs = 1 / dt
+            if welch:
+                f, A, nseg = an.welch_psd(yy, fs, int(self.sp_seg.currentText()), self.sp_win.currentText(),
+                                          self.sp_det.currentText())
+                extra = f", {nseg} segments"
+            else:
+                f, A = an.amplitude_spectrum(yy, fs, self.sp_win.currentText(), self.sp_det.currentText())
+                extra = ""
+            Ap = A
+            if normalize:
+                ref = np.max(A[1:]) if len(A) > 1 and np.max(A[1:]) > 0 else 1.0
+                Ap = A / ref
+            Y = (10 if welch else 20) * np.log10(Ap + 1e-30) if db else Ap
+            if logx:
+                f, Y, A = f[1:], Y[1:], A[1:]
+            color = self.color(k)
+            self.sp_pw.plot(f, Y, pen=pg.mkPen(color, width=1.5), name=self.main.series_label(k))
+            pk = an.find_peaks(f, A, 6)
+            if pk:
+                idx = [int(np.searchsorted(f, p[0])) for p in pk]
+                self.sp_pw.plot(f[idx], Y[idx], pen=None, symbol="o", symbolSize=8, symbolBrush=color,
+                                symbolPen=pg.mkPen(self.main.theme["bg"], width=1.5))
+            for fr, amp in pk:
+                peaks_rows.append((k, fr, amp))
+            info.append(f"{self.main.series_label(k)}: fs {fs:.4g} Hz, Nyquist {fs / 2:.4g} Hz, "
+                        f"N {len(yy):,}, Δf {(f[1] - f[0]) if len(f) > 1 else 0:.4g} Hz{extra}")
+        unit = next(iter(units)) if len(units) == 1 else ""
+        if normalize:
+            ylab = "Relative to each signal's largest peak"
+            info.insert(0, "Mixed units → each spectrum is scaled to its own largest peak (peak table "
+                           "shows real values)")
+        elif welch:
+            ylab = f"PSD [{unit}²/Hz]" if unit else "PSD [/Hz]"
+        else:
+            ylab = f"Amplitude [{unit}]" if unit else "Amplitude"
+        self.sp_pw.setLabel("left", ylab + (" (dB)" if db else ""))
+        self.sp_pw.setLabel("bottom", "Frequency (Hz)")
+        self.sp_peaks.setRowCount(len(peaks_rows))
+        for r, (k, fr, amp) in enumerate(peaks_rows):
+            u = unit_of(k[1])
+            u = (f"{u}²/Hz" if u else "/Hz") if welch else u
+            vals = [self.main.series_label(k), f"{fr:.5g}", f"{1 / fr:.5g}" if fr else "—",
+                    fmt(amp, 5) + (f" {u}" if u else "")]
+            for c, v in enumerate(vals):
+                it = QtWidgets.QTableWidgetItem(v)
+                if c == 0:
+                    it.setData(Qt.ItemDataRole.DecorationRole, QtGui.QColor(self.color(k)))
+                self.sp_peaks.setItem(r, c, it)
+        self.sp_peaks.resizeColumnsToContents()
+        self.sp_info.setText("   ·   ".join(info) + ("   ·   Signals are resampled to an even grid at the "
+                                                     "median sample interval." if info else ""))
+        self.sp_pw.autoRange()
+
+    # ---- Spectrogram ----------------------------------------------------------------
+    def _build_spectrogram(self):
+        w = QtWidgets.QWidget()
+        lay = QtWidgets.QVBoxLayout(w)
+        self.sg_combo = QtWidgets.QComboBox()
+        self.sg_combo.currentIndexChanged.connect(self.schedule)
+        self.sg_seg = self._combo([str(2 ** i) for i in range(5, 15)], "256")
+        self.sg_seg.setToolTip("Window length (samples): longer = finer frequency, coarser time")
+        self.sg_ov = self._combo(["50%", "75%", "90%"], "75%")
+        self.sg_win = self._combo(list(an.WINDOWS), "Hann")
+        self.sg_fmax = self._spin(0, 0, 1e6, 2, " Hz")
+        self.sg_fmax.setToolTip("Upper frequency shown (0 = Nyquist)")
+        lay.addLayout(self._row("Signal", self.sg_combo, "Window", self.sg_seg, "Overlap", self.sg_ov,
+                                self.sg_win, "Max freq", self.sg_fmax, None))
+        self.sg_pw = self._plot()
+        self.sg_pw.showGrid(x=False, y=False)
+        self.sg_img = pg.ImageItem()
+        self.sg_pw.addItem(self.sg_img)
+        self.sg_bar = pg.ColorBarItem(values=(0, 1), colorMap=self._seq_cmap(), label="Power (dB)",
+                                      interactive=True)
+        self.sg_bar.setImageItem(self.sg_img, insert_in=self.sg_pw.getPlotItem())
+        lay.addWidget(self.sg_pw, 1)
+        self.sg_info = QtWidgets.QLabel()
+        lay.addWidget(self.sg_info)
+        self.tabs.addTab(w, "Spectrogram")
+
+    def _seq_cmap(self):
+        ramp = SEQ_BLUE if not self.main.dark else SEQ_BLUE[::-1]
+        return pg.ColorMap(np.linspace(0, 1, len(ramp)), [QtGui.QColor(c) for c in ramp])
+
+    def _update_spectrogram(self):
+        self._style(self.sg_pw)
+        self.sg_bar.setColorMap(self._seq_cmap())
+        k = self.sg_combo.currentData()
+        if k is None:
+            self.sg_img.clear()
+            self.sg_info.setText("Tick a signal on the left.")
+            return
+        k = tuple(k)
+        u = an.uniform(*self.data(k))
+        nseg = int(self.sg_seg.currentText())
+        if u is None or len(u[1]) < 64:
+            self.sg_img.clear()
+            self.sg_info.setText("Not enough samples in the selected range.")
+            return
+        tt, yy, dt = u
+        fs = 1 / dt
+        ov = int(self.sg_ov.currentText().rstrip("%")) / 100
+        # Short range: shrink the window until there are enough time slices to be useful
+        asked = nseg
+        while nseg > 16 and (len(yy) - nseg) // max(1, int(nseg * (1 - ov))) + 1 < 24:
+            nseg //= 2
+        shrunk = f" (reduced from {asked} for this short range)" if nseg != asked else ""
+        centers, f, S = an.spectrogram(yy, fs, nseg, ov, self.sg_win.currentText())
+        step = (centers[1] - centers[0]) if len(centers) > 1 else nseg / fs
+        df = f[1] - f[0]
+        self.sg_img.setImage(S, autoLevels=False)
+        self.sg_img.setRect(QtCore.QRectF(tt[0] + centers[0] - step / 2, -df / 2, step * len(centers), df * len(f)))
+        lo, hi = np.percentile(S, [5, 99.7])
+        self.sg_bar.setLevels((lo, hi))
+        fmax = self.sg_fmax.value() or fs / 2
+        self.sg_pw.setLabel("bottom", "Time (s)")
+        self.sg_pw.setLabel("left", "Frequency (Hz)")
+        self.sg_pw.setXRange(tt[0], tt[-1], padding=0)
+        self.sg_pw.setYRange(0, min(fmax, fs / 2), padding=0)
+        self.sg_info.setText(f"{self.main.series_label(k)}: fs {fs:.4g} Hz, window {nseg} samples{shrunk} = "
+                             f"{nseg / fs:.4g} s, Δf {df:.4g} Hz, {len(centers)} time slices. "
+                             "Drag the color bar ends to change contrast.")
+
+    # ---- Histogram ------------------------------------------------------------------
+    def _build_histogram(self):
+        w = QtWidgets.QWidget()
+        lay = QtWidgets.QVBoxLayout(w)
+        self.hi_bins = self._combo(["Auto", "10", "20", "50", "100", "200", "500"], "Auto")
+        self.hi_density = self._check("Normalize (probability density)")
+        self.hi_fit = self._check("Normal fit", True)
+        lay.addLayout(self._row("Bins", self.hi_bins, self.hi_density, self.hi_fit, None))
+        self.hi_pw = self._plot()
+        self.hi_legend = self._legend(self.hi_pw)
+        lay.addWidget(self.hi_pw, 1)
+        self.hi_info = QtWidgets.QLabel()
+        self.hi_info.setWordWrap(True)
+        lay.addWidget(self.hi_info)
+        self.tabs.addTab(w, "Histogram")
+
+    def _update_histogram(self):
+        self._reset(self.hi_pw, self.hi_legend)
+        bins = self.hi_bins.currentText()
+        bins = "auto" if bins == "Auto" else int(bins)
+        density = self.hi_density.isChecked()
+        info, units = [], set()
+        for k in self.selected():
+            _t, y = self.data(k)
+            y = y[np.isfinite(y)]
+            if not len(y):
+                continue
+            units.add(unit_of(k[1]))
+            edges, counts = an.histogram(y, bins, density)
+            color = self.color(k)
+            fill = QtGui.QColor(color)
+            fill.setAlpha(60)
+            self.hi_pw.plot(edges, counts, stepMode="center", fillLevel=0, brush=fill,
+                            pen=pg.mkPen(color, width=1.5), name=self.main.series_label(k))
+            mu, sd = float(np.mean(y)), float(np.std(y))
+            if self.hi_fit.isChecked() and sd > 0:
+                x = np.linspace(edges[0], edges[-1], 300)
+                pdf = np.exp(-0.5 * ((x - mu) / sd) ** 2) / (sd * math.sqrt(2 * math.pi))
+                scale = 1.0 if density else len(y) * float(np.mean(np.diff(edges)))
+                self.hi_pw.plot(x, pdf * scale, pen=pg.mkPen(color, width=2, style=Qt.PenStyle.DashLine))
+            info.append(f"{self.main.series_label(k)}: n {len(y):,}, {len(counts)} bins, μ {fmt(mu, 5)}, "
+                        f"σ {fmt(sd, 5)}")
+        unit = units.pop() if len(units) == 1 else ""
+        self.hi_pw.setLabel("bottom", f"Value [{unit}]" if unit else "Value")
+        self.hi_pw.setLabel("left", "Probability density" if density else "Count")
+        self.hi_info.setText("   ·   ".join(info) + ("   ·   dashed = normal distribution with the same μ, σ"
+                                                     if info and self.hi_fit.isChecked() else ""))
+
+    # ---- Correlation ----------------------------------------------------------------
+    def _build_correlation(self):
+        w = QtWidgets.QWidget()
+        lay = QtWidgets.QVBoxLayout(w)
+        split = QtWidgets.QSplitter(Qt.Orientation.Vertical)
+        top = QtWidgets.QWidget()
+        tl = QtWidgets.QVBoxLayout(top)
+        tl.setContentsMargins(0, 0, 0, 0)
+        tl.addWidget(QtWidgets.QLabel("<b>Correlation matrix</b> (Pearson r, on a common time grid over "
+                                      "the overlap; blue = move together, red = move opposite)"))
+        self.co_table = QtWidgets.QTableWidget()
+        self.co_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.co_table.horizontalHeader().setDefaultSectionSize(130)
+        tl.addWidget(self.co_table)
+        split.addWidget(top)
+        bot = QtWidgets.QWidget()
+        bl = QtWidgets.QVBoxLayout(bot)
+        bl.setContentsMargins(0, 0, 0, 0)
+        self.ca_combo = QtWidgets.QComboBox()
+        self.cb_combo = QtWidgets.QComboBox()
+        for c in (self.ca_combo, self.cb_combo):
+            c.currentIndexChanged.connect(self.schedule)
+        self.co_lag = self._spin(2.0, 0.001, 1e5, 3, " s")
+        bl.addLayout(self._row("<b>Cross-correlation</b>  A", self.ca_combo, "B", self.cb_combo,
+                               "Max lag ±", self.co_lag, None))
+        self.co_pw = self._plot()
+        bl.addWidget(self.co_pw, 1)
+        self.co_info = QtWidgets.QLabel()
+        self.co_info.setWordWrap(True)
+        bl.addWidget(self.co_info)
+        split.addWidget(bot)
+        split.setSizes([260, 500])
+        lay.addWidget(split, 1)
+        self.tabs.addTab(w, "Correlation")
+
+    def _update_correlation(self):
+        keys = self.selected()
+        n = len(keys)
+        tbl = self.co_table
+        tbl.clear()
+        tbl.setRowCount(n)
+        tbl.setColumnCount(n)
+        labels = [self.main.series_label(k) for k in keys]
+        tbl.setHorizontalHeaderLabels(labels)
+        tbl.setVerticalHeaderLabels(labels)
+        pos, mid, neg = DIVERGING["dark" if self.main.dark else "light"]
+        data = {k: self.data(k) for k in keys}
+        for i in range(n):
+            for j in range(i, n):
+                if i == j:
+                    r = 1.0
+                else:
+                    g = an.common_grid(*data[keys[i]], *data[keys[j]])
+                    r = an.pearson(g[1], g[2]) if g is not None else math.nan
+                for (a, b) in ((i, j), (j, i)):
+                    it = QtWidgets.QTableWidgetItem("—" if not math.isfinite(r) else f"{r:+.3f}")
+                    it.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                    if math.isfinite(r):
+                        it.setBackground(blend(mid, pos if r >= 0 else neg, abs(r) * 0.85))
+                        it.setForeground(QtGui.QColor("#ffffff" if abs(r) > 0.6 else self.main.theme["fg"]))
+                    tbl.setItem(a, b, it)
+
+        self._reset(self.co_pw)
+        ka, kb = self.ca_combo.currentData(), self.cb_combo.currentData()
+        if ka is None or kb is None:
+            self.co_info.setText("Tick at least one signal (pick the same one twice for autocorrelation).")
+            return
+        ka, kb = tuple(ka), tuple(kb)
+        g = an.common_grid(*self.data(ka), *self.data(kb))
+        if g is None:
+            self.co_info.setText("These signals don't overlap in time.")
+            return
+        tt, ya, yb, dt = g
+        lags, r = an.xcorr(ya, yb, int(self.co_lag.value() / dt))
+        x = lags * dt
+        th = self.main.theme
+        self.co_pw.plot(x, r, pen=pg.mkPen(th["series"][0], width=2))
+        self.co_pw.addItem(pg.InfiniteLine(0, angle=90, pen=pg.mkPen(th["fg2"], style=Qt.PenStyle.DotLine)))
+        self.co_pw.setLabel("bottom", "Lag (s)")
+        self.co_pw.setLabel("left", "Correlation r")
+        la, lb = self.main.series_label(ka), self.main.series_label(kb)
+        if ka == kb:
+            pk = [i for i in range(1, len(r) - 1) if x[i] > 0 and r[i] > r[i - 1] and r[i] >= r[i + 1] and r[i] > 0.2]
+            if pk:
+                i = pk[0]
+                self.co_pw.addItem(pg.InfiniteLine(x[i], angle=90, pen=pg.mkPen(th["series"][1], width=1.5)))
+                self.co_info.setText(f"Autocorrelation of {la}: first repeat at {x[i]:.4g} s "
+                                     f"(≈ {1 / x[i]:.4g} Hz, r = {r[i]:.3f}).")
+            else:
+                self.co_info.setText(f"Autocorrelation of {la}: no clear periodicity within ±{self.co_lag.value():g} s.")
+        else:
+            i = int(np.argmax(np.abs(r)))
+            lag = x[i]
+            zero = f"zero-lag r = {r[len(r) // 2]:+.3f}; grid Δt {dt:.4g} s"
+            self.co_pw.setYRange(-1, 1)
+            if abs(r[i]) < 0.3:
+                self.co_info.setText(f"No meaningful correlation between A = {la} and B = {lb} "
+                                     f"(largest |r| = {abs(r[i]):.3f} < 0.3), so no delay can be estimated ({zero}).")
+                return
+            self.co_pw.addItem(pg.InfiniteLine(lag, angle=90, pen=pg.mkPen(th["series"][1], width=1.5)))
+            rel = (f"A lags B by {lag:.4g} s" if lag > 0 else f"A leads B by {-lag:.4g} s" if lag < 0
+                   else "no delay")
+            edge = "  ⚠ peak is at the edge of the lag range; try a larger max lag." \
+                if abs(abs(lag) - self.co_lag.value()) < 2 * dt else ""
+            self.co_info.setText(f"Strongest correlation r = {r[i]:+.3f} at lag {lag:+.4g} s → {rel} "
+                                 f"(A = {la}, B = {lb}; {zero}).{edge}")
+
+    # ---- Rolling statistics ---------------------------------------------------------
+    def _build_rolling(self):
+        w = QtWidgets.QWidget()
+        lay = QtWidgets.QVBoxLayout(w)
+        self.ro_combo = QtWidgets.QComboBox()
+        self.ro_combo.currentIndexChanged.connect(self.schedule)
+        self.ro_win = self._spin(1.0, 0.001, 1e5, 3, " s")
+        self.ro_win.setToolTip("Centered time window")
+        self.ro_checks = {s: self._check(s.upper() if s == "rms" else s.capitalize(), s in ("mean", "std"))
+                          for s in an.ROLLING_STATS}
+        self.ro_orig = self._check("Show original", True)
+        add_b = QtWidgets.QPushButton("Add checked to graphs")
+        add_b.setToolTip("Creates derived signals (rolling_mean(...), ...) and plots them in a new graph")
+        add_b.clicked.connect(self._rolling_to_graphs)
+        lay.addLayout(self._row("Signal", self.ro_combo, "Window", self.ro_win, *self.ro_checks.values(),
+                                self.ro_orig, None, add_b))
+        self.ro_pw = self._plot()
+        self.ro_legend = self._legend(self.ro_pw)
+        lay.addWidget(self.ro_pw, 1)
+        self.tabs.addTab(w, "Rolling stats")
+
+    def _update_rolling(self):
+        self._reset(self.ro_pw, self.ro_legend)
+        k = self.ro_combo.currentData()
+        if k is None:
+            return
+        k = tuple(k)
+        ds = self.main.datasets[k[0]]
+        t, y = self.full(k)
+        a, b = self.span()
+        i0, i1 = ds.index_range(a, b)
+        th = self.main.theme
+        if self.ro_orig.isChecked():
+            c = QtGui.QColor(th["fg2"])
+            c.setAlpha(110)
+            self.ro_pw.plot(t[i0:i1], y[i0:i1], pen=pg.mkPen(c, width=1), name=f"{k[1]} (original)",
+                            connect="finite")
+        w = self.ro_win.value()
+        for i, (stat, cb) in enumerate(self.ro_checks.items()):
+            if cb.isChecked():
+                r = an.rolling(t, y, w, stat)   # whole file, so the window is full at the range edges
+                self.ro_pw.plot(t[i0:i1], r[i0:i1], pen=pg.mkPen(th["series"][i % len(th["series"])], width=2),
+                                name=f"rolling {stat} ({w:g} s)", connect="finite")
+        u = unit_of(k[1])
+        self.ro_pw.setLabel("left", u)
+        self.ro_pw.setLabel("bottom", "Time (s)")
+
+    def _rolling_to_graphs(self):
+        k = self.ro_combo.currentData()
+        if k is None:
+            return
+        k = tuple(k)
+        w = self.ro_win.value()
+        items = [(safe_name(f"{k[1]}_r{stat}_{w:g}s"), f"rolling_{stat}({self.ref_expr(k)}, {w:g})")
+                 for stat, cb in self.ro_checks.items() if cb.isChecked()]
+        if items:
+            self.main.add_derived_series(self.main.datasets[k[0]], items, f"{k[1]} rolling {w:g} s")
+
+    # ---- Filter ---------------------------------------------------------------------
+    def _build_filter(self):
+        w = QtWidgets.QWidget()
+        lay = QtWidgets.QVBoxLayout(w)
+        self.fi_combo = QtWidgets.QComboBox()
+        self.fi_combo.currentIndexChanged.connect(self.schedule)
+        self.fi_kind = self._combo([k for k, _ in FILTER_KINDS])
+        self.fi_f1 = self._spin(5.0, 0.0001, 1e6, 4, " Hz")
+        self.fi_f2 = self._spin(10.0, 0.0001, 1e6, 4, " Hz")
+        add_b = QtWidgets.QPushButton("Add filtered signal to graphs")
+        add_b.setToolTip("Creates a derived signal (fft_lowpass(...), ...) and plots it")
+        add_b.clicked.connect(self._filter_to_graphs)
+        self.fi_f2_lbl = QtWidgets.QLabel("to")
+        lay.addLayout(self._row("Signal", self.fi_combo, self.fi_kind, "Cutoff", self.fi_f1, self.fi_f2_lbl,
+                                self.fi_f2, None, add_b))
+        split = QtWidgets.QSplitter(Qt.Orientation.Vertical)
+        self.fi_pw = self._plot()
+        self.fi_legend = self._legend(self.fi_pw)
+        self.fi_spw = self._plot()
+        self.fi_slegend = self._legend(self.fi_spw)
+        split.addWidget(self.fi_pw)
+        split.addWidget(self.fi_spw)
+        lay.addWidget(split, 1)
+        self.fi_info = QtWidgets.QLabel()
+        self.fi_info.setWordWrap(True)
+        lay.addWidget(self.fi_info)
+        self.tabs.addTab(w, "Filter")
+
+    def _filter_params(self):
+        kind = dict(FILTER_KINDS)[self.fi_kind.currentText()]
+        band = kind in ("bandpass", "bandstop")
+        self.fi_f2.setVisible(band)
+        self.fi_f2_lbl.setVisible(band)
+        f1, f2 = self.fi_f1.value(), self.fi_f2.value()
+        if band:
+            f1, f2 = sorted((f1, f2))
+        return kind, f1, (f2 if band else None)
+
+    def _update_filter(self):
+        self._reset(self.fi_pw, self.fi_legend)
+        self._reset(self.fi_spw, self.fi_slegend)
+        k = self.fi_combo.currentData()
+        kind, f1, f2 = self._filter_params()
+        if k is None:
+            return
+        k = tuple(k)
+        ds = self.main.datasets[k[0]]
+        t, y = self.full(k)
+        ck = (k, kind, f1, f2, self.unwrap_cb.isChecked(), id(t), len(t))
+        filt = self._filter_cache.get(ck)
+        if filt is None:
+            filt = an.fft_filter(t, y, kind, f1, f2)   # whole file -> no edge effects at the range edges
+            self._filter_cache = {ck: filt}
+        a, b = self.span()
+        i0, i1 = ds.index_range(a, b)
+        th = self.main.theme
+        c = QtGui.QColor(th["fg2"])
+        c.setAlpha(110)
+        self.fi_pw.plot(t[i0:i1], y[i0:i1], pen=pg.mkPen(c, width=1), name="original", connect="finite")
+        self.fi_pw.plot(t[i0:i1], filt[i0:i1], pen=pg.mkPen(th["series"][0], width=2), name="filtered",
+                        connect="finite")
+        self.fi_pw.setLabel("left", unit_of(k[1]))
+        self.fi_pw.setLabel("bottom", "Time (s)")
+        u0 = an.uniform(t[i0:i1], y[i0:i1])
+        u1 = an.uniform(t[i0:i1], filt[i0:i1])
+        if u0 is None or u1 is None or len(u0[1]) < 16:
+            self.fi_info.setText("Not enough samples in the selected range.")
+            return
+        fs = 1 / u0[2]
+        self.fi_spw.setLogMode(x=True, y=False)
+        top = -math.inf
+        for (uu, name, pen) in ((u0, "original", pg.mkPen(c, width=1)),
+                                (u1, "filtered", pg.mkPen(th["series"][0], width=1.5))):
+            f, A = an.amplitude_spectrum(uu[1], 1 / uu[2], "Hann", "Linear")
+            dB = 20 * np.log10(A[1:] + 1e-30)
+            top = max(top, float(np.max(dB)))
+            self.fi_spw.plot(f[1:], dB, pen=pen, name=name)
+        for fc in (f1, f2):
+            if fc is not None and fc > 0:   # log axis: lines are placed in log10 units
+                self.fi_spw.addItem(pg.InfiniteLine(math.log10(fc), angle=90,
+                                                    pen=pg.mkPen(th["series"][1], width=1.5,
+                                                                 style=Qt.PenStyle.DashLine)))
+        self.fi_spw.setYRange(top - 100, top + 5)   # 100 dB of range keeps the stop band readable
+        self.fi_spw.setLabel("bottom", "Frequency (Hz)")
+        self.fi_spw.setLabel("left", "Amplitude (dB)")
+        warn = "  ⚠ cutoff above Nyquist" if max(f1, f2 or 0) >= fs / 2 else ""
+        removed = np.nanstd(y[i0:i1] - filt[i0:i1])
+        self.fi_info.setText(f"Zero-phase FFT filter (no time shift). fs {fs:.4g} Hz, Nyquist {fs / 2:.4g} Hz. "
+                             f"Std of removed part: {fmt(removed, 4)} {unit_of(k[1])}.{warn}")
+
+    def _filter_to_graphs(self):
+        k = self.fi_combo.currentData()
+        if k is None:
+            return
+        k = tuple(k)
+        kind, f1, f2 = self._filter_params()
+        args = f"{f1:g}" + (f", {f2:g}" if f2 is not None else "")
+        name = safe_name(f"{k[1]}_{kind}_{f1:g}" + (f"_{f2:g}" if f2 is not None else "") + "Hz")
+        self.main.add_derived_series(self.main.datasets[k[0]], [(name, f"fft_{kind}({self.ref_expr(k)}, {args})")],
+                                     f"{k[1]} {kind}")
+
+
 class TextDialog(QtWidgets.QDialog):
     def __init__(self, parent, title, text):
         super().__init__(parent)
@@ -1226,6 +2118,19 @@ KEYS
   S flight-state shading on/off   D derived signal   G new empty graph   T dark/light theme
   Ctrl+0 fit all graphs to the window   Ctrl+Shift+Up / Down active graph taller / shorter
 
+ANALYSIS  (Tools ▸ Analyze signals, Ctrl+Shift+A, or "Analyze…" in a graph's Series menu)
+  * Works on the ticked signals over the visible range, crop, A–B or whole file, and follows
+    the main view as you zoom/pan/move cursors.
+  * Statistics: mean, median, std, RMS, percentiles, skew/kurtosis, trend, integral, rate of
+    change, crossings, dominant frequency, time above a threshold ... (copy / save as CSV)
+  * Spectrum: FFT amplitude or Welch PSD, windows, detrending, dB / log axes, peak table
+  * Spectrogram: frequency content over time
+  * Histogram: distribution with normal fit
+  * Correlation: matrix of r between signals, cross-correlation lag (sensor delay), periodicity
+  * Rolling stats and Filter: preview, then "Add … to graphs" makes them derived signals
+  * Analysis / XY / Compare open as normal windows (own taskbar + Alt+Tab entry). Window menu
+    or Ctrl+Shift+W brings them all back to the front.
+
 COMPARING FLIGHTS
   * Open several logs of the same format (File ▸ Open folder… takes e.g. nav_*.csv).
   * With "Compare mode" on, plotting a column overlays it for every flight of that format:
@@ -1251,6 +2156,7 @@ TIPS
 class MainWindow(QtWidgets.QMainWindow):
     view_changed = QtCore.Signal()
     files_changed = QtCore.Signal()
+    ab_changed = QtCore.Signal()
 
     def __init__(self):
         super().__init__()
@@ -1273,6 +2179,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.compare_mode = self.settings.value("compare_mode", True, type=bool)
         self.align_mode = "start"
         self._rebuilding_files = False
+        self._tool_windows: list[ToolWindow] = []
+        self._compare_win = None
         self.view_hist, self.view_pos = [], -1
         self._syncing = False
         self._last_range = None
@@ -1618,12 +2526,27 @@ class MainWindow(QtWidgets.QMainWindow):
         act(g, "Scroll graphs down", lambda: self._scroll_page(+1), "PgDown")
 
         tl = mb.addMenu("&Tools")
+        act(tl, "Analyze signals…", lambda: self.open_analysis(), "Ctrl+Shift+A",
+            "Statistics, FFT / PSD, spectrogram, histogram, correlation, rolling stats, filters "
+            "(focuses the analysis window if it's already open)", toolbar=True)
+        act(tl, "New analysis window", lambda: self.open_analysis(new_window=True), None,
+            "Open an additional, independent analysis window")
         act(tl, "Compare flights…", self.open_compare, "Ctrl+Shift+C",
             "Headline numbers of every open flight side by side", toolbar=True)
-        act(tl, "XY plot…", self.open_xy, None, "Plot one column against another (e.g. ground track)",
+        act(tl, "XY plot…", lambda: self.open_xy(), None, "Plot one column against another (e.g. ground track)",
             toolbar=False)
+        act(tl, "New XY plot window", lambda: self.open_xy(new_window=True), None,
+            "Open an additional XY plot")
         act(tl, "Flight summary…", self.flight_summary, None, "Key numbers for each open file")
         act(tl, "Column statistics…", self.column_stats, None, "Statistics of every column over the range")
+
+        wm = mb.addMenu("&Window")
+        self.window_menu = wm
+        wm.aboutToShow.connect(self._build_window_menu)
+        bring = QtGui.QAction("Bring tool windows to front", self)
+        bring.setShortcut(QtGui.QKeySequence("Ctrl+Shift+W"))
+        bring.triggered.connect(self.bring_tool_windows_up)
+        self.addAction(bring)   # window-wide shortcut; the menu itself is rebuilt each time it opens
 
         h = mb.addMenu("&Help")
         act(h, "Mouse && keyboard…", lambda: TextDialog(self, "Mouse & keyboard", HELP_TEXT).exec(), "F1")
@@ -1634,6 +2557,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.dark = on
         self.settings.setValue("dark", on)
         self.apply_theme()
+        self.view_changed.emit()   # lets XY / analysis windows restyle
 
     def apply_theme(self):
         th = self.theme
@@ -1972,14 +2896,105 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.open_files(paths)
 
+    # ---- separate tool windows (analysis / XY / compare) ----------------------------
+    def register_tool_window(self, w):
+        self._tool_windows.append(w)
+
+    def unregister_tool_window(self, w):
+        if w in self._tool_windows:
+            self._tool_windows.remove(w)
+        if self._compare_win is w:
+            self._compare_win = None
+
+    def bring_tool_windows_up(self):
+        for w in self._tool_windows:
+            w.bring_up()
+
+    def _build_window_menu(self):
+        m = self.window_menu
+        m.clear()
+        m.addAction("Main window", lambda: (self.showNormal() if self.isMinimized() else None,
+                                                self.raise_(), self.activateWindow()))
+        if not self._tool_windows:
+            m.addSeparator()
+            m.addAction("(no analysis / XY / compare windows open)").setEnabled(False)
+            return
+        m.addAction("Bring all tool windows to front  (Ctrl+Shift+W)", self.bring_tool_windows_up)
+        m.addSeparator()
+        counts = {}
+        for w in self._tool_windows:
+            counts[w.base_title] = counts.get(w.base_title, 0) + 1
+            n = counts[w.base_title]
+            m.addAction(f"{w.base_title}" + (f" ({n})" if n > 1 else "") + ("  (minimized)" if w.isMinimized() else ""),
+                        w.bring_up)
+        m.addSeparator()
+        m.addAction("Close all tool windows", lambda: [w.close() for w in list(self._tool_windows)])
+
+    def closeEvent(self, ev):
+        for w in list(self._tool_windows):
+            w.close()
+        super().closeEvent(ev)
+
+    def changeEvent(self, ev):
+        # Clicking back into the graphs must put this window in front of the analysis / XY /
+        # compare windows (which stay open just behind it).
+        if ev.type() == QtCore.QEvent.Type.ActivationChange and self.isActiveWindow():
+            self.raise_()
+        super().changeEvent(ev)
+
+    def _existing(self, cls):
+        return next((w for w in reversed(self._tool_windows) if isinstance(w, cls)), None)
+
+    def open_analysis(self, keys=None, new_window=False):
+        """Focus the analysis window (opening one only if none is open).
+        keys given (e.g. "Analyze…" on a series): those signals become the ticked ones."""
+        if not self.datasets:
+            return
+        w = None if new_window else self._existing(AnalysisWindow)
+        if w is not None:
+            if keys:
+                w.focus_keys(keys)
+            w.bring_up()
+            return w
+        if not keys:
+            if self.active_panel is not None and self.active_panel.series:
+                keys = [s["key"] for s in self.active_panel.series]
+            else:
+                keys = self.selected_keys()
+        w = AnalysisWindow(self, keys or [])
+        w.bring_up()
+        return w
+
+    def add_derived_series(self, ds, items, title=None):
+        """Create derived signals [(name, expr)] (for every same-format flight in compare mode) and plot them."""
+        made = []
+        for name, expr in items:
+            try:
+                ds.set_derived(name, expr)
+            except Exception as exc:
+                QtWidgets.QMessageBox.warning(self, "Derived signal", f"{name} = {expr}\n\n{exc}")
+                continue
+            made.append(name)
+            if self.compare_mode:
+                for d in self.same_format(ds):
+                    if d is not ds:
+                        try:
+                            d.set_derived(name, expr)
+                        except Exception:
+                            pass
+        self.rebuild_tree(select=ds)
+        if made:
+            self.add_series([(ds.id, n) for n in made], None, title)
+            self.status.showMessage("Added " + ", ".join(f"{n} = {e}" for n, e in items if n in made), 10000)
+        self.refresh_all()
+
     def open_compare(self):
         if not self.datasets:
             return
-        if getattr(self, "_compare_win", None) is None:
+        if self._compare_win is None:
             self._compare_win = CompareWindow(self)
         self._compare_win.refresh()
-        self._compare_win.show()
-        self._compare_win.raise_()
+        self._compare_win.bring_up()
 
     def close_current_file(self):
         self.close_file(self.current_dataset())
@@ -2091,6 +3106,7 @@ class MainWindow(QtWidgets.QMainWindow):
             m.addAction("Add to active graph", lambda: self.add_series(keys, self.active_panel))
             m.addAction("Plot in new graph", lambda: self.add_series(keys, None))
             m.addAction("Each in its own graph", lambda: [self.add_series([k], None) for k in keys])
+            m.addAction("Analyze…", lambda: self.open_analysis(keys))
             if len(self.datasets) > 1:
                 m.addAction("Compare across all flights (new graph)",
                             lambda: self.add_series(keys, None, expand=True))
@@ -2644,6 +3660,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.stats_timer.start()
         self.readout_timer.start()
         self.view_changed.emit()
+        self.ab_changed.emit()
 
     def place_ab(self, which):
         if self.cursor_t is None:
@@ -2665,6 +3682,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._syncing = False
         self.stats_timer.start()
         self.readout_timer.start()
+        self.ab_changed.emit()
 
     def set_shading(self, on):
         self.shade_states = on
@@ -2787,11 +3805,14 @@ class MainWindow(QtWidgets.QMainWindow):
             m.addAction(f"{t:9.3f} s   {name}", lambda t=t: self.center_view(t))
 
     # ---- tools ------------------------------------------------------------------------
-    def open_xy(self):
+    def open_xy(self, new_window=False):
         if not self.datasets:
             return
-        w = XYWindow(self)
-        w.show()
+        w = None if new_window else self._existing(XYWindow)
+        if w is None:
+            w = XYWindow(self)
+        w.bring_up()
+        return w
 
     def flight_summary(self):
         lines = []
